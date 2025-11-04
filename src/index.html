@@ -15,6 +15,27 @@
     ></script>
   </head>
   <body>
-    <h1 class="text-4xl">Hello</h1>
+    <div class="w-full h-dvh flex flex-col justify-center items-center gap-8">
+      <h1 class="font-bold text-4xl">Carnivault</h1>
+      <div class="grid gap-4">
+        <div class="grid gap-2.5">
+          <label for="email" class="label">Email</label>
+          <input class="input" type="email" placeholder="Email" />
+        </div>
+        <div class="grid gap-2.5">
+          <label for="password" class="label">Password</label>
+          <input class="input" type="password" placeholder="Password" />
+        </div>
+        <hr class="border-t border-gray-300 my-2" />
+        <button class="btn font-bold">Login</button>
+      </div>
+      <a
+        href="signup.html"
+        class="text-sm text-gray-600 hover:text-gray-900 hover:underline transition"
+      >
+        Don't have an account?
+        <span class="font-medium text-blue-500">Create one</span>
+      </a>
+    </div>
   </body>
 </html>
