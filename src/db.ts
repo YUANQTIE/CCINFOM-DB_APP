@@ -6,7 +6,7 @@ dotenv.config();
 export let pool: mysql.Connection;
 
 try {
-    pool = mysql.createPool({
+    pool = await mysql.createConnection({
     host: process.env.DB_HOST!,
     user: process.env.DB_USER!,
     password: process.env.DB_PASS!,
