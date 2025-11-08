@@ -26,7 +26,7 @@ console.log(await views.getLivestock(pool));
 console.log(await views.getMeatSelection(pool));
 console.log(await views.getDeliveries(pool));
 console.log(await views.getClients(pool));
-<<<<<<< HEAD
+
 console.log(await views.getNutrition(pool));
 console.log(await views.getOrderLine(pool));
 console.log(await views.getSupplier(pool));
@@ -41,7 +41,7 @@ const result1 = await views.createSupplier(pool, {
 console.log("Deleted rows:", result1);
 const result2 = await views.deleteSupplier(pool, "BYM");
 console.log("Deleted rows:", result2);
-=======
+
 
 /*
 Rin version
@@ -95,4 +95,3 @@ async function testQuery() {
 testQuery();
 
 */
->>>>>>> a26caf9a660ae2e6d384242f1d6da3d2b05de519
