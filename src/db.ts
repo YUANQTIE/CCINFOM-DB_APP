@@ -1,6 +1,7 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import process from "process";
+import * as views from "./db_views.ts";
 
 dotenv.config();
 export let pool: mysql.Connection;
@@ -20,5 +21,7 @@ catch(error){
     process.exit(1);
 }
 
-const [rows] = await pool.query("SELECT * FROM livestock");
-console.log(rows);
+console.log(await views.getLivestock(pool));
+console.log(await views.getMeatSelection(pool));
+console.log(await views.getDeliveries(pool));
+console.log(await views.getClients(pool));
