@@ -1,7 +1,7 @@
-import {pool} from "./db.ts"
+import {pool} from "./db.ts";
 import mysql from "mysql2/promise";
 import * as read from "./db_read.ts";
-import * as obj from "./objects.ts"
+import * as obj from "./objects.ts";
 
 export async function createSupplier(s: obj.Supplier) {
     const [result] = await pool.query(`
