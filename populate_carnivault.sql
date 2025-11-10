@@ -13,8 +13,6 @@ VALUES ('XYZ001', 'XYZ Company', '09183752750'),
 ('SLV007', 'Silverline Meats', '09193456782'),
 ('BRV008', 'Bravo Food Products', '09084561239');
 
-DELETE FROM livestock WHERE livestock_id = '251023-0001';
-
 SELECT * FROM livestock;
 INSERT INTO livestock(livestock_id, breed, weight, age, country_of_origin, medical_condition, vaccination_status, date_arrived, storage_location, supplier_id, status, processing_date)
 VALUES 
@@ -98,8 +96,37 @@ VALUES
 SELECT * FROM order_line;
 INSERT INTO order_line (order_no, item_serial_no)
 VALUES
-(3, 'BRS904731'),
-(3, 'CSR345781'),
-(3, 'RPR817294'),
-(4, 'SSR219084'),
-(4, 'TRT678520');
+(1, 'BRS904731'),
+(1, 'CSR345781'),
+(1, 'RPR817294'),
+(2, 'SSR219084'),
+(2, 'TRT678520');
+
+INSERT INTO agreements (
+  restaurant_code,
+  contract_end,
+  contract_start,
+  client_pricing,
+  week_of_delivery,
+  cut_type_of_choice,
+  weight,
+  tenderness,
+  color,
+  fat_content,
+  protein_content,
+  connective_tissue_content,
+  water_holding_capacity,
+  pH,
+  water_distribution
+)
+VALUES
+('BBQ-101', '2026-12-31', '2024-10-01', 15000.00, 2, 'Ribeye Steak, Boneless', 45.50, 'Very Tender', 'Bright Red', 18.50, 22.10, 2.20, 75.30, 5.60, 72.00),
+('BFS-010', '2026-06-30', '2024-05-15', 12500.00, 3, 'Top Sirloin Steak', 38.00, 'Tender', 'Dark Red', 15.80, 21.90, 2.80, 74.20, NULL, 70.90),
+('BRG-303', '2025-09-30', '2024-01-10', 9800.00, 1, 'Ground Beef and Ground Beef Patties', 50.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('BST-606', '2026-03-31', '2024-07-01', 11000.00, 4, 'Chuck Center Roast', 42.30, 'Moderate', 'Pale', 13.60, 23.10, 3.00, 73.50,NULL, 71.20),
+('BYR-404', '2026-10-31', '2024-09-01', 17500.00, 2, 'Tenderloin Steak (Filet Mignon)', 35.25, 'Very Tender', 'Bright Red', 19.40, 21.80, 2.00, 76.10, 5.55, 73.80),
+('CRV-909', '2027-02-28', '2025-02-01', 16000.00, 1, 'Tri-Tip Roast', 40.00, 'Tender', 'Dark Red', 17.50, 22.40, NULL,NULL,NULL,NULL),
+('GRL-505', '2026-08-31', '2024-08-10', 13400.00, 3, 'Brisket Flat', 48.70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('HUS-707', '2026-12-15', '2024-12-01', 14200.00, 2, 'Porterhouse Steak', 37.80, 'Tender', 'Bright Red', 16.20, 23.00, 2.50, 74.80, 5.70, 72.60),
+('MTL-808', '2027-01-31', '2025-03-05', 12000.00, 4, 'Ribeye Roast, Boneless', 43.10, 'Moderate', 'Dark Red', 14.90, 22.60, 3.20, NULL, 5.75, 71.00),
+('STK-202', '2026-05-31', '2024-04-20', 10000.00, 1, 'Top Round Steak', 41.50, 'Tough', 'Brownish', 12.80, 24.10, 3.50, NULL, 5.85, 69.90);

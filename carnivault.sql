@@ -104,7 +104,7 @@ CREATE TABLE `agreements` (
   `restaurant_code` VARCHAR(8) NOT NULL,
   `contract_end` DATE NOT NULL,
   `contract_start` DATE NOT NULL,
-  `client_pricing` DECIMAL(5,2) NOT NULL,
+  `client_pricing` DECIMAL(10,2) NOT NULL,
   `week_of_delivery` INT NOT NULL,
   `cut_type_of_choice` ENUM('Arm Chuck Roast','Cross Rib Chuck Roast','Prime Rib Roast','Porterhouse Steak','Top Sirloin Steak','Top Round','Kabobs','Arm Chuck Steak','Shoulder Roast','Ribeye Steak, Bone-In','T-Bone Steak','Top Sirloin Petite Roast','Top Round Steak','Stew Meat','Blade Chuck Roast','Shoulder Steak','Back Ribs','Strip Steak, Bone-In','Top Sirloin Filet','Bottom Round Roast','Strips','Blade Chuck Steak','Ranch Steak','Ribeye Roast, Boneless','Strip Steak, Boneless','Coulotte Roast','Bottom Round Rump Roast','Cubed Steak','7-Bone Chuck Roast','Flat Iron Steak','Ribeye Steak, Boneless','Strip Petite Roast','Coulotte Steak','Ground Beef and Ground Beef Patties','Chuck Center Roast','Top Blade Steak','Ribeye Cap Steak','Strip Filet','Tri-Tip Roast','Eye of Round Roast','Shank Cross-Cut','Denver Steak','Shoulder Petite Tender','Ribeye Petite Roast','Tenderloin Roast','Tri-Tip Steak','Eye of Round Steak','Tenderloin Tips','Chuck Eye Roast','Shoulder Petite Tender Medallions','Ribeye Filet','Tenderloin Steak (Filet Mignon)','Petite Sirloin Steak','Brisket Flat','Inside Skirt','Flank Steak','Short Ribs, Bone-In','Chuck Eye Steak','Sirloin Bavette Steak','Brisket Point','Country-Style Ribs') NOT NULL,
   `weight` DECIMAL(5,2) NOT NULL,
