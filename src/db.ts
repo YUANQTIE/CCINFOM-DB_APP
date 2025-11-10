@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import process from "process";
-import * as views from "./db_views.ts";
+import * as read from "./db_read.ts";
 import { create } from "domain";
 
 dotenv.config();
@@ -22,25 +22,27 @@ try {
   process.exit(1);
 }
 
-console.log(await views.getLivestock(pool));
-console.log(await views.getMeatSelection(pool));
-console.log(await views.getDeliveries(pool));
-console.log(await views.getClients(pool));
 
-console.log(await views.getNutrition(pool));
-console.log(await views.getOrderLine(pool));
-console.log(await views.getSupplier(pool));
-console.log(await views.getAgreements(pool));
+console.log(await read.getLivestock());
+console.log(await read.getMeatSelection());
+console.log(await read.getDeliveries());
+console.log(await read.getClients());
 
+console.log(await read.getNutrition());
+console.log(await read.getOrderLine());
+console.log(await read.getSupplier());
+console.log(await read.getAgreements());
 
-const result1 = await views.createSupplier(pool, {
+/*
+const result1 = await read.createSupplier(pool, {
     supplier_id: "BYM",
     company_name: "beatyomeat",
     contact_no: "0933-532-4345",
 })
 console.log("Deleted rows:", result1);
-const result2 = await views.deleteSupplier(pool, "BYM");
+const result2 = await read.deleteSupplier(pool, "BYM");
 console.log("Deleted rows:", result2);
+*/
 
 
 /*
