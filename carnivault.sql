@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `deliveries` (
     `driver_name` VARCHAR(100) NOT NULL,
     `truck_number` INT NOT NULL,
     `deliver_date` DATE DEFAULT NULL,
+	`order_date` DATE NOT NULL,
     `distance_traveled` DECIMAL(8,2) DEFAULT NULL,
     `delivery_duration` DECIMAL(5,2) DEFAULT NULL,
     `weight` DECIMAL(6,2) NOT NULL,
