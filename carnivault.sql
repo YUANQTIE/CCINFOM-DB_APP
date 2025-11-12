@@ -78,14 +78,14 @@ CREATE TABLE IF NOT EXISTS `clients` (
 );
 
 CREATE TABLE IF NOT EXISTS `deliveries` (
-    `delivery_no` INT AUTO_INCREMENT NOT NULL,
-    `driver_name` VARCHAR(100) NOT NULL,
-    `truck_number` INT NOT NULL,
+    `delivery_no` INT AUTO_INCREMENT DEFAULT NULL,
+    `driver_name` VARCHAR(100) DEFAULT NULL,
+    `truck_number` INT DEFAULT NULL,
     `deliver_date` DATE DEFAULT NULL,
 	`order_date` DATE NOT NULL,
     `distance_traveled` DECIMAL(8,2) DEFAULT NULL,
     `delivery_duration` DECIMAL(5,2) DEFAULT NULL,
-    `weight` DECIMAL(6,2) NOT NULL,
+    `weight` DECIMAL(6,2) DEFAULT NULL,
     `restaurant_code` VARCHAR(8),
     `status` ENUM('Pending', 'Delivered', 'Cancelled', 'Returned'),
     `profit` DECIMAL(10,2),
