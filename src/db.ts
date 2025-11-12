@@ -23,6 +23,9 @@ try {
   process.exit(1);
 }
 
+update.updateLivestockStatus("251023-0002");
+console.log(await read.getLivestock());
+
 /*
 console.log(await read.getLivestock());
 console.log(await read.getMeatSelection());

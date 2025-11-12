@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Company Clients</title>
+</head>
+<body>
+  <h1>Clients</h1>
+  <ul id="clients-list"></ul>
+
+  <h2 id="cut-title">Cut Types</h2>
+  <ul id="cut-types-list"></ul>
+
+  <script>
+    async function loadClients() { 
+      const res = await fetch("http://localhost:3000/api/clients"); 
+      const data = await res.json(); 
+
+      const list = document.getElementById("clients-list"); 
+      list.innerHTML = ""; 
+
+      data.forEach(client => { 
+        const li = document.createElement("li"); 
+        li.textContent = `${client.client_name} -- ${client.restaurant_name} -- ${client.restaurant_type} -- ${client.restaurant_address} -- ${client.contact_no} -- ${client.email_address} -- ${client.year_of_establishment}`; 
+        
+        // When clicked, show cut types for that restaurant
+        li.addEventListener("click", () => {
+          loadCutTypeByClient(client.restaurant_name);
+        });
+
+        list.appendChild(li); 
+      }); 
+    }
+
+    async function loadCutTypeByClient(restaurant_name) {
+      const encodedName = encodeURIComponent(restaurant_name);
+      const res = await fetch(`http://localhost:3000/api/cut-types-by-clients?restaurant_name=${encodedName}`);
+      const data = await res.json();
+
+      const title = document.getElementById("cut-title");
+      const list = document.getElementById("cut-types-list");
+
+      title.textContent = `Cut Types for: ${restaurant_name}`;
+      list.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "No cut types found for this restaurant";
+        list.appendChild(li);
+        return; 
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.cuts;
+        list.appendChild(li);
+      });
+    }
+
+    // Only call this once
+    loadClients();
+  </script>
+</body>
+</html>
