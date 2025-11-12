@@ -143,3 +143,11 @@ export async function createAgreement(a: obj.Agreement) {
     ]);
     return read.getAgreements();
 }
+
+export async function createDeliveries(order_date : string) {
+    const [result] = await pool.query(`
+        INSERT INTO deliveries (order_date, status)
+        VALUES (?, 'Pending');
+    `, [order_date]);
+     return { delivery_no: result.insertId }; //gets the delivery_id
+}

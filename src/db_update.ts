@@ -54,3 +54,22 @@ export async function updatePendingDeliveryInfo(delivery_no : string, driverName
         `, [driverName, truckNumber, delivery_no]
     );
 }
+
+export async function updateCancelledDeliveryStatus(deliveryNo : number) {
+    await pool.query(`
+        UPDATE deliveries
+        SET 
+            status = 'Cancelled'
+        WHERE delivery_no = ?;
+        `, [deliveryNo]
+    );
+}
+
+export async function updateCancelledMeatSelectionStatus(serial_no : string) {
+    await pool.query(`
+        UPDATE meat_selection
+        SET status = "Discarded"
+        WHERE serial_no = ?;
+        `, [serial_no]
+    );
+}
