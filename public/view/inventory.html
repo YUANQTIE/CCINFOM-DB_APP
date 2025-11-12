@@ -16,7 +16,9 @@
       const list = document.getElementById("meat-list");
       data.forEach(item => {
         const li = document.createElement("li");
-        li.textContent = `${item.c} — ${item.status}`;
+        li.textContent = `${item.serial_no}, ${item.cut_type}, ${item.weight}, 
+                          ${item.expiry_date}, ${item.storage_location}, ${item.quality_control_clearance},
+                          ${item.status}, ${item.origin_livestock_id}`;
         list.appendChild(li);
       });
     }
