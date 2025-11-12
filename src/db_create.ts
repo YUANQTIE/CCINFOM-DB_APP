@@ -149,5 +149,5 @@ export async function createDeliveries(order_date : string) {
         INSERT INTO deliveries (order_date, status)
         VALUES (?, 'Pending');
     `, [order_date]);
-     return { delivery_no: result.insertId }; //gets the delivery_id
+    // return { delivery_no: result.insertId }; //gets the delivery_id
 }

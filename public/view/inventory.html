@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Meat Selection</title>
+</head>
+<body>
+  <h1>Meat Selection</h1>
+  <ul id="meat-list"></ul>
+
+  <script>
+    async function loadMeatSelection() {
+      const res = await fetch("http://localhost:3000/api/meat-selection");
+      const data = await res.json();
+
+      const list = document.getElementById("meat-list");
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.c} — ${item.status}`;
+        list.appendChild(li);
+      });
+    }
+
+    loadMeatSelection();
+  </script>
+</body>
+</html>
