@@ -5,7 +5,11 @@ import * as obj from "./objects.ts";
 
 // SUPPLIERS
 export async function getSupplier() {
-    const [records] = await pool.query("SELECT * FROM supplier");
+    const [records] = await pool.query(`
+        SELECT * FROM supplier
+        ORDER BY company_name;
+        `
+    );
     return records;
 }
 
@@ -13,7 +17,8 @@ export async function getLivestockBySupplier(supplierName : string) {
     const [records] = await pool.query(`
         SELECT l.livestock_id, l.breed FROM supplier s
         JOIN livestock l ON s.supplier_id = l.supplier_id
-        WHERE s.company_name = ?;
+        WHERE s.company_name = ?
+        ORDER BY l.date_arrived DESC;
         `, [supplierName]
     );
 
@@ -22,7 +27,10 @@ export async function getLivestockBySupplier(supplierName : string) {
 
 //LIVESTOCK
 export async function getLivestock() {
-    const [records] = await pool.query("SELECT * FROM livestock");
+    const [records] = await pool.query(`
+        SELECT * FROM livestock
+        ORDER BY date_arrived DESC;
+    `);
     return records;
 }
 
@@ -37,16 +45,20 @@ export async function getMeatByLivestockBreed(breed : string) {
     return records;
 }
 
-// MEAT SELECTION
+// MEAT SELECTION & nutrition
 export async function getMeatSelection() {
-    const [records] = await pool.query("SELECT * FROM meat_selection");
+    const [records] = await pool.query(`
+        SELECT * FROM meat_selection m
+        LEFT JOIN nutrition n ON m.serial_no = n.item_serial_no
+        ORDER BY status, expiry_date;`
+    );
     return records;
 }
 
 export async function getTotalStatusMeatCutInventory(status : string) {
     const [records] = await pool.query(`
         SELECT * FROM meat_selection
-        WHERE status = ?
+        WHERE status = ?;
         `, [status]
     );
 
@@ -59,7 +71,7 @@ export async function getTotalStatusMeatCutInventory(status : string) {
 export async function getTotalStorageInventory(location : string) {
     const [records] = await pool.query(`
         SELECT * FROM meat_selection
-        WHERE storage_location = ?
+        WHERE storage_location = ?;
         `, [location]
     );
 
@@ -82,21 +94,6 @@ export async function getClientByCutType(cutType: string) {
     return records;
 }
 
-// NUTRITION
-export async function getNutrition() {
-    const [records] = await pool.query("SELECT * FROM nutrition");
-    return records;
-}
-
-export async function getMeatWithNutrition() {
-    const [records] = await pool.query(`
-        SELECT * FROM meat_selection m
-        JOIN nutrition n ON m.serial_no = n.item_serial_no;
-        `
-    );
-    return records;
-}
-
 // CLIENTS
 export async function getClients() {
     const [records] = await pool.query("SELECT * FROM clients");
@@ -109,7 +106,8 @@ export async function getCutTypeByClient(restaurant_name : string) {
         JOIN deliveries d ON c.restaurant_code = d.restaurant_code
         JOIN order_line ol ON d.delivery_no = ol.order_no
         JOIN meat_selection m ON ol.item_serial_no = m.serial_no
-        WHERE TRIM(c.restaurant_name) = ?;            
+        WHERE TRIM(c.restaurant_name) = ?;
+        ORDER BY m.cut_type;        
         `, [restaurant_name]
     );
     
@@ -118,14 +116,18 @@ export async function getCutTypeByClient(restaurant_name : string) {
 
 // AGREEMENTS
 export async function getAgreements() {
-    const [records] = await pool.query("SELECT * FROM agreements");
+    const [records] = await pool.query(`
+        SELECT * FROM agreements
+        ORDER BY contract_end DESC;
+        `
+    );
     return records;
 }
 
 export async function getClientWithAgreements() {
     const [records] = await pool.query(`
         SELECT * FROM clients c
-        JOIN agreements a ON c.restaurant_code = a.restaurant_code
+        JOIN agreements a ON c.restaurant_code = a.restaurant_code;
         `
     );
     return records;
@@ -133,7 +135,11 @@ export async function getClientWithAgreements() {
 
 // DELIVERIES
 export async function getDeliveries() {
-    const [records] = await pool.query("SELECT * FROM deliveries");
+    const [records] = await pool.query(`
+        SELECT * FROM deliveries
+        ORDER BY delivery_no DESC;
+        `
+    );
     return records;
 }
 
@@ -142,6 +148,7 @@ export async function getRestaurantsByDriver(name : string) {
         SELECT c.restaurant_name FROM deliveries d
         JOIN clients c ON d.restaurant_code = c.restaurant_code
         WHERE driver_name = ?
+        ORDER BY c.restaurant_name;
         `, [name]
     );
     return records;
