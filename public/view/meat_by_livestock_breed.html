@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Meat By Livestock Breed</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center;">Meat by Livestock Breed</h1>
+  <div style="text-align:center;">
+    <input id="input" placeholder="Enter Breed">
+    <button onclick="loadData()">Search</button>
+  </div>
+
+  <table id="resultsTable">
+    <thead>
+      <tr id="tableHead"></tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script>
+    async function loadData() {
+      const breed = document.getElementById("input").value;
+      const response = await fetch(`/api/livestock/meat-by-livestock-breed/${encodeURIComponent(breed)}`);
+      const data = await response.json();
+
+      const tableHead = document.getElementById("tableHead");
+      const tableBody = document.getElementById("tableBody");
+
+      tableHead.innerHTML = "";
+      tableBody.innerHTML = "";
+
+      if (data.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='10'>No results found.</td></tr>";
+        return;
+      }
+
+      // Create table headers dynamically
+      const headers = Object.keys(data[0]);
+      headers.forEach(h => {
+        const th = document.createElement("th");
+        th.textContent = h;
+        tableHead.appendChild(th);
+      });
+
+      // Create table rows dynamically
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        headers.forEach(h => {
+          const td = document.createElement("td");
+          td.textContent = row[h];
+          tr.appendChild(td);
+        });
+        tableBody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
