@@ -119,19 +119,27 @@ export async function getCutTypeByClient(restaurant_name : string) {
 }
 
 // AGREEMENTS
-export async function getAgreements() {
-    const [records] = await pool.query(`
-        SELECT * FROM agreements
-        ORDER BY contract_end DESC;
-        `
-    );
-    return records;
-}
-
 export async function getClientWithAgreements() {
     const [records] = await pool.query(`
-        SELECT * FROM clients c
-        JOIN agreements a ON c.restaurant_code = a.restaurant_code;
+        SELECT 
+            c.restaurant_code,
+            c.restaurant_name,
+            a.contract_end,
+            a.contract_start,
+            a.client_pricing,
+            a.week_of_delivery,
+            a.cut_type_of_choice,
+            a.weight,
+            a.color,
+            a.fat_content,
+            a.protein_content,
+            a.connective_tissue_content,
+            a.water_holding_capacity,
+            a.pH,
+            a.water_distribution
+        FROM clients c
+        JOIN agreements a ON c.restaurant_code = a.restaurant_code
+        ORDER BY a.contract_end DESC;
         `
     );
     return records;
@@ -158,16 +166,16 @@ export async function getRestaurantsByDriver(name : string) {
     return records;
 }
 
-export async function getOrderLine() {
-    const [records] = await pool.query("SELECT * FROM order_line");
-    return records;
-}
-
-export async function getCutTypeInOrder(order_no : number) {
+export async function getDeliveryItems(order_no : number) {
     const [records] = await pool.query(`
-        SELECT m.cut_type FROM order_line ol 
+        SELECT 
+            m.serial_no, 
+            m.cut_type, 
+            m.weight 
+        FROM order_line ol 
         JOIN meat_selection m ON ol.item_serial_no = m.serial_no
         WHERE ol.order_no = ?
+        ORDER BY m.weight;
         `, [order_no]
     );
     return records;
