@@ -13,7 +13,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-
 router.get("/delivery-items/:no", async (req, res) => {
     const {no} = req.params;
     try {
@@ -26,5 +25,15 @@ router.get("/delivery-items/:no", async (req, res) => {
     }
 });
 
+router.get("/restaurant-by-driver/:driver", async (req, res) => {
+    const {driver} = req.params;
+    try {
+        const data = await read.getRestaurantsByDriver(driver);
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch deliveries by cut type" });
+    }
+});
 
 export default router;
