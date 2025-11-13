@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Client Transactions</title>
+</head>
+<body>
+  <h1>Client Transactions</h1>
+
+  <label>Email Address:</label>
+  <input type="text" id="email" placeholder="Enter client email">
+  <button onclick="loadClientTransactions()">Load Transactions</button>
+
+  <ul id="transaction-list"></ul>
+
+  <script>
+    async function loadClientTransactions() {
+      const email = document.getElementById("email").value.trim();
+      const list = document.getElementById("transaction-list");
+      list.innerHTML = "";
+
+      if (!email) {
+        alert("Please enter an email address");
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/client-transactions?email_address=${encodeURIComponent(email)}`);
+        const data = await res.json();
+
+        if (res.status !== 200) {
+          list.innerHTML = `<li>${data.error || "Error loading data"}</li>`;
+          return;
+        }
+
+        if (data.length === 0) {
+          list.innerHTML = "<li>No transactions found for this client.</li>";
+          return;
+        }
+
+        data.forEach(t => {
+          const li = document.createElement("li");
+          li.textContent =
+            `${t.order_date} --- ${t.deliver_date} | ${t.cut_type_of_choice} | Tenderness: ${t.tenderness}, Color: ${t.color} | Tenderness: ${t.tenderness}, Fat Content: ${t.fat_content} | Protein Content: ${t.protein_content}, Connective Tissue Content: ${t.connective_tissue_content} | Water Holding Capacity: ${t.water_holding_capacity}, pH: ${t.pH}, water_distribution: ${t.water_distribution}`;
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error(err);
+        list.innerHTML = "<li>Failed to fetch transactions.</li>";
+      }
+    }
+  </script>
+</body>
+</html>

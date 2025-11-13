@@ -76,8 +76,7 @@ export interface Delivery {
 
 export interface OrderLine {
     order_line_no : number;
-    item_serial_no : string;
-    agreement_no : string
+    agreement_no : number
 }
 
 export interface Agreement {

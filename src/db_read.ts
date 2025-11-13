@@ -306,15 +306,28 @@ export async function getClientAgreements(email_address : string) {
     `, [email_address]);
     return records;
 }
+// Get client agreements with agreement_no
+export async function getClientAgreementsWithNumber(email_address: string) {
+  const [records] = await pool.query<any[]>(`
+    SELECT a.agreement_no, a.restaurant_code, a.contract_end, a.contract_start, a.client_pricing,
+           a.week_of_delivery, a.cut_type_of_choice, a.tenderness, a.color, a.fat_content,
+           a.protein_content, a.connective_tissue_content, a.water_holding_capacity, a.pH, a.water_distribution
+    FROM agreements a
+    JOIN clients c ON c.restaurant_code = a.restaurant_code
+    WHERE c.email_address = ?
+  `, [email_address]);
+
+  return records;
+}
+
 
 // CLIENT INFO
 
 export async function getClient(email_address : string) {
     const [records] = await pool.query(`
-        SELECT c.restaurant_name, a.contract_end, a.contract_start, a.client_pricing, a.week_of_delivery, a.cut_type_of_choice, a.tenderness, a.color, a.fat_content, a.protein_content, a.connective_tissue_content, a.water_holding_capacity, a.pH, a.water_distribution
-        FROM agreements a
-        JOIN clients c ON c.restaurant_code = a.restaurant_code
-        WHERE c.email_address = ?
+        SELECT restaurant_name, restaurant_type, restaurant_address, contact_no, email_address, year_of_establishment
+        FROM clients
+        WHERE email_address = ?
     `, [email_address]);
     return records;
 }

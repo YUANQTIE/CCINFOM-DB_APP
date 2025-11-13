@@ -3,6 +3,8 @@ import path from "path";
 import cors from "cors";
 import { pool } from "./db.ts";
 import * as read from "./db_read.ts";
+import * as create from "./db_create.ts";
+import * as objects from "./objects.ts";
 const app = express();
 const port = 3000;
 
@@ -162,6 +164,61 @@ app.get("/api/deliveries/distance-duration", async (req, res) => {
 
 // MAKE AN ORDER
 
+// API to get agreements
+// Get client agreements with agreement_no
+app.get("/api/client/agreements/number", async (req, res) => { 
+  try { 
+    const email_address = req.query.email_address as string; 
+    if (!email_address) { 
+      return res.status(400).json({ error: "email_address is required" }); 
+    } 
+
+    const data = await read.getClientAgreementsWithNumber(email_address); 
+    res.json(data); 
+  } catch (err) { 
+    console.error("Error fetching client agreements:", err); 
+    res.status(500).json({ error: "Failed to fetch client agreements" }); 
+  } 
+});
+
+// Place order for selected agreements
+app.post("/api/client/order", async (req, res) => { 
+  try { 
+    // Expecting: email_address + array of agreement_no 
+    const { email_address, agreements } = req.body as { email_address: string; agreements: number[] }; 
+
+    if (!email_address || !agreements || agreements.length === 0) { 
+      return res.status(400).json({ error: "Email and agreements are required" }); 
+    }
+
+    // Fetch restaurant_code from email 
+    const [clientRows] = await pool.query(
+      `SELECT restaurant_code FROM clients WHERE email_address = ?`,
+      [email_address]
+    ) as any[]; 
+
+    if (!clientRows || clientRows.length === 0) { 
+      return res.status(404).json({ error: "Client not found" }); 
+    } 
+
+    const restaurant_code = clientRows[0].restaurant_code; 
+
+    // Create delivery 
+    const delivery_id = await create.createDelivery({ restaurant_code } as objects.Delivery); 
+
+    // Create order lines for each selected agreement 
+    for (const agreement_no of agreements) { 
+      await create.createOrderLine({ order_line_no: delivery_id, agreement_no } as objects.OrderLine); 
+    } 
+
+    res.json({ message: "Order placed successfully", delivery_id }); 
+
+  } catch (err) { 
+    console.error("Error placing order:", err); 
+    res.status(500).json({ error: "Failed to place order" }); 
+  } 
+});
+
 // note; use the same api key on table of transactions
 
 // CANCEL AN ORDER
@@ -177,9 +234,10 @@ app.get("/api/client", async (req, res) => {
     }
 
     const data = await read.getClient(email_address);
+
     res.json(data);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching client info:", err);
     res.status(500).json({ error: "Failed to fetch client data" });
   }
 });
@@ -193,14 +251,58 @@ app.get("/api/client/agreements", async (req, res) => {
     }
 
     const data = await read.getClientAgreements(email_address);
+
     res.json(data);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching client agreements:", err);
     res.status(500).json({ error: "Failed to fetch client agreements" });
   }
 });
 
+
+
+
 // MAKE NEW AGREEMENT
+
+app.post("/api/client/agreements/create", async (req, res) => {
+  try {
+    const a: objects.Agreement & { email_address: string } = req.body;
+
+    // Required fields check
+    const email = a.email_address?.trim();
+    const start = a.contract_start?.trim();
+    const end = a.contract_end?.trim();
+    const pricing = Number(a.client_pricing);
+
+    if (!email || !start || !end || isNaN(pricing)) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    a.client_pricing = pricing;
+
+    // Fetch restaurant_code from email
+    const [rows] = await pool.query(`SELECT restaurant_code FROM clients WHERE email_address = ?`, [email]) as any[];
+    if (!rows || rows.length === 0) return res.status(404).json({ error: "Client not found" });
+
+    a.restaurant_code = rows[0].restaurant_code;
+
+    // Optional numeric fields
+    a.weight = Number(a.weight);
+    a.fat_content = a.fat_content ? Number(a.fat_content) : null;
+    a.protein_content = a.protein_content ? Number(a.protein_content) : null;
+    a.connective_tissue_content = a.connective_tissue_content ? Number(a.connective_tissue_content) : null;
+    a.water_holding_capacity = a.water_holding_capacity ? Number(a.water_holding_capacity) : null;
+    a.pH = a.pH ? Number(a.pH) : null;
+    a.water_distribution = a.water_distribution ? Number(a.water_distribution) : null;
+
+    await create.createAgreement(a);
+
+    res.json({ message: "Agreement created successfully" });
+  } catch (err) {
+    console.error("Error creating agreement:", err);
+    res.status(500).json({ error: "Failed to create agreement" });
+  }
+});
+
 
 // TABLE OF TRANSACTIONS
 
