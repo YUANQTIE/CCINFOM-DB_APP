@@ -4,6 +4,7 @@ import cors from "cors";
 import * as read from "./db_read.ts";
 import meatSelectionRoutes from "./routes/meatSelectionRoutes.ts";
 import livestockRoutes from "./routes/livestockRoutes.ts"
+import clientsRoutes from "./routes/clientsRoutes.ts"
 
 const app = express();
 const port = 3000;
@@ -14,6 +15,7 @@ app.use(express.static("public"));
 
 app.use("/api/meat-selection", meatSelectionRoutes);
 app.use("/api/livestock", livestockRoutes);
+app.use("/api/clients", clientsRoutes);
 
 app.get("/api/cut-types-by-clients", async (req, res) => {
   try {

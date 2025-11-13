@@ -96,7 +96,11 @@ export async function getClientByCutType(cutType: string) {
 
 // CLIENTS
 export async function getClients() {
-    const [records] = await pool.query("SELECT * FROM clients");
+    const [records] = await pool.query(`
+        SELECT * FROM clients
+        ORDER BY restaurant_name;
+        `
+    );
     return records;
 }
 
@@ -106,7 +110,7 @@ export async function getCutTypeByClient(restaurant_name : string) {
         JOIN deliveries d ON c.restaurant_code = d.restaurant_code
         JOIN order_line ol ON d.delivery_no = ol.order_no
         JOIN meat_selection m ON ol.item_serial_no = m.serial_no
-        WHERE TRIM(c.restaurant_name) = ?;
+        WHERE TRIM(c.restaurant_name) = ?
         ORDER BY m.cut_type;        
         `, [restaurant_name]
     );
