@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Logistics Report</title>
+</head>
+<body>
+  <h1>Logistic Report</h1>
+
+  <!-- SECTION 1: Total Deliveries by Truck -->
+  <section>
+    <h2>Total Deliveries by Truck</h2>
+
+    <form id="deliveries-truck-form">
+      <label>Truck ID: <input type="number" id="truck-id" required></label>
+      <label>Start Date: <input type="date" id="truck-start" required></label>
+      <label>End Date: <input type="date" id="truck-end" required></label>
+      <button type="submit">Load Total Deliveries</button>
+    </form>
+
+    <ul id="truck-deliveries-results"></ul>
+  </section>
+
+  <hr>
+
+  <!-- SECTION 2: Distance-to-Duration Ratio -->
+  <section>
+    <h2>Distance-to-Duration Ratio</h2>
+
+    <form id="distance-duration-form">
+      <label>Truck ID: <input type="number" id="ratio-truck-id" required></label>
+      <label>Start Date: <input type="date" id="ratio-start" required></label>
+      <label>End Date: <input type="date" id="ratio-end" required></label>
+      <button type="submit">Load Distance-to-Duration Ratio</button>
+    </form>
+
+    <ul id="distance-duration-results"></ul>
+  </section>
+
+  <script>
+    // --- Total Deliveries by Truck ---
+    document.getElementById("deliveries-truck-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const truck = document.getElementById("truck-id").value;
+      const start = document.getElementById("truck-start").value;
+      const end = document.getElementById("truck-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/deliveries/truck?truck=${truck}&start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("truck-deliveries-results");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No deliveries found for this truck in the given range.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `Truck ${truck} delivered ${item.total_deliveries || 0} times`;
+        list.appendChild(li);
+      });
+    });
+
+    // --- Distance-to-Duration Ratio ---
+    document.getElementById("distance-duration-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const truck = document.getElementById("ratio-truck-id").value;
+      const start = document.getElementById("ratio-start").value;
+      const end = document.getElementById("ratio-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/deliveries/distance-duration?truck=${truck}&start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("distance-duration-results");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No records found for this truck in the given range.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `Truck ${truck}: Distance-to-Duration Ratio = ${item.distance_to_duration_ratio || "N/A"}`;
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

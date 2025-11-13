@@ -86,22 +86,14 @@ CREATE TABLE IF NOT EXISTS `deliveries` (
     `distance_traveled` DECIMAL(8,2) DEFAULT NULL,
     `delivery_duration` DECIMAL(5,2) DEFAULT NULL,
     `weight` DECIMAL(6,2) DEFAULT NULL,
-    `restaurant_code` VARCHAR(8),
+    `restaurant_code` VARCHAR(8) NOT NULL,
     `status` ENUM('Pending', 'Delivered', 'Cancelled', 'Returned'),
-    `profit` DECIMAL(10,2),
     PRIMARY KEY (`delivery_no`),
     CONSTRAINT FOREIGN KEY (`restaurant_code`) REFERENCES `clients`(`restaurant_code`)
 );
 
-CREATE TABLE IF NOT EXISTS `order_line`(
-	`order_no` INT NOT NULL,
-    `item_serial_no` VARCHAR(30) NOT NULL,
-    PRIMARY KEY(`order_no`, `item_serial_no`),
-    CONSTRAINT FOREIGN KEY(`item_serial_no`) REFERENCES `meat_selection`(`serial_no`),
-    CONSTRAINT FOREIGN KEY(`order_no`) REFERENCES `deliveries`(`delivery_no`)
-);
-
 CREATE TABLE `agreements` (
+  `agreement_no` INT AUTO_INCREMENT,
   `restaurant_code` VARCHAR(8) NOT NULL,
   `contract_end` DATE NOT NULL,
   `contract_start` DATE NOT NULL,
@@ -117,5 +109,16 @@ CREATE TABLE `agreements` (
   `water_holding_capacity` DECIMAL(5,2) DEFAULT NULL,
   `pH` DECIMAL(5,2) DEFAULT NULL,
   `water_distribution` DECIMAL(5,2) DEFAULT NULL,
+  PRIMARY KEY(`agreement_no`),
   CONSTRAINT FOREIGN KEY (`restaurant_code`) REFERENCES `clients` (`restaurant_code`)
-)
+);
+
+CREATE TABLE IF NOT EXISTS `order_line`(
+	`order_no` INT NOT NULL,
+    `item_serial_no` VARCHAR(30) DEFAULT NULL,
+    `agreement_no` INT NOT NULL,
+    PRIMARY KEY(`order_no`, `agreement_no`),
+    CONSTRAINT FOREIGN KEY(`item_serial_no`) REFERENCES `meat_selection`(`serial_no`),
+    CONSTRAINT FOREIGN KEY(`order_no`) REFERENCES `deliveries`(`delivery_no`),
+    CONSTRAINT FOREIGN KEY(`agreement_no`) REFERENCES `agreements`(`agreement_no`)
+);

@@ -52,7 +52,7 @@ export interface Nutrition {
     fat_content: number;
     protein_content: number;
     connective_tissue_content: number;
-    water_holding_content: number;
+    water_holding_capacity: number;
     pH : number;
     water_distribution : number;
 }
@@ -69,25 +69,21 @@ export interface Client {
 }
 
 export interface Delivery {
-    delivery_no : number;
-    driver_name : string;
-    truck_number : number;
-    deliver_date : string;
-    distance_travelled : number;
-    delivery_duration : number;
-    weight : number;
+    order_date : string;
     restaurant_code : string;
     status : 'Pending' | 'Delivered' | 'Cancelled' | 'Returned';
-    profit : number;
 }   
 
 export interface OrderLine {
     order_line_no : number;
     item_serial_no : string;
+    agreement_no : string
 }
 
 export interface Agreement {
     restaurant_code : string;
+    contract_end : string;
+    contract_start: string;
     client_pricing : number;
     week_of_delivery : number;
     cut_type_of_choice : MeatSelection['cut_type'];

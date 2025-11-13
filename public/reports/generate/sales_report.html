@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sales Reports</title>
+</head>
+<body>
+  <h1>Sales Reports</h1>
+
+  <!-- SECTION 1: Profit by Client -->
+  <section>
+    <h2>Profit by Client</h2>
+
+    <form id="profit-client-form">
+      <label>Client Name: <input type="text" id="client-name" placeholder="e.g. BBQ-101" required></label>
+      <label>Start Date: <input type="date" id="client-start" required></label>
+      <label>End Date: <input type="date" id="client-end" required></label>
+      <button type="submit">Load Profit by Client</button>
+    </form>
+
+    <ul id="profit-client-results"></ul>
+  </section>
+
+  <hr>
+
+  <!-- SECTION 2: Total Profit -->
+  <section>
+    <h2>Total Profit</h2>
+
+    <form id="profit-total-form">
+      <label>Start Date: <input type="date" id="total-start" required></label>
+      <label>End Date: <input type="date" id="total-end" required></label>
+      <button type="submit">Load Total Profit</button>
+    </form>
+
+    <ul id="profit-total-results"></ul>
+  </section>
+
+  <script>
+    // --- Profit by Client ---
+    document.getElementById("profit-client-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const client = document.getElementById("client-name").value.trim();
+      const start = document.getElementById("client-start").value;
+      const end = document.getElementById("client-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/profit/client?client=${encodeURIComponent(client)}&start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("profit-client-results");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No profit records found for this client.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `Total Profit for ${client}: ₱${item.total_profit || 0}`;
+        list.appendChild(li);
+      });
+    });
+
+    // --- Total Profit ---
+    document.getElementById("profit-total-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const start = document.getElementById("total-start").value;
+      const end = document.getElementById("total-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/profit/total?start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("profit-total-results");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No profit records found for this date range.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `Total Profit: ₱${item.total_profit || 0}`;
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -216,8 +216,9 @@ export async function getAverageNutritionalQuantity(date_start: string, date_end
                 SELECT n2.tenderness
                 FROM nutrition n2
                 JOIN meat_selection ms2 ON n2.item_serial_no = ms2.serial_no
-                WHERE ms2.cut_type = ?
-                  AND ms2.processing_date BETWEEN ? AND ?
+                JOIN livestock l2 on l2.livestock_id = ms2.origin_livestock_id
+                WHERE ms2.cut_type =  ?
+                  AND l2.processing_date BETWEEN ? AND ?
                 GROUP BY n2.tenderness
                 ORDER BY COUNT(*) DESC
                 LIMIT 1
@@ -226,16 +227,18 @@ export async function getAverageNutritionalQuantity(date_start: string, date_end
                 SELECT n3.color
                 FROM nutrition n3
                 JOIN meat_selection ms3 ON n3.item_serial_no = ms3.serial_no
+                JOIN livestock l3 on l3.livestock_id = ms3.origin_livestock_id
                 WHERE ms3.cut_type = ?
-                  AND ms3.processing_date BETWEEN ? AND ?
+                  AND l3.processing_date BETWEEN ? AND ?
                 GROUP BY n3.color
                 ORDER BY COUNT(*) DESC
                 LIMIT 1
             ) AS most_frequent_color
         FROM meat_selection ms
         JOIN nutrition n ON ms.serial_no = n.item_serial_no
+        JOIN livestock l on l.livestock_id = ms.origin_livestock_id
         WHERE ms.cut_type = ?
-          AND ms.processing_date BETWEEN ? AND ?;
+          AND l.processing_date BETWEEN ? AND ?;
     `, [meat_cut, date_start, date_end, meat_cut, date_start, date_end, meat_cut, date_start, date_end]);
     
     return records;
@@ -246,9 +249,11 @@ export async function getAverageNutritionalQuantity(date_start: string, date_end
 
 export async function getTotalProfitByClient(restaurant_name : string, date_start : string, date_end : string) {
     const [records] = await pool.query(`
-        SELECT SUM(d.profit) AS total_profit
+        SELECT SUM(a.client_pricing) AS total_profit
         FROM deliveries d
-        JOIN clients c ON c.restaurant_code = d.restaurant_code
+        JOIN order_line ol ON ol.order_no = d.delivery_no
+        JOIN agreements a ON ol.agreement_no = a.agreement_no
+        JOIN clients c ON c.restaurant_code = a.restaurant_code
         WHERE c.restaurant_name = ? AND d.delivery_no IS NOT NULL AND d.deliver_date BETWEEN ? AND ?
     `, [restaurant_name, date_start, date_end]);
 
@@ -257,9 +262,11 @@ export async function getTotalProfitByClient(restaurant_name : string, date_star
 
 export async function getTotalProfit(date_start : string, date_end : string) {
     const [records] = await pool.query(`
-        SELECT SUM(profit) AS total_profit
-        FROM deliveries
-        WHERE deliver_date BETWEEN ? AND ?
+        SELECT SUM(a.client_pricing) AS total_profit
+        FROM deliveries d
+        JOIN order_line ol ON ol.order_no = d.delivery_no
+        JOIN agreements a ON ol.agreement_no = a.agreement_no
+        WHERE d.delivery_no IS NOT NULL AND d.deliver_date BETWEEN ? AND ?
     `, [date_start, date_end]);
 
     return records || 0;

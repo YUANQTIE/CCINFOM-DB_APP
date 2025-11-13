@@ -37,7 +37,7 @@ VALUES
 ('SRS187349', 'Sirloin Bavette Steak', 1.10, '2026-03-09', 'Cooler 4', 'Approved', 'Available', '251014-0008'),
 ('BFR316802', 'Brisket Flat', 6.75, '2026-05-30', 'Cooler 8', 'Approved', 'Available', '251017-0006'),
 ('FRS209864', 'Flank Steak', 1.35, '2026-04-18', 'Cooler 9', 'Approved', 'Available', '251016-0007'),
-('TRS592740', 'Tri-Tip Roast', 2.80, '2026-06-12', 'Cooler 10', 'Approved', 'Available', '251010-0010'),
+('TRS592740', 'Tri-Tip Roast', 2.80, '2026-06-12', 'Cooler 10', 'Approved', 'Sold', '251010-0010'),
 ('CBS874612', 'Chuck Eye Steak', 0.85, '2026-01-28', 'Cooler 1', 'Approved', 'Available', '251018-0005');
 
 SELECT * FROM meat_selection
@@ -47,7 +47,7 @@ VALUES
 ('CSR345781', 'Chuck Center Roast', 4.60, '2026-05-20', 'Cooler 2', 'Approved', 'Sold', '251018-0005'),
 ('SSR219084', 'Shoulder Roast', 5.10, '2026-06-10', 'Cooler 4', 'Approved', 'Sold', '251021-0003'),
 ('RPR817294', 'Ribeye Roast, Boneless', 6.85, '2026-04-15', 'Cooler 6', 'Approved', 'Sold', '251016-0007'),
-('TRT678520', 'Tri-Tip Steak', 1.25, '2026-03-22', 'Cooler 8', 'Approved', 'Sold', '251014-0008'),
+('TRT678520', 'Top Round Steak', 1.25, '2026-03-22', 'Cooler 8', 'Approved', 'Sold', '251014-0008'),
 ('BRS904731', 'Bottom Round Roast', 4.90, '2026-05-28', 'Cooler 9', 'Approved', 'Sold', '251010-0010');
 
 SELECT * FROM nutrition;
@@ -88,20 +88,10 @@ VALUES
 ('BFS-010', 'Rica Navarro', 'Beef & Fire Smokehouse', 'Barbecue Restaurant', '95 Macapagal Blvd, Pasay City, Metro Manila', '09381245679', 'rica.navarro@beeffire.ph', 2017);
 
 INSERT INTO deliveries (
-    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, weight, restaurant_code, status, profit
+    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, weight, restaurant_code, status
 ) VALUES
-('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 16.35, 'BBQ-101', 'Delivered', 2850.00),
-('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 6.35, 'STK-202', 'Delivered', 1190.00);
-
-
-SELECT * FROM order_line;
-INSERT INTO order_line (order_no, item_serial_no)
-VALUES
-(1, 'BRS904731'),
-(1, 'CSR345781'),
-(1, 'RPR817294'),
-(2, 'SSR219084'),
-(2, 'TRT678520');
+('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 16.35, 'BBQ-101', 'Delivered'),
+('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 6.35, 'STK-202', 'Delivered');
 
 INSERT INTO agreements (
   restaurant_code,
@@ -121,7 +111,7 @@ INSERT INTO agreements (
   water_distribution
 )
 VALUES
-('BBQ-101', '2026-12-31', '2024-10-01', 15000.00, 2, 'Ribeye Steak, Boneless', 45.50, 'Very Tender', 'Bright Red', 18.50, 22.10, 2.20, 75.30, 5.60, 72.00),
+('BBQ-101', '2026-12-31', '2024-10-01', 15000.00, 2, 'Bottom Round Roast', 45.50, 'Very Tender', 'Bright Red', 18.50, 22.10, 2.20, 75.30, 5.60, 72.00),
 ('BFS-010', '2026-06-30', '2024-05-15', 12500.00, 3, 'Top Sirloin Steak', 38.00, 'Tender', 'Dark Red', 15.80, 21.90, 2.80, 74.20, NULL, 70.90),
 ('BRG-303', '2025-09-30', '2024-01-10', 9800.00, 1, 'Ground Beef and Ground Beef Patties', 50.00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 ('BST-606', '2026-03-31', '2024-07-01', 11000.00, 4, 'Chuck Center Roast', 42.30, 'Moderate', 'Pale', 13.60, 23.10, 3.00, 73.50,NULL, 71.20),
@@ -130,4 +120,12 @@ VALUES
 ('GRL-505', '2026-08-31', '2024-08-10', 13400.00, 3, 'Brisket Flat', 48.70, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 ('HUS-707', '2026-12-15', '2024-12-01', 14200.00, 2, 'Porterhouse Steak', 37.80, 'Tender', 'Bright Red', 16.20, 23.00, 2.50, 74.80, 5.70, 72.60),
 ('MTL-808', '2027-01-31', '2025-03-05', 12000.00, 4, 'Ribeye Roast, Boneless', 43.10, 'Moderate', 'Dark Red', 14.90, 22.60, 3.20, NULL, 5.75, 71.00),
-('STK-202', '2026-05-31', '2024-04-20', 10000.00, 1, 'Top Round Steak', 41.50, 'Tough', 'Brownish', 12.80, 24.10, 3.50, NULL, 5.85, 69.90);
+('STK-202', '2026-05-31', '2024-04-20', 10000.00, 1, 'Top Round Steak', 41.50, 'Tough', 'Brownish', 12.80, 24.10, 3.50, NULL, 5.85, 69.90),
+('BBQ-101', '2026-05-31', '2024-04-20', 10000.00, 1, 'Tri-Tip Roast', 41.50, 'Tough', 'Brownish', 12.80, 24.10, 3.50, NULL, 5.85, 69.90);
+
+SELECT * FROM order_line;
+INSERT INTO order_line (order_no, item_serial_no, agreement_no)
+VALUES
+(1, 'BRS904731', 1),
+(1, 'TRS592740', 11),
+(2, 'TRT678520', 10);
