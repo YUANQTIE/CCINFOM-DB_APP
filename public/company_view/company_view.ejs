@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company View</title>
+    <link href="../output.css" rel="stylesheet" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.3/dist/js/basecoat.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.3/dist/js/sidebar.min.js"
+      defer
+    ></script>
+  </head>
+  <body class="h-full font-sans text-foreground bg-background">
+    <div class="flex flex-col h-screen">
+      <header class="bg-primary text-primary-foreground shadow z-20">
+        <div class="container mx-auto px-4 flex h-14 items-center">
+          <h1 class="text-2xl font-semibold tracking-tight">Carnivault</h1>
+          <button id="toggleSidebarBtn">Click Me</button>
+
+          <!-- <button
+            id="toggleSidebarBtn"
+            class="inline-flex items-center justify-center rounded-(--radius-md) p-2 text-primary-foreground/80 transition-colors hover:bg-primary/90 hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
+            aria-label="Toggle sidebar"
+          >
+            ok
+            <svg
+              class="w-6 h-6"
+              fill="black"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button> -->
+        </div>
+      </header>
+      <div class="flex flex-1 overflow-hidden">
+        <aside
+          id="sidebar"
+          class="fixed md:static inset-y-0 left-0 z-30 w-64 border-r border-sidebar-border bg-sidebar text-sidebar-foreground p-4 overflow-y-auto transform -translate-x-full md:translate-x-0 h-full transition-transform duration-300 ease-in-out"
+        >
+          <nav aria-label="Sidebar navigation">
+            <div role="group" aria-labelledby="group-label-content-1">
+              <h3
+                id="group-label-content-1"
+                class="px-2 mb-1 text-sm font-semibold text-muted-foreground uppercase tracking-wider"
+              >
+                Getting started
+              </h3>
+              <ul class="space-y-1">
+                <li>
+                  <details class="group">
+                    <summary
+                      class="flex items-center space-x-2 p-2 rounded-(--radius-md) hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer list-none transition-colors"
+                    >
+                      <img
+                        class="w-4 h-4"
+                        src="../resources/table.svg"
+                        alt=""
+                      />
+                      <span class="font-medium text-sm">View Tables</span>
+                    </summary>
+                    <ul class="ml-6 mt-1 space-y-1 py-1">
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Inventory</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Livestock</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Deliveries</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Clients</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="flex items-center space-x-2 p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground transition-colors"
+                  >
+                    <img class="w-4 h-4" src="../resources/beef.svg" alt="" />
+                    <span class="font-medium text-sm">Process Meat</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="flex items-center space-x-2 p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground transition-colors"
+                  >
+                    <img
+                      class="w-4 h-4"
+                      src="../resources/tractor.svg"
+                      alt=""
+                    />
+                    <span class="font-medium text-sm"
+                      >Register New Livestock</span
+                    >
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    class="flex items-center space-x-2 p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground hover:text-sidebar-accent-foreground transition-colors"
+                  >
+                    <img
+                      class="w-4 h-4"
+                      src="../resources/package.svg"
+                      alt=""
+                    />
+                    <span class="font-medium text-sm">Deliver Product</span>
+                  </a>
+                </li>
+                <li>
+                  <details class="group">
+                    <summary
+                      class="flex items-center space-x-2 p-2 rounded-(--radius-md) hover:bg-sidebar-accent hover:text-sidebar-accent-foreground cursor-pointer list-none transition-colors"
+                    >
+                      <img
+                        class="w-4 h-4"
+                        src="../resources/notepad-text.svg"
+                        alt=""
+                      />
+                      <span class="font-medium text-sm">Generate Reports</span>
+                    </summary>
+                    <ul class="ml-6 mt-1 space-y-1 py-1">
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Inventory Keeping</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Livestock Keeping</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Logistics Report</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#"
+                          class="block p-2 rounded-(--radius-md) hover:bg-sidebar-accent text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm transition-colors pl-8"
+                        >
+                          <span>Sales Report</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- Table -->
+        <main class="flex-1 p-10 overflow-y-auto bg-background">
+          <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+            Inventory View
+          </h1>
+          <div class="overflow-x-auto">
+            <table class="table">
+              <caption>
+                A list of your recent invoices.
+              </caption>
+              <thead>
+                <tr>
+                  <th>Invoice</th>
+                  <th>Status</th>
+                  <th>Method</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-medium">INV001</td>
+                  <td>Paid</td>
+                  <td>Credit Card</td>
+                  <td class="text-right">$250.00</td>
+                </tr>
+                <tr>
+                  <td class="font-medium">INV002</td>
+                  <td>Pending</td>
+                  <td>PayPal</td>
+                  <td class="text-right">$150.00</td>
+                </tr>
+                <tr>
+                  <td class="font-medium">INV003</td>
+                  <td>Unpaid</td>
+                  <td>Bank Transfer</td>
+                  <td class="text-right">$350.00</td>
+                </tr>
+                <tr>
+                  <td class="font-medium">INV004</td>
+                  <td>Paid</td>
+                  <td>Paypal</td>
+                  <td class="text-right">$450.00</td>
+                </tr>
+                <tr>
+                  <td class="font-medium">INV005</td>
+                  <td>Paid</td>
+                  <td>Credit Card</td>
+                  <td class="text-right">$550.00</td>
+                </tr>
+                <tr>
+                  <td class="font-medium">INV006</td>
+                  <td>Pending</td>
+                  <td>Bank Transfer</td>
+                  <td class="text-right">$200.00</td>
+                </tr>
+                <tr>
+                  <td class="font-medium">INV007</td>
+                  <td>Unpaid</td>
+                  <td>Credit Card</td>
+                  <td class="text-right">$300.00</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3">Total</td>
+                  <td class="text-right">$2,500.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const sidebar = document.getElementById("sidebar");
+        const toggleButton = document.getElementById("toggleSidebarBtn");
+        toggleButton.addEventListener("click", () => {
+          sidebar.classList.toggle("-translate-x-full");
+        });
+      });
+    </script>
+  </body>
+</html>

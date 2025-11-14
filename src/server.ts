@@ -7,16 +7,27 @@ import meatSelectionRoutes from "./routes/meatSelectionRoutes.ts";
 import livestockRoutes from "./routes/livestockRoutes.ts";
 import clientsRoutes from "./routes/clientsRoutes.ts";
 import deliveriesRoutes from "./routes/deliveriesRoutes.ts";
+import { fileURLToPath } from "url";
 import * as create from "./db_create.ts";
 import * as objects from "./objects.ts";
 
+// Setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
 app.use(express.json());
 app.use(cors());
-app.use(express.static("public", { extensions: ["html"] }));
 
+// Static Files
+app.use(express.static(path.join(__dirname, "public")));
+
+// EJS View Engine
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// API Routes
 app.use("/api/meat-selection", meatSelectionRoutes);
 app.use("/api/livestock", livestockRoutes);
 app.use("/api/clients", clientsRoutes);
