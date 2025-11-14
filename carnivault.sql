@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
 );
 
 CREATE TABLE IF NOT EXISTS `deliveries` (
-    `delivery_no` INT AUTO_INCREMENT DEFAULT NULL,
+    `delivery_no` INT AUTO_INCREMENT,
     `driver_name` VARCHAR(100) DEFAULT NULL,
     `truck_number` INT DEFAULT NULL,
     `deliver_date` DATE DEFAULT NULL,

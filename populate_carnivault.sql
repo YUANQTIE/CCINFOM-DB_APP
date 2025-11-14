@@ -87,11 +87,12 @@ VALUES
 ('CRV-909', 'Joseph Bautista', 'Carnivore’s Table', 'Fine Dining', '72 Greenhills Ave, San Juan City, Metro Manila', '09175678934', 'joseph.bautista@carnivorestable.ph', 2011),
 ('BFS-010', 'Rica Navarro', 'Beef & Fire Smokehouse', 'Barbecue Restaurant', '95 Macapagal Blvd, Pasay City, Metro Manila', '09381245679', 'rica.navarro@beeffire.ph', 2017);
 
-SELECT * FROM deliveries;
-INSERT INTO deliveries (driver_name,truck_number,deliver_date,distance_traveled,delivery_duration,weight,restaurant_code,status,profit)
-VALUES
-('Mario Dela Cruz', 1024, '2025-11-05', 12.50, 45.00, 16.35, 'BBQ-101', 'Delivered', 2850.00),
-('Ramon Villanueva', 2089, '2025-11-07', 8.75, 30.00, 6.35, 'STK-202', 'Delivered', 1190.00);
+INSERT INTO deliveries (
+    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, weight, restaurant_code, status, profit
+) VALUES
+('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 16.35, 'BBQ-101', 'Delivered', 2850.00),
+('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 6.35, 'STK-202', 'Delivered', 1190.00);
+
 
 SELECT * FROM order_line;
 INSERT INTO order_line (order_no, item_serial_no)
