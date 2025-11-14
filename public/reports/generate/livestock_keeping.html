@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Livestock Keeping Report</title>
+</head>
+<body>
+  <h1>Livestock Keeping Report</h1>
+
+  <!-- SECTION 1: Average Condition Ratio -->
+  <section>
+    <h2>Average Condition Ratio</h2>
+
+    <form id="condition-form">
+      <label>Start Date: <input type="date" id="condition-start" required></label>
+      <label>End Date: <input type="date" id="condition-end" required></label>
+      <button type="submit">Load Condition Report</button>
+    </form>
+
+    <ul id="average-ratio"></ul>
+  </section>
+
+  <hr>
+
+  <!-- SECTION 2: Total Breed Supplied -->
+  <section>
+    <h2>Total Breed Supplied</h2>
+
+    <form id="breed-form">
+      <label>Breed: <input type="text" id="breed" placeholder="e.g. Angus" required></label>
+      <label>Company: <input type="text" id="company" placeholder="e.g. MeatCo" required></label>
+      <label>Start Date: <input type="date" id="breed-start" required></label>
+      <label>End Date: <input type="date" id="breed-end" required></label>
+      <button type="submit">Load Breed Report</button>
+    </form>
+
+    <ul id="breed-results"></ul>
+  </section>
+
+  <script>
+    // --- SECTION 1: AVERAGE CONDITION RATIO ---
+    document.getElementById("condition-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const start = document.getElementById("condition-start").value;
+      const end = document.getElementById("condition-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/average-condition-ratio?start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("average-ratio");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        list.innerHTML = "<li>No records found for the given date range.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `Healthy: ${item.healthy_count || "N/A"} — Unhealthy: ${item.unhealthy_count || "N/A"} — Healthy to Unhealthy ratio: ${item.healthy_to_unhealthy_ratio || "N/A"}`;
+        list.appendChild(li);
+      });
+    });
+
+
+    // --- SECTION 2: TOTAL BREED SUPPLIED ---
+    document.getElementById("breed-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const breed = document.getElementById("breed").value.trim();
+      const company = document.getElementById("company").value.trim();
+      const start = document.getElementById("breed-start").value;
+      const end = document.getElementById("breed-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/total-breed-supplied?breed=${breed}&company=${company}&start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("breed-results");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        list.innerHTML = "<li>No records found for the given inputs.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.total_breed_supplied || 0} supplied`;
+        list.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>

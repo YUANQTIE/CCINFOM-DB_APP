@@ -36,7 +36,7 @@ export async function createLivestock(l : obj.Livestock) {
 
 export async function createMeatSelection(cut: obj.MeatSelection) {
     const [result] = await pool.query(`
-        INSERT INTO meat_cuts (
+        INSERT INTO meat_selection (
         serial_no, cut_type, weight, expiry_date, storage_location,
         quality_control_clearance, status, origin_livestock_id
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -57,7 +57,7 @@ export async function createMeatSelection(cut: obj.MeatSelection) {
 export async function createNutrition(n: obj.Nutrition) {
     const [result] = await pool.query(`
         INSERT INTO nutrition (
-        item_serial_no, tenderness, color, fat_content, protein_content, connective_tissue_content, water_holding_content, pH, water_distribution
+        item_serial_no, tenderness, color, fat_content, protein_content, connective_tissue_content, water_holding_capacity, pH, water_distribution
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
         n.item_serial_no,
@@ -66,7 +66,7 @@ export async function createNutrition(n: obj.Nutrition) {
         n.fat_content,
         n.protein_content,
         n.connective_tissue_content,
-        n.water_holding_content,
+        n.water_holding_capacity,
         n.pH,
         n.water_distribution
     ]);
@@ -89,65 +89,50 @@ export async function createClient(c: obj.Client) {
         c.email_address,
         c.year_of_establishment
     ]);
-
-    return read.getClients();
 }
 
-export async function createDelivery(d: obj.Delivery) {
-    const [result] = await pool.query(`
-        INSERT INTO deliveries (delivery_no, driver_name, truck_number, distance_travelled, delivery_duration, weight, restaurant_code, status, profit
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-        d.delivery_no,
-        d.driver_name,
-        d.truck_number,
-        d.distance_travelled,
-        d.delivery_duration,
-        d.weight,
-        d.restaurant_code,
-        d.status,
-        d.profit
-    ]);
-    return read.getDeliveries();
+// Create a new delivery
+export async function createDelivery(d: { restaurant_code: string }) {
+  const [result] = await pool.query(`
+    INSERT INTO deliveries (order_date, restaurant_code, status)
+    VALUES (NOW(), ?, "Pending")
+  `, [d.restaurant_code]) as any;
+
+  return result.insertId as number;
 }
 
-export async function createOrderLine(o: obj.OrderLine) {
-    const [result] = await pool.query(`
-        INSERT INTO order_line (order_line_no, item_serial_no
-        ) VALUES (?, ?)
-    `, [
-        o.order_line_no,
-        o.item_serial_no
-    ]);
-    return read.getOrderLine();
+// Create an order line
+export async function createOrderLine(o: { order_line_no: number, agreement_no: number }) {
+  const [result] = await pool.query(`
+    INSERT INTO order_line (order_no, agreement_no)
+    VALUES (?, ?)
+  `, [o.order_line_no, o.agreement_no]) as any;
+
+  return result.insertId as number;
 }
 
 export async function createAgreement(a: obj.Agreement) {
-    const [result] = await pool.query(`
-        INSERT INTO agreements (
-        restaurant_code, client_pricing, week_of_delivery, cut_type_of_choice, tenderness, color, fat_content, protein_content, connective_tissue_content, water_holding_capacity, pH, water_distribution
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-        a.restaurant_code,
-        a.client_pricing,
-        a.week_of_delivery,
-        a.cut_type_of_choice,
-        a.tenderness,
-        a.color,
-        a.fat_content,
-        a.protein_content,
-        a.connective_tissue_content,
-        a.water_holding_capacity,
-        a.pH,
-        a.water_distribution
-    ]);
-    return read.getAgreements();
-}
-
-export async function createDeliveries(order_date : string) {
-    const [result] = await pool.query(`
-        INSERT INTO deliveries (order_date, status)
-        VALUES (?, 'Pending');
-    `, [order_date]);
-    // return { delivery_no: result.insertId }; //gets the delivery_id
+  const [result] = await pool.query(`
+    INSERT INTO agreements (
+      restaurant_code, contract_start, contract_end, client_pricing, week_of_delivery, cut_type_of_choice,
+      weight, tenderness, color, fat_content, protein_content, connective_tissue_content,
+      water_holding_capacity, pH, water_distribution
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `, [
+    a.restaurant_code,
+    a.contract_start,
+    a.contract_end,
+    a.client_pricing,
+    a.week_of_delivery,
+    a.cut_type_of_choice,
+    a.weight || null,
+    a.tenderness || null,
+    a.color || null,
+    a.fat_content || null,
+    a.protein_content || null,
+    a.connective_tissue_content || null,
+    a.water_holding_capacity || null,
+    a.pH || null,
+    a.water_distribution || null
+  ]);
 }

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Client Info & Agreements</title>
+</head>
+<body>
+  <h1>Client Dashboard</h1>
+
+  <input type="text" id="email" placeholder="Enter client email and press Enter">
+
+  <h2>Client Info</h2>
+  <ul id="client-info"></ul>
+
+  <h2>Client Agreements</h2>
+  <ul id="client-agreements"></ul>
+
+  <script>
+    const emailInput = document.getElementById("email");
+
+    emailInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        loadClientData();
+      }
+    });
+
+    async function loadClientData() {
+      const email = emailInput.value.trim();
+      if (!email) return alert("Please enter an email address.");
+
+      document.getElementById("client-info").innerHTML = "";
+      document.getElementById("client-agreements").innerHTML = "";
+
+      try {
+        // Fetch client info
+        const clientRes = await fetch(`http://localhost:3000/api/client?email_address=${encodeURIComponent(email)}`);
+        const clientData = await clientRes.json();
+
+        // Fetch client agreements
+        const agreementsRes = await fetch(`http://localhost:3000/api/client/agreements?email_address=${encodeURIComponent(email)}`);
+        const agreementsData = await agreementsRes.json();
+
+        displayClientInfo(clientData);
+        displayClientAgreements(agreementsData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    }
+
+    function displayClientInfo(data) {
+      const list = document.getElementById("client-info");
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No client info found.</li>";
+        return;
+      }
+
+      const client = data[0];
+      for (const key in client) {
+        const li = document.createElement("li");
+        li.textContent = `${key}: ${client[key]}`;
+        list.appendChild(li);
+      }
+    }
+
+    function displayClientAgreements(data) {
+      const list = document.getElementById("client-agreements");
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No agreements found.</li>";
+        return;
+      }
+
+      data.forEach((agreement, index) => {
+        const li = document.createElement("li");
+        li.textContent = `Agreement ${index + 1}: ` + 
+          Object.entries(agreement)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(", ");
+        list.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
