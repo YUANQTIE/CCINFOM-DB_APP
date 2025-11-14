@@ -1,0 +1,318 @@
+import { get } from "http";
+import {pool} from "./db.ts"
+import mysql from "mysql2/promise";
+import * as obj from "./objects.ts";
+
+// SUPPLIERS
+export async function getSupplier() {
+    const [records] = await pool.query(`
+        SELECT * FROM supplier
+        ORDER BY company_name;
+        `
+    );
+    return records;
+}
+
+export async function getLivestockBySupplier(supplierName : string) {
+    const [records] = await pool.query(`
+        SELECT l.livestock_id, l.breed FROM supplier s
+        JOIN livestock l ON s.supplier_id = l.supplier_id
+        WHERE s.company_name = ?
+        ORDER BY l.date_arrived DESC;
+        `, [supplierName]
+    );
+
+    return records;
+}
+
+//LIVESTOCK
+export async function getLivestock() {
+    const [records] = await pool.query(`
+        SELECT * FROM livestock
+        ORDER BY date_arrived DESC;
+    `);
+    return records;
+}
+
+export async function getMeatByLivestockBreed(breed : string) {
+    const [records] = await pool.query(`
+        SELECT m.serial_no, m.cut_type FROM livestock l
+        JOIN meat_selection m ON l.livestock_id = m.origin_livestock_id
+        WHERE l.breed = ?;
+        `, [breed]
+    );
+
+    return records;
+}
+
+// MEAT SELECTION & nutrition
+export async function getMeatSelection() {
+    const [records] = await pool.query(`
+        SELECT * FROM meat_selection m
+        LEFT JOIN nutrition n ON m.serial_no = n.item_serial_no
+        ORDER BY status, expiry_date;`
+    );
+    return records;
+}
+
+export async function getTotalStatusMeatCutInventory(status : string) {
+    const [records] = await pool.query(`
+        SELECT * FROM meat_selection
+        WHERE status = ?;
+        `, [status]
+    );
+
+    const rows = records as any[]
+    const count = rows.length;
+
+    return count;
+}
+
+export async function getTotalStorageInventory(location : string) {
+    const [records] = await pool.query(`
+        SELECT * FROM meat_selection
+        WHERE storage_location = ?;
+        `, [location]
+    );
+
+    const rows = records as any[]
+    const count = rows.length;
+
+    return count;
+}
+
+export async function getClientByCutType(cutType: string) {
+    const [records] = await pool.query(`
+        SELECT c.restaurant_name FROM clients c
+        JOIN deliveries d ON c.restaurant_code = d.restaurant_code
+        JOIN order_line ol ON d.delivery_no = ol.order_no
+        JOIN meat_selection m ON ol.item_serial_no = m.serial_no
+        WHERE m.cut_type = ?;
+        `, [cutType]
+    )    
+
+    return records;
+}
+
+// CLIENTS
+export async function getClients() {
+    const [records] = await pool.query("SELECT * FROM clients");
+    return records;
+}
+
+export async function getCutTypeByClient(restaurant_name : string) {
+    const [records] = await pool.query(`
+        SELECT DISTINCT m.cut_type FROM clients c
+        JOIN deliveries d ON c.restaurant_code = d.restaurant_code
+        JOIN order_line ol ON d.delivery_no = ol.order_no
+        JOIN meat_selection m ON ol.item_serial_no = m.serial_no
+        WHERE c.restaurant_name = ?
+        ORDER BY m.cut_type;        
+        `, [restaurant_name]
+    );
+    return records;
+}
+
+// AGREEMENTS
+export async function getAgreements() {
+    const [records] = await pool.query(`
+        SELECT * FROM agreements
+        ORDER BY contract_end DESC;
+        `
+    );
+    return records;
+}
+
+export async function getClientWithAgreements() {
+    const [records] = await pool.query(`
+        SELECT * FROM clients c
+        JOIN agreements a ON c.restaurant_code = a.restaurant_code;
+        `
+    );
+    return records;
+}
+
+// DELIVERIES
+export async function getDeliveries() {
+    const [records] = await pool.query(`
+        SELECT * FROM deliveries
+        ORDER BY delivery_no DESC;
+        `
+    );
+    return records;
+}
+
+export async function getRestaurantsByDriver(name : string) {
+    const [records] = await pool.query(`
+        SELECT c.restaurant_name FROM deliveries d
+        JOIN clients c ON d.restaurant_code = c.restaurant_code
+        WHERE driver_name = ?
+        ORDER BY c.restaurant_name;
+        `, [name]
+    );
+    return records;
+}
+
+export async function getOrderLine() {
+    const [records] = await pool.query("SELECT * FROM order_line");
+    return records;
+}
+
+export async function getCutTypeInOrder(order_no : number) {
+    const [records] = await pool.query(`
+        SELECT m.cut_type FROM order_line ol 
+        JOIN meat_selection m ON ol.item_serial_no = m.serial_no
+        WHERE ol.order_no = ?
+        `, [order_no]
+    );
+    return records;
+}
+
+//LIVESTOCK KEEPING REPORT
+
+export async function getAverageConditionRatio(date_start : string, date_end : string,) {
+    const [records] = await pool.query(`
+        SELECT ROUND(SUM(CASE WHEN medical_condition = "Healthy" THEN 1 ELSE 0 END) / NULLIF(SUM(CASE WHEN medical_condition <> "Healthy" THEN 1 ELSE 0 END), 0), 2) AS average_h_to_u_ratio
+        FROM livestock
+        WHERE date_arrived BETWEEN ? AND ?
+  `, [date_start, date_end]);
+    return records;
+}
+
+export async function getTotalBreedSuppliedBySupplier(breed : string, company_name : string, date_start : string, date_end : string) {
+    const [records] = await pool.query(`
+        SELECT COUNT(*) AS total_breed_supplied
+        FROM livestock AS l
+        JOIN supplier AS s ON l.supplier_id = s.supplier_id
+        WHERE l.breed = ? 
+        AND s.company_name = ? 
+        AND l.date_arrived BETWEEN ? AND ?
+        `, [breed, company_name, date_start, date_end]);
+    return records;
+}
+
+// INVENTORY UPKEEP REPORT
+
+export async function getTotalProducedMeatSelection( date_start : string, date_end : string, meat_cut : string) {
+    const [records] = await pool.query(`
+        SELECT COUNT(*) AS total_produced_meat
+        FROM meat_selection as ms
+        JOIN livestock as l ON l.livestock_id = ms.origin_livestock_id
+        WHERE l.processing_date BETWEEN ? AND ? AND ms.cut_type = ?
+        `, [date_start, date_end, meat_cut]);
+    return records;
+}
+
+export async function getAverageNutritionalQuantity( date_start : string, date_end : string, meat_cut : string) {
+    const [records] = await pool.query(`
+        SELECT 
+        AVG(ms.fat_content) AS average_fat_content,
+        AVG(ms.protein_content) AS average_protein_content,
+        AVG(ms.connective_tissue_content) AS average_connective_tissue_content,
+        AVG(ms.water_holding_capacity) AS average_water_holding_capacity,
+        AVG(ms.water_distribution) AS average_water_distribution,
+        AVG(ms.pH) AS average_pH,
+        (SELECT ms2.tenderness
+            FROM filtered_ms ms2
+            GROUP BY ms2.tenderness
+            ORDER BY COUNT(*) DESC
+            LIMIT 1) AS most_frequent_tenderness,
+        (SELECT ms3.color
+            FROM filtered_ms ms3
+            GROUP BY ms3.color
+            ORDER BY COUNT(*) DESC
+            LIMIT 1) AS most_frequent_color
+        FROM filtered_ms ms
+    `, [date_start, date_end, meat_cut]);
+    return records;
+}
+
+
+//SALES REPORT 
+
+export async function getTotalProfitByClient(restaurant_name : string, date_start : string, date_end : string) {
+    const [records] = await pool.query(`
+        SELECT SUM(d.profit) AS total_profit
+        FROM deliveries d
+        JOIN clients c ON c.restaurant_code = d.restaurant_code
+        WHERE c.restaurant_name = ? AND d.delivery_no IS NOT NULL AND d.delivery_date BETWEEN ? AND ?
+    `, [restaurant_name, date_start, date_end]);
+
+    return records || 0;
+}
+
+export async function getTotalProfit(date_start : string, date_end : string) {
+    const [records] = await pool.query(`
+        SELECT SUM(profit) AS total_profit
+        FROM deliveries
+        WHERE delivery_date BETWEEN ? AND ?
+    `, [date_start, date_end]);
+
+    return records || 0;
+}
+
+// LOGISTICS REPORTS
+export async function getTotalDeliveriesByTruck(truck_number : number, date_start : string, date_end : string) {
+    const [records] = await pool.query(`
+        SELECT COUNT(*) AS total_deliveries
+        FROM deliveries
+        WHERE truck_number = ?
+        AND delivery_date BETWEEN ? AND ?
+    `, [truck_number, date_start, date_end]);
+
+    return records || 0;
+}
+
+export async function getDistanceToDurationRatio(truck_number : number, date_start : string, date_end : string) {
+    const [records] = await pool.query(`
+        SELECT SUM(distance_traveled) / NULLIF(SUM(delivery_duration),0) AS distance_to_duration_ratio
+        FROM deliveries
+        WHERE truck_number = ?
+        AND delivery_date BETWEEN ? AND ?
+    `, [truck_number, date_start, date_end]);
+
+    return records || 0;
+}
+
+// MAKE AN ORDER / CLIENT INFO
+
+export async function getClientAgreements(email_address : string) {
+    const [records] = await pool.query(`
+        SELECT a.contract_end, a.contract_start, a.client_pricing,. a.week_of_delivery, a.cut_type_of_choice, a.tenderness, a.color, a.fat_content, a.protein_content, a.connective_tissue_content, a.water_holding_capacity, a.pH, a.water_distribution
+        FROM agreements a
+        JOIN clients c ON c.restaurant_code = a.restaurant_code
+        WHERE c.email_address = ?
+    `, [email_address]);
+    return records;
+}
+
+// CLIENT INFO
+
+export async function getClient(email_address : string) {
+    const [records] = await pool.query(`
+        SELECT a.contract_end, a.contract_start, a.client_pricing,. a.week_of_delivery, a.cut_type_of_choice, a.tenderness, a.color, a.fat_content, a.protein_content, a.connective_tissue_content, a.water_holding_capacity, a.pH, a.water_distribution
+        FROM agreements a
+        JOIN clients c ON c.restaurant_code = a.restaurant_code
+        WHERE c.email_address = ?
+    `, [email_address]);
+    return records;
+}
+
+// TABLE OF TRANSACTIONS
+
+export async function getClientTransactions(email_address : string) {
+    const [records] = await pool.query(`
+        SELECT 
+            d.order_date,
+            ms.cut_type AS cut_type_of_choice,
+            d.profit AS total_price
+        FROM deliveries d
+        JOIN clients c ON c.restaurant_code = d.restaurant_code
+        JOIN order_line ol ON ol.order_no = d.delivery_no
+        JOIN meat_selection ms ON ms.serial_no = ol.item_serial_no
+        WHERE c.email_address = ?
+        GROUP BY d.order_date, ms.cut_type
+        ORDER BY d.order_date DESC
+    `, [email_address]);
+    return records;
+}
