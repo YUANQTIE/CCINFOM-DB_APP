@@ -255,6 +255,12 @@
   .ml-4 {
     margin-left: calc(var(--spacing) * 4);
   }
+  .ml-5 {
+    margin-left: calc(var(--spacing) * 5);
+  }
+  .ml-5\.5 {
+    margin-left: calc(var(--spacing) * 5.5);
+  }
   .ml-6 {
     margin-left: calc(var(--spacing) * 6);
   }
