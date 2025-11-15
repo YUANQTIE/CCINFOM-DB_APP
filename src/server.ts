@@ -10,28 +10,83 @@ import deliveriesRoutes from "./routes/deliveriesRoutes.ts";
 import { fileURLToPath } from "url";
 import * as create from "./db_create.ts";
 import * as objects from "./objects.ts";
+import ejsLayouts from "express-ejs-layouts";
 
 // Setup
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename); // This is /CCINFOM-DB_APP/src
 const app = express();
 const port = 3000;
 
+// Middleware
 app.use(express.json());
 app.use(cors());
 
 // Static Files
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 // EJS View Engine
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "..", "views"));
+
+// Use Layouts
+app.use(ejsLayouts);
 
 // API Routes
 app.use("/api/meat-selection", meatSelectionRoutes);
 app.use("/api/livestock", livestockRoutes);
 app.use("/api/clients", clientsRoutes);
 app.use("/api/deliveries", deliveriesRoutes);
+
+// Default EJS Route
+app.get("", (req, res) => {
+  res.render("index");
+});
+
+// Routes
+app.get("/inventory", (req, res) => {
+  res.render("tables/inventory");
+});
+
+app.get("/livestock", (req, res) => {
+  res.render("tables/livestock");
+});
+
+app.get("/deliveries", (req, res) => {
+  res.render("tables/deliveries");
+});
+
+app.get("/clients", (req, res) => {
+  res.render("tables/clients");
+});
+
+app.get("/process-meat", (req, res) => {
+  res.render("process-meat");
+});
+
+app.get("/register-new-livestock", (req, res) => {
+  res.render("register-new-livestock");
+});
+
+app.get("/deliver-products", (req, res) => {
+  res.render("deliver-products");
+});
+
+app.get("/reports/inventory-keeping", (req, res) => {
+  res.render("reports/inventory-keeping");
+});
+
+app.get("/reports/livestock-keeping", (req, res) => {
+  res.render("reports/livestock-keeping");
+});
+
+app.get("/reports/logistics-report", (req, res) => {
+  res.render("reports/logistics-report");
+});
+
+app.get("/reports/sales-report", (req, res) => {
+  res.render("reports/sales-report");
+});
 
 // GENERATE REPORTS
 
