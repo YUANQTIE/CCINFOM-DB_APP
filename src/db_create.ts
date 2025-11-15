@@ -14,23 +14,31 @@ export async function createSupplier(s: obj.Supplier) {
     return read.getSupplier();
 }
 
-export async function createLivestock(l : obj.Livestock) {
-    const [records] = await pool.query(`
-        INSERT INTO livestock (livestock_id, breed, age, weight, country_of_origin, medical_condition, vaccination_status, date_arrived, storage_location, supplier_id, status, processing_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-            l.livestock_id,
-            l.breed,
-            l.age,
-            l.weight,
-            l.country_of_origin,
-            l.medical_condition,
-            l.vaccination_status,
-            l.date_arrived,
-            l.storage_location,
-            l.supplier_id,
-            l.status,
-            l.processing_date]);
+export async function createLivestock(l : obj.LivestockInput) {
+    await pool.query(`
+      INSERT INTO livestock(livestock_id, breed, weight, age, country_of_origin, medical_condition, vaccination_status, date_arrived, storage_location, supplier_id, status, processing_date)
+      VALUES 
+      (CONCAT(DATE_FORMAT(CURDATE(), '%y%m%d'), '-', (FLOOR(RAND() * (9999 - 1000 + 1)) + 1000)), 
+      ?, 
+      ?, 
+      ?, 
+      ?, 
+      ?, 
+      ?, 
+      CURDATE(), 
+      ?, 
+      ?, 
+      1, 
+      NULL);
+      `, [
+          l.breed,
+          l.weight,
+          l.age,
+          l.country_of_origin,
+          l.medical_condition,
+          l.vaccination_status,
+          l.storage_location,
+          l.supplier_id,]);
     return read.getLivestock();
 }
 
@@ -71,7 +79,7 @@ export async function createNutrition(n: obj.Nutrition) {
         n.water_distribution
     ]);
 
-    return read.getNutrition();
+    //return read.getNutrition();
 }
 
 export async function createClient(c: obj.Client) {

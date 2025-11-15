@@ -19,6 +19,17 @@ export interface Livestock {
     processing_date?: string | null;
 }
 
+export interface LivestockInput {
+    breed: string;
+    weight: number;
+    age: number;
+    country_of_origin: string;
+    medical_condition: string;
+    vaccination_status: "Vaccinated" | "Not Vaccinated" | "Pending";
+    storage_location: string;
+    supplier_id: string;
+}
+
 export interface MeatSelection {
     serial_no: string;
     cut_type:  'Arm Chuck Roast' | 'Cross Rib Chuck Roast' | 'Prime Rib Roast' | 'Porterhouse Steak'

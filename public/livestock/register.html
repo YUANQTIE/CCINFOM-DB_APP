@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Livestock</title>
+</head>
+<body>
+  <h1>Register Livestock</h1>
+
+  <form id="livestock-form">
+    <label>Breed: <input type="text" name="breed" required></label><br><br>
+    <label>Weight: <input type="number" name="weight" required></label><br><br>
+    <label>Age: <input type="number" name="age" required></label><br><br>
+    <label>Country of Origin: <input type="text" name="country_of_origin" required></label><br><br>
+    <label>Medical Condition: <input type="text" name="medical_condition"></label><br><br>
+
+    <label>Vaccination Status:
+      <select name="vaccination_status" required>
+        <option value="Vaccinated">Vaccinated</option>
+        <option value="Not Vaccinated">Not Vaccinated</option>
+        <option value="Pending">Pending</option>
+      </select>
+    </label><br><br>
+
+    <label>Storage Location:
+      <select name="storage_location" required>
+        <option value="Farm 1">Farm 1</option>
+        <option value="Farm 2">Farm 2</option>
+        <option value="Farm 3">Farm 3</option>
+        <option value="Farm 4">Farm 4</option>
+        <option value="Farm 5">Farm 5</option>
+      </select>
+    </label><br><br>
+
+    <label>Supplier ID: <input type="text" name="supplier_id" required></label><br><br>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p id="message"></p>
+
+  <script>
+    document.getElementById("livestock-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      const res = await fetch("http://localhost:3000/api/livestock/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const json = await res.json();
+
+      const msg = document.getElementById("message");
+      if (json.success) {
+        msg.textContent = "Livestock created successfully!";
+        msg.style.color = "green";
+      } else {
+        msg.textContent = "Failed to create livestock.";
+        msg.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
