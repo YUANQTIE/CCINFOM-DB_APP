@@ -58,4 +58,20 @@ router.post("/register", async (req, res) => {
     }
 });
 
+router.get("/unprocessed", async (req, res) => {
+  const records = await read.getUnprocessedLivestock();
+  res.json(records);
+});
+
+router.post("/process/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await create.processLivestock(id);
+    res.json({ success: true, message: "Livestock processed." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+});
+
 export default router;

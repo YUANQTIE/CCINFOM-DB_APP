@@ -34,6 +34,26 @@ export async function getLivestock() {
     return records;
 }
 
+export async function getUnprocessedLivestock() {
+    const [records] = await pool.query(`
+        SELECT 
+        livestock_id,
+        breed,
+        weight,
+        age,
+        country_of_origin,
+        medical_condition,
+        vaccination_status,
+        date_arrived,
+        storage_location,
+        status 
+        FROM livestock
+        WHERE status = 'For Processing'
+        ORDER BY date_arrived;
+    `);
+    return records;
+}
+
 export async function getMeatByLivestockBreed(breed : string) {
     const [records] = await pool.query(`
         SELECT m.serial_no, m.cut_type FROM livestock l

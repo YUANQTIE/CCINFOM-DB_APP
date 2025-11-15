@@ -1,6 +1,7 @@
 import {pool} from "./db.ts";
 import mysql from "mysql2/promise";
 import * as read from "./db_read.ts";
+import * as update from "./db_update.ts"
 import * as obj from "./objects.ts";
 
 export async function createSupplier(s: obj.Supplier) {
@@ -40,6 +41,65 @@ export async function createLivestock(l : obj.LivestockInput) {
           l.storage_location,
           l.supplier_id,]);
     return read.getLivestock();
+}
+
+export async function processLivestock(livestock_id: string) {
+    let abrv: string[] = [
+      "ACR", "CRC", "PRR", "PTS", "TSS", "TPR", "KAB", "ACS", 
+      "SRR", "RSB", "TBS", "TSP", "TRS", "STM", "BCR", "SHS", 
+      "BRB", "SSI", "TSF", "BRR", "STR", "BCS", "RAN", "RRB", 
+      "SSB", "CLR", "BRO", "CUB", "SBR", "FIR", "RSO", "SPR", 
+      "CLS", "GBP", "CCR", "TBT", "RCS", "STF", "TTR", "ERR", 
+      "SHX", "DES", "SPT", "RPR", "TLR", "TTS", "ERS", "TLT", 
+      "CER", "SPM", "RNF", "TSM", "PSS", "BRF", "ISK", "FLS", 
+      "SRB", "CES", "SBS", "BRP", "CSR"
+    ]
+
+    let cuts: string[] = [
+      'Arm Chuck Roast', 'Cross Rib Chuck Roast', 'Prime Rib Roast', 'Porterhouse Steak', 'Top Sirloin Steak',
+      'Top Round', 'Kabobs', 'Arm Chuck Steak', 'Shoulder Roast', 'Ribeye Steak, Bone-In', 'T-Bone Steak',
+      'Top Sirloin Petite Roast', 'Top Round Steak', 'Stew Meat', 'Blade Chuck Roast', 'Shoulder Steak', 'Back Ribs',
+      'Strip Steak, Bone-In', 'Top Sirloin Filet', 'Bottom Round Roast', 'Strips', 'Blade Chuck Steak', 'Ranch Steak',
+      'Ribeye Roast, Boneless', 'Strip Steak, Boneless', 'Coulotte Roast', 'Bottom Round Rump Roast', 'Cubed Steak',
+      '7-Bone Chuck Roast', 'Flat Iron Steak', 'Ribeye Steak, Boneless', 'Strip Petite Roast', 'Coulotte Steak',
+      'Ground Beef and Ground Beef Patties', 'Chuck Center Roast', 'Top Blade Steak', 'Ribeye Cap Steak', 'Strip Filet', 
+      'Tri-Tip Roast', 'Eye of Round Roast', 'Shank Cross-Cut', 'Denver Steak', 'Shoulder Petite Tender', 'Ribeye Petite Roast',
+      'Tenderloin Roast', 'Tri-Tip Steak', 'Eye of Round Steak', 'Tenderloin Tips', 'Chuck Eye Roast', 'Shoulder Petite Tender Medallions',
+      'Ribeye Filet', 'Tenderloin Steak (Filet Mignon)', 'Petite Sirloin Steak', 'Brisket Flat', 'Inside Skirt', 'Flank Steak',
+      'Short Ribs, Bone-In', 'Chuck Eye Steak', 'Sirloin Bavette Steak', 'Brisket Point', 'Country-Style Ribs'
+    ]
+
+    for(let i = 0; i < abrv.length; i++) {
+      await pool.query (`
+        INSERT INTO meat_selection (
+        serial_no, 
+        cut_type, 
+        weight, 
+        expiry_date, 
+        storage_location,
+        quality_control_clearance, 
+        status, 
+        origin_livestock_id
+        ) VALUES (
+         CONCAT(?, '-' , DATE_FORMAT(CURDATE(), '%y%m%d'), '-', (FLOOR(RAND() * (9999 - 1000 + 1)) + 1000)), 
+         ?, 
+         ROUND((RAND() * 7.0 + 0.5), 2), 
+         DATE_ADD(CURDATE(), INTERVAL 6 MONTH), 
+         CONCAT('Cooler', ' ', FLOOR(RAND() * (10 - 1 + 1)) + 1), 
+         1, 
+         1, 
+         ?
+         )
+        `, [
+          abrv[i],
+          cuts[i],
+          livestock_id
+        ]
+      )
+    }
+
+    await update.updateLivestockStatus(livestock_id)
+
 }
 
 export async function createMeatSelection(cut: obj.MeatSelection) {
