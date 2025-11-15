@@ -30,24 +30,5 @@
     <script>
       lucide.createIcons();
     </script>
-    <script lang="ts">
-      // restore nav state
-      const handleNavState = () => {
-        const navMenuId = sessionStorage.getItem("expandedNavMenuId");
-        if (navMenuId) {
-          const navMenuDoc = document.getElementById(navMenuId);
-          const button = document.querySelector(
-            `[data-target="#${navMenuId}"]`
-          );
-
-          if (navMenuDoc) {
-            navMenuDoc.classList.add("expanded");
-            button?.classList.add("active");
-          }
-        }
-      };
-
-      // listen to state
-    </script>
   </body>
 </html>
