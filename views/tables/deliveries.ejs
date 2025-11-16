@@ -18,14 +18,14 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Suppliers", select_id: "searchbar", placeholder: "Search suppliers..." }) %>
+            <%- include("../partials/searchbar", { label: "Suppliers", select_id: "searchbar", placeholder: "Search deliveries..." }) %>
           </section>
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton"})
-            %> <%- include("../partials/table", { id: "supplier-table"}) %>
+            %> <%- include("../partials/table", { id: "deliveries-table"}) %>
           </div>
           <!-- prettier-ignore -->
-          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Supplier data not available..."}) %>
+          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Deliveries data not available..."}) %>
         </section>
       </main>
     </div>
@@ -55,7 +55,7 @@
           "Status",
         ];
         const tableSkeleton = document.getElementById("table-skeleton");
-        const table = document.getElementById("supplier-table");
+        const table = document.getElementById("deliveries-table");
         const tableDataZeroLabel = document.getElementById("table-data-zero");
         const tableBody = table.tBodies[0];
         const tableHeader = table.tHead;
@@ -122,7 +122,7 @@
 
           tableBody.appendChild(dataFragment);
         } catch (error) {
-          console.error("Error fetching supplier data:", error);
+          console.error("Error fetching deliveries data:", error);
           table.classList.replace("table", "hidden");
           tableDataZeroLabel.classList.replace("hidden", "flex");
         }
