@@ -57,22 +57,38 @@ export async function updateMeatSelectionStatus(
   );
 }
 
-export async function updatePendingDeliveryStatus(
-  deliveryNo: number,
-  distanceTraveled: number,
-  deliveryDuration: number,
-  status: string
+export async function updateDeliveryDriver(
+  delivery_no: number,
+  driverName: string,
 ) {
-  await pool.query(
-    `
+  await pool.query(`
     UPDATE deliveries
-    SET 
-        distance_traveled = ?,
-        delivery_duration = ?,
-        status = ?
+    SET driver_name = ?
     WHERE delivery_no = ?;
-  `,
-    [distanceTraveled, deliveryDuration, status, deliveryNo]
+    `, [driverName, delivery_no]
+  );
+}
+
+export async function updateDeliveryTruckNo(
+  delivery_no: number,
+  truckNumber: number
+) {
+  await pool.query(`
+    UPDATE deliveries
+    SET truck_number = ?
+    WHERE delivery_no = ?;
+    `, [truckNumber, delivery_no]
+  );
+}
+
+export async function updateDeliveryDate(
+  deliveryNo: number,
+) {
+  await pool.query(`
+    UPDATE deliveries
+    SET deliver_date = CURDATE()
+    WHERE delivery_no = ?;
+    `, [deliveryNo]
   );
 }
 
@@ -90,6 +106,62 @@ export async function updatePendingDeliveryInfo(
     WHERE delivery_no = ?;
   `, // Fixed: Added comma between driver_name = ? AND truck_number = ?
     [driverName, truckNumber, delivery_no]
+  );
+}
+
+export async function updateDeliveryDistance(
+  deliveryNo: number,
+  distanceTraveled: number,
+) {
+  await pool.query(`
+    UPDATE deliveries
+    SET distance_traveled = ?,
+    WHERE delivery_no = ?;
+    `, [distanceTraveled, deliveryNo]
+  );
+}
+
+export async function updateDeliveryDuration(
+  deliveryNo: number,
+  deliveryDuration: number
+) {
+  await pool.query(`
+    UPDATE deliveries
+    SET delivery_duration = ?,
+    WHERE delivery_no = ?;
+    `, [deliveryDuration, deliveryNo]
+  );
+}
+
+export async function updateDeliveryStatus(
+  deliveryNo: number,
+  status: string
+) {
+  await pool.query(`
+    UPDATE deliveries
+    SET status = ?
+    WHERE delivery_no = ?;
+    `, [status, deliveryNo]
+  );
+}
+
+
+export async function updatePendingDeliveryStatus(
+  deliveryNo: number,
+  distanceTraveled: number,
+  deliveryDuration: number,
+  status: string
+) {
+  await pool.query(
+    `
+    UPDATE deliveries
+    SET 
+        distance_traveled = ?,
+        delivery_duration = ?,
+        status = ?
+    WHERE delivery_no = ?;
+  `,
+    [distanceTraveled, deliveryDuration, status, deliveryNo]
   );
 }
 
