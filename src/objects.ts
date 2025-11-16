@@ -57,6 +57,17 @@ export interface Nutrition {
     water_distribution : number;
 }
 
+export interface NutritionInput {
+    tenderness:  'Very Tender' | 'Tender' | 'Moderate' | 'Tough';
+    color:  'Bright Red' | 'Dark Red' | 'Pale' | 'Brownish';
+    fat_content: number;
+    protein_content: number;
+    connective_tissue_content: number;
+    water_holding_capacity: number;
+    pH : number;
+    water_distribution : number;
+}
+
 export interface Client {
     restaurant_code : string;
     client_name : string;

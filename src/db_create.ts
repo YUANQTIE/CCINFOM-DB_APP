@@ -66,16 +66,23 @@ export async function createMeatSelection(cut: obj.MeatSelection) {
   return result;
 }
 
-export async function createNutrition(n: obj.Nutrition) {
+export async function createNutrition(serial_no: string, n: obj.NutritionInput) {
   const [result] = await pool.query(
     `
     INSERT INTO nutrition (
-      item_serial_no, tenderness, color, fat_content, protein_content, 
-      connective_tissue_content, water_holding_capacity, pH, water_distribution
+      item_serial_no, 
+      tenderness, 
+      color, 
+      fat_content, 
+      protein_content, 
+      connective_tissue_content, 
+      water_holding_capacity, 
+      pH, 
+      water_distribution
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
-      n.item_serial_no,
+      serial_no,
       n.tenderness,
       n.color,
       n.fat_content,

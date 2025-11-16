@@ -1,6 +1,7 @@
 import { Router } from "express";
 import * as read from "../db_read.ts";
 import * as update from "../db_update.ts";
+import * as create from "../db_create.ts";
 
 const router = Router();
 
@@ -62,6 +63,19 @@ router.put("/:serial_no/status", async (req, res) => {
     console.error(err);
     res.status(500).json({ success: false });
   }
+});
+
+router.post("/add-nutrition/:serial_no", async (req, res) => {
+    const serial_no = req.params.serial_no
+    const data = req.body;
+
+    try {
+        await create.createNutrition(serial_no, data);
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false });
+    }
 });
 
 router.get("/client-by-cut-type/:cutType", async (req, res) => {
