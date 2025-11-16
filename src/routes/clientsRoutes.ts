@@ -13,6 +13,19 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/filter", async (req, res) => {
+    const filterBy = req.query.filterBy as string;
+    const key = req.query.key as string;
+    
+    try {
+        const results = await read.getClientsFiltered(filterBy, key);
+        res.json({ success: true, data: results });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch data" });
+    }
+});
+
 router.get("/cut-type-by-client/:client", async (req, res) => {
     const {client} = req.params;
     try {

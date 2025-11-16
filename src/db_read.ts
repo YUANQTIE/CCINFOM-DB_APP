@@ -23,12 +23,110 @@ export async function getLivestockBySupplier(supplierName: string) {
   return records;
 }
 
+export async function getSupplierFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Supplier ID": "supplier_id",
+    "Company Name": "company_name",
+    "Contact No.": "contact_no",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM supplier
+      WHERE supplier_id LIKE ?
+      OR company_name LIKE ?
+      OR contact_no LIKE ?
+      ORDER BY company_name;
+    `;
+    params = Array(3).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM supplier
+      WHERE ${column} LIKE ?
+      ORDER BY company_name;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
+  return records;
+}
+
 // --- LIVESTOCK ---
 export async function getLivestock() {
   const [records] = await pool.query(`
     SELECT * FROM livestock
-    ORDER BY date_arrived DESC;
+    ORDER BY storage_location, date_arrived DESC;
   `);
+  return records;
+}
+
+export async function getLivestockFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Livestock ID": "livestock_id",
+    "Breed": "breed",
+    "Weight": "weight",
+    "Age": "age",
+    "Country of Origin": "country_of_origin",
+    "Medical Condition": "medical_condition",
+    "Vaccination Status": "vaccination_status",
+    "Date Arrived": "date_arrived",
+    "Storage Location": "storage_location",
+    "Supplier ID": "supplier_id",
+    "Status": "status",
+    "Processing Date": "processing_date",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM livestock
+      WHERE livestock_id LIKE ?
+      OR breed LIKE ?
+      OR weight LIKE ?
+      OR age LIKE ?
+      OR country_of_origin LIKE ?
+      OR medical_condition LIKE ?
+      OR vaccination_status LIKE ?
+      OR date_arrived LIKE ?
+      OR storage_location LIKE ?
+      OR supplier_id LIKE ?
+      OR status LIKE ?
+      OR processing_date LIKE ?
+      ORDER BY date_arrived DESC
+    `;
+    params = Array(12).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM livestock
+      WHERE ${column} LIKE ?
+      ORDER BY date_arrived DESC
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
   return records;
 }
 
@@ -48,8 +146,58 @@ export async function getMeatByLivestockBreed(breed: string) {
 export async function getMeatSelection() {
   const [records] = await pool.query(`
     SELECT * FROM meat_selection
-    ORDER BY status, storage_location, expiry_date;
+    ORDER BY status, expiry_date;
   `);
+  return records;
+}
+
+export async function getMeatSelectionFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Serial No.": "serial_no",
+    "Cut Type": "cut_type",
+    "Weight": "weight",
+    "Expiry Date": "expiry_date",
+    "Storage Location": "storage_location",
+    "Quality Control Clearance": "quality_control_clearance",
+    "Status": "status",
+    "Origin Livestock ID": "origin_livestock_id",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM meat_selection
+      WHERE serial_no LIKE ?
+      OR cut_type LIKE ?
+      OR weight LIKE ?
+      OR expiry_date LIKE ?
+      OR storage_location LIKE ?
+      OR quality_control_clearance LIKE ?
+      OR status LIKE ?
+      OR origin_livestock_id LIKE ?
+      ORDER BY status, expiry_date;
+    `;
+    params = Array(8).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM meat_selection
+      WHERE ${column} LIKE ?
+      ORDER BY status, expiry_date;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
   return records;
 }
 
@@ -108,6 +256,56 @@ export async function getClients() {
   return records;
 }
 
+export async function getClientsFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Restaurant Code": "restaurant_code",
+    "Client Name": "client_name",
+    "Restaurant Name": "restaurant_name",
+    "Restaurant Type": "restaurant_type",
+    "Restaurant Address": "restaurant_address",
+    "Contact No.": "contact_no",
+    "Email Address": "email_address",
+    "Year of Establishment": "year_of_establishment",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM clients
+      WHERE restaurant_code LIKE ?
+      OR client_name LIKE ?
+      OR restaurant_name LIKE ?
+      OR restaurant_type LIKE ?
+      OR restaurant_address LIKE ?
+      OR contact_no LIKE ?
+      OR email_address LIKE ?
+      OR year_of_establishment LIKE ?
+      ORDER BY restaurant_name;
+    `;
+    params = Array(8).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM clients
+      WHERE ${column} LIKE ?
+      ORDER BY restaurant_name;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
+  return records;
+}
+
 export async function getCutTypeByClient(restaurant_name: string) {
   const [records] = await pool.query(
     `
@@ -146,6 +344,60 @@ export async function getDeliveries() {
     SELECT * FROM deliveries
     ORDER BY delivery_no DESC;
   `);
+  return records;
+}
+
+export async function getDeliveriesFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Delivery No.": "delivery_no",
+    "Driver Name": "driver_name",
+    "Truck Number": "truck_number",
+    "Deliver Date": "deliver_date",
+    "Order Date": "order_date",
+    "Distance Traveled": "distance_traveled",
+    "Delivery Duration": "delivery_duration",
+    "Weight": "weight",
+    "Restaurant Code": "restaurant_code",
+    "Status": "status",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM deliveries
+      WHERE delivery_no LIKE ?
+      OR driver_name LIKE ?
+      OR truck_number LIKE ?
+      OR deliver_date LIKE ?
+      OR order_date LIKE ?
+      OR distance_traveled LIKE ?
+      OR delivery_duration LIKE ?
+      OR weight LIKE ?
+      OR restaurant_code LIKE ?
+      OR status LIKE ?
+      ORDER BY delivery_no DESC;
+    `;
+    params = Array(10).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM deliveries
+      WHERE ${column} LIKE ?
+      ORDER BY delivery_no DESC;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
   return records;
 }
 
