@@ -3,15 +3,146 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Register New Livestock</title>
+    <title>Carnivault - Add Livestock</title>
   </head>
   <body>
     <div class="flex flex-1">
       <%- include("./partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
-          Register New Livestock
+          Add Livestock
         </h1>
+        <section class="flex flex-col gap-4">
+          <form class="form grid gap-6">
+            <!-- Livestock ID -->
+            <div class="grid gap-2">
+              <label for="demo-form-text">Livestock ID</label>
+              <input type="text" id="demo-form-text" placeholder="hunvreus" />
+              <p class="text-muted-foreground text-sm">
+                This is your public display name.
+              </p>
+            </div>
+
+            <!-- Breed -->
+            <div class="grid gap-2">
+              <label for="demo-form-select">Breed</label>
+              <select id="demo-form-select">
+                <option value="bob@example.com">m@example.com</option>
+                <option value="alice@example.com">m@google.com</option>
+                <option value="john@example.com">m@support.com</option>
+              </select>
+              <p class="text-muted-foreground text-sm">
+                You can manage email addresses in your email settings.
+              </p>
+            </div>
+
+            <!-- Weight -->
+            <div class="grid gap-2">
+              <label for="demo-form-text">Weight</label>
+              <input type="text" id="demo-form-text" placeholder="hunvreus" />
+              <p class="text-muted-foreground text-sm">
+                This is your public display name.
+              </p>
+            </div>
+
+            <!-- Age -->
+            <div class="grid gap-2">
+              <label for="demo-form-text">Age</label>
+              <input type="text" id="demo-form-text" placeholder="hunvreus" />
+              <p class="text-muted-foreground text-sm">
+                This is your public display name.
+              </p>
+            </div>
+
+            <!-- Country of Origin -->
+            <div class="grid gap-2">
+              <label for="demo-form-select">Country of Origin</label>
+              <select id="demo-form-select">
+                <option value="bob@example.com">m@example.com</option>
+                <option value="alice@example.com">m@google.com</option>
+                <option value="john@example.com">m@support.com</option>
+              </select>
+              <p class="text-muted-foreground text-sm">
+                You can manage email addresses in your email settings.
+              </p>
+            </div>
+
+            <!-- Medical Condition -->
+            <div class="grid gap-2">
+              <label for="demo-form-select">Medical Condition</label>
+              <select id="demo-form-select">
+                <option value="bob@example.com">m@example.com</option>
+                <option value="alice@example.com">m@google.com</option>
+                <option value="john@example.com">m@support.com</option>
+              </select>
+              <p class="text-muted-foreground text-sm">
+                You can manage email addresses in your email settings.
+              </p>
+            </div>
+
+            <!-- Vaccination Status -->
+            <div class="grid gap-2">
+              <label for="demo-form-select">Vaccination Status</label>
+              <select id="demo-form-select">
+                <option value="bob@example.com">m@example.com</option>
+                <option value="alice@example.com">m@google.com</option>
+                <option value="john@example.com">m@support.com</option>
+              </select>
+              <p class="text-muted-foreground text-sm">
+                You can manage email addresses in your email settings.
+              </p>
+            </div>
+
+            <!-- Date Arrived -->
+            <div class="grid gap-2">
+              <label for="demo-form-date">Date Arrived</label>
+              <input type="date" id="demo-form-date" />
+              <p class="text-muted-foreground text-sm">
+                Your date of birth is used to calculate your age.
+              </p>
+            </div>
+
+            <!-- Storage Location -->
+            <div class="grid gap-2">
+              <label for="demo-form-select">Storage Location</label>
+              <select id="demo-form-select">
+                <option value="bob@example.com">m@example.com</option>
+                <option value="alice@example.com">m@google.com</option>
+                <option value="john@example.com">m@support.com</option>
+              </select>
+              <p class="text-muted-foreground text-sm">
+                You can manage email addresses in your email settings.
+              </p>
+            </div>
+
+            <!-- Supplier ID -->
+            <div class="grid gap-2">
+              <label for="demo-form-text">Supplier ID</label>
+              <input type="text" id="demo-form-text" placeholder="hunvreus" />
+              <p class="text-muted-foreground text-sm">
+                This is your public display name.
+              </p>
+            </div>
+
+            <!-- Status -->
+            <div class="grid gap-2">
+              <label for="demo-form-select">Status</label>
+              <select id="demo-form-select">
+                <option value="bob@example.com">m@example.com</option>
+                <option value="alice@example.com">m@google.com</option>
+                <option value="john@example.com">m@support.com</option>
+              </select>
+              <p class="text-muted-foreground text-sm">
+                You can manage email addresses in your email settings.
+              </p>
+            </div>
+
+            <button type="submit" class="btn">
+              <i data-lucide="log-in"></i>
+              Register
+            </button>
+          </form>
+        </section>
       </main>
     </div>
   </body>
