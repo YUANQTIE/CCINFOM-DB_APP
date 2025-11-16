@@ -4,84 +4,117 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Carnivault - Inventory</title>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
   </head>
   <body>
     <div class="flex flex-1">
       <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
-        <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
-          Inventory
-        </h1>
-        <!-- prettier-ignore -->
-        <%- include("../partials/searchbar", { label: "Inventory", select_id: "searchbar", placeholder: "Search inventory..." }) %>
-
-        <div class="overflow-x-auto">
-          <table class="table">
-            <caption>
-              A list of your recent invoices.
-            </caption>
-            <thead>
-              <tr>
-                <th>Invoice</th>
-                <th>Status</th>
-                <th>Method</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="font-medium">INV001</td>
-                <td>Paid</td>
-                <td>Credit Card</td>
-                <td class="text-right">$250.00</td>
-              </tr>
-              <tr>
-                <td class="font-medium">INV002</td>
-                <td>Pending</td>
-                <td>PayPal</td>
-                <td class="text-right">$150.00</td>
-              </tr>
-              <tr>
-                <td class="font-medium">INV003</td>
-                <td>Unpaid</td>
-                <td>Bank Transfer</td>
-                <td class="text-right">$350.00</td>
-              </tr>
-              <tr>
-                <td class="font-medium">INV004</td>
-                <td>Paid</td>
-                <td>Paypal</td>
-                <td class="text-right">$450.00</td>
-              </tr>
-              <tr>
-                <td class="font-medium">INV005</td>
-                <td>Paid</td>
-                <td>Credit Card</td>
-                <td class="text-right">$550.00</td>
-              </tr>
-              <tr>
-                <td class="font-medium">INV006</td>
-                <td>Pending</td>
-                <td>Bank Transfer</td>
-                <td class="text-right">$200.00</td>
-              </tr>
-              <tr>
-                <td class="font-medium">INV007</td>
-                <td>Unpaid</td>
-                <td>Credit Card</td>
-                <td class="text-right">$300.00</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3">Total</td>
-                <td class="text-right">$2,500.00</td>
-              </tr>
-            </tfoot>
-          </table>
+        <div class="flex gap-4">
+          <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+            Inventory
+          </h1>
         </div>
+        <section class="flex flex-col gap-4">
+          <section class="flex justify-between">
+            <!-- prettier-ignore -->
+            <%- include("../partials/searchbar", { label: "Inventory", select_id: "searchbar", placeholder: "Search inventory..." }) %>
+          </section>
+          <div class="overflow-x-auto">
+            <%- include("../partials/table-skeleton", { id: "table-skeleton"})
+            %> <%- include("../partials/table", { id: "inventory-table"}) %>
+          </div>
+          <!-- prettier-ignore -->
+          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Inventory data not available..."}) %>
+        </section>
       </main>
     </div>
-    <script type="module" src="/scripts/pages/inventory.js"></script>
+
+    <script>
+      const { format, parseISO } = dateFns;
+      const initSearchBar = (columns) => {
+        const searchBar = document.getElementById("searchbar");
+        let html = "";
+        html += "<option>All</option>";
+        for (let column of columns) {
+          html += `<option>${column}</option>`;
+        }
+        searchBar.innerHTML = html;
+      };
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const tableColumns = [
+          "Serial No.",
+          "Cut Type",
+          "Weight",
+          "Expiry Date",
+          "Storage Location",
+          "Quality Control Clearance",
+          "Status",
+          "Origin Livestock ID",
+        ];
+        const tableSkeleton = document.getElementById("table-skeleton");
+        const table = document.getElementById("inventory-table");
+        const tableDataZeroLabel = document.getElementById("table-data-zero");
+        const tableBody = table.tBodies[0];
+        const tableHeader = table.tHead;
+
+        // Check elements
+        if (!tableSkeleton || !table || !tableDataZeroLabel || !tableBody) {
+          console.error("A required table element is missing!");
+          return;
+        }
+
+        // Add columns to table header
+        const columnFragment = document.createDocumentFragment();
+        const row = columnFragment.appendChild(document.createElement("tr"));
+        tableColumns.forEach((col) => {
+          const cell = row.insertCell();
+          cell.textContent = col;
+          cell.classList.add("font-bold");
+        });
+
+        tableHeader.appendChild(columnFragment);
+
+        // Init Search Bar
+        initSearchBar(tableColumns);
+
+        // Fetch from data
+        try {
+          const response = await fetch("/api/meat-selection");
+          const data = await response.json();
+
+          // hide skeleton and show table after data load
+          tableSkeleton.classList.add("hidden");
+          table.classList.replace("hidden", "table");
+
+          // show message and hide table when data is empty
+          if (data.length === 0) {
+            table.classList.replace("table", "hidden");
+            tableDataZeroLabel.classList.replace("hidden", "flex");
+            return;
+          }
+
+          const dataFragment = document.createDocumentFragment();
+          data.forEach((inventory) => {
+            const row = dataFragment.appendChild(document.createElement("tr"));
+            row.insertCell().textContent = inventory.serial_no;
+            row.insertCell().textContent = inventory.cut_type;
+            row.insertCell().textContent = inventory.weight;
+            row.insertCell().textContent = inventory.expiry_date;
+            row.insertCell().textContent = inventory.storage_location;
+            row.insertCell().textContent = inventory.quality_control_clearance;
+            row.insertCell().textContent = inventory.status;
+            row.insertCell().textContent = inventory.origin_livestock_id;
+          });
+
+          tableBody.appendChild(dataFragment);
+        } catch (error) {
+          console.error("Error fetching inventory data:", error);
+          table.classList.replace("table", "hidden");
+          tableDataZeroLabel.classList.replace("hidden", "flex");
+        }
+      });
+    </script>
   </body>
 </html>
