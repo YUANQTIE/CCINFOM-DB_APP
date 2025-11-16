@@ -347,6 +347,60 @@ export async function getDeliveries() {
   return records;
 }
 
+export async function getDeliveriesFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Delivery No.": "delivery_no",
+    "Driver Name": "driver_name",
+    "Truck Number": "truck_number",
+    "Deliver Date": "deliver_date",
+    "Order Date": "order_date",
+    "Distance Traveled": "distance_traveled",
+    "Delivery Duration": "delivery_duration",
+    "Weight": "weight",
+    "Restaurant Code": "restaurant_code",
+    "Status": "status",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM deliveries
+      WHERE delivery_no LIKE ?
+      OR driver_name LIKE ?
+      OR truck_number LIKE ?
+      OR deliver_date LIKE ?
+      OR order_date LIKE ?
+      OR distance_traveled LIKE ?
+      OR delivery_duration LIKE ?
+      OR weight LIKE ?
+      OR restaurant_code LIKE ?
+      OR status LIKE ?
+      ORDER BY delivery_no DESC;
+    `;
+    params = Array(10).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM deliveries
+      WHERE ${column} LIKE ?
+      ORDER BY delivery_no DESC;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
+  return records;
+}
+
 export async function getRestaurantsByDriver(name: string) {
   const [records] = await pool.query(
     `
