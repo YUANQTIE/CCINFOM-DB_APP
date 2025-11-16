@@ -13,7 +13,7 @@
           Inventory
         </h1>
         <!-- prettier-ignore -->
-        <%- include("../partials/searchbar", { placeholder: "Search inventory..." }) %>
+        <%- include("../partials/searchbar", { label: "Inventory", select_id: "searchbar", placeholder: "Search inventory..." }) %>
 
         <div class="overflow-x-auto">
           <table class="table">
@@ -82,5 +82,6 @@
         </div>
       </main>
     </div>
+    <script type="module" src="/scripts/pages/inventory.js"></script>
   </body>
 </html>

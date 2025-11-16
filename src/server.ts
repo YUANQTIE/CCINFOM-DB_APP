@@ -1,49 +1,49 @@
+// --- server.ts ---
 import express from "express";
 import path from "path";
 import cors from "cors";
+import ejsLayouts from "express-ejs-layouts";
+import { fileURLToPath } from "url";
 import { pool } from "./db.ts";
 import * as read from "./db_read.ts";
+import * as create from "./db_create.ts";
+import * as objects from "./objects.ts";
+
+// Route Imports
 import meatSelectionRoutes from "./routes/meatSelectionRoutes.ts";
 import livestockRoutes from "./routes/livestockRoutes.ts";
 import clientsRoutes from "./routes/clientsRoutes.ts";
 import deliveriesRoutes from "./routes/deliveriesRoutes.ts";
-import { fileURLToPath } from "url";
-import * as create from "./db_create.ts";
-import * as objects from "./objects.ts";
-import ejsLayouts from "express-ejs-layouts";
 
-// Setup
+// --- SETUP ---
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename); // This is /CCINFOM-DB_APP/src
+const __dirname = path.dirname(__filename);
 const app = express();
 const port = 3000;
 
-// Middleware
-app.use(express.json());
+// --- MIDDLEWARE ---
 app.use(cors());
+app.use(express.json()); // Body parser for JSON
+app.use(ejsLayouts);
 
-// Static Files
+// --- STATIC ASSETS ---
 app.use(express.static(path.join(__dirname, "..", "public")));
 
-// EJS View Engine
+// --- VIEW ENGINE (EJS) ---
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "..", "views"));
 
-// Use Layouts
-app.use(ejsLayouts);
-
-// API Routes
+// --- API ROUTES (Imported) ---
 app.use("/api/meat-selection", meatSelectionRoutes);
 app.use("/api/livestock", livestockRoutes);
 app.use("/api/clients", clientsRoutes);
 app.use("/api/deliveries", deliveriesRoutes);
 
-// Default EJS Route
+// --- VIEW ROUTES (EJS) ---
 app.get("", (req, res) => {
   res.render("index");
 });
 
-// Routes
 app.get("/inventory", (req, res) => {
   res.render("tables/inventory");
 });
@@ -64,14 +64,19 @@ app.get("/process-meat", (req, res) => {
   res.render("process-meat");
 });
 
-app.get("/register-new-livestock", (req, res) => {
+app.get("/livestock/register", (req, res) => {
   res.render("register-new-livestock");
+});
+
+app.get("/livestock/suppliers", (req, res) => {
+  res.render("suppliers");
 });
 
 app.get("/deliver-products", (req, res) => {
   res.render("deliver-products");
 });
 
+// --- REPORT VIEW ROUTES ---
 app.get("/reports/inventory-keeping", (req, res) => {
   res.render("reports/inventory-keeping");
 });
@@ -88,16 +93,15 @@ app.get("/reports/sales-report", (req, res) => {
   res.render("reports/sales-report");
 });
 
-// GENERATE REPORTS
+// --- API ROUTES (Reports) ---
 
-// LIVESTOCK KEEPING REPORT
-
+// Livestock Keeping Report
 app.get("/api/average-condition-ratio", async (req, res) => {
   try {
     const { start, end } = req.query as { start: string; end: string };
-    if (!start || !end)
+    if (!start || !end) {
       return res.status(400).json({ error: "start and end are required" });
-
+    }
     const data = await read.getAverageConditionRatio(start, end);
     res.json(data);
   } catch (err) {
@@ -109,11 +113,11 @@ app.get("/api/average-condition-ratio", async (req, res) => {
 app.get("/api/total-breed-supplied", async (req, res) => {
   try {
     const { breed, company, start, end } = req.query as any;
-    if (!breed || !company || !start || !end)
+    if (!breed || !company || !start || !end) {
       return res
         .status(400)
         .json({ error: "breed, company, start, end are required" });
-
+    }
     const data = await read.getTotalBreedSuppliedBySupplier(
       breed,
       company,
@@ -127,14 +131,13 @@ app.get("/api/total-breed-supplied", async (req, res) => {
   }
 });
 
-// INVETORY UPKEEP REPORT
-
+// Inventory Upkeep Report
 app.get("/api/total-produced-meat", async (req, res) => {
   try {
     const { cut, start, end } = req.query as any;
-    if (!cut || !start || !end)
+    if (!cut || !start || !end) {
       return res.status(400).json({ error: "cut, start, end required" });
-
+    }
     const data = await read.getTotalProducedMeatSelection(start, end, cut);
     res.json(data);
   } catch (err) {
@@ -146,9 +149,9 @@ app.get("/api/total-produced-meat", async (req, res) => {
 app.get("/api/average-nutrition", async (req, res) => {
   try {
     const { cut, start, end } = req.query as any;
-    if (!cut || !start || !end)
+    if (!cut || !start || !end) {
       return res.status(400).json({ error: "cut, start, end required" });
-
+    }
     const data = await read.getAverageNutritionalQuantity(start, end, cut);
     res.json(data);
   } catch (err) {
@@ -157,14 +160,13 @@ app.get("/api/average-nutrition", async (req, res) => {
   }
 });
 
-// SALES REPORT
-
+// Sales Report
 app.get("/api/profit/client", async (req, res) => {
   try {
     const { client, start, end } = req.query as any;
-    if (!client || !start || !end)
+    if (!client || !start || !end) {
       return res.status(400).json({ error: "client, start, end required" });
-
+    }
     const data = await read.getTotalProfitByClient(client, start, end);
     res.json(data);
   } catch (err) {
@@ -176,9 +178,9 @@ app.get("/api/profit/client", async (req, res) => {
 app.get("/api/profit/total", async (req, res) => {
   try {
     const { start, end } = req.query as any;
-    if (!start || !end)
+    if (!start || !end) {
       return res.status(400).json({ error: "start and end required" });
-
+    }
     const data = await read.getTotalProfit(start, end);
     res.json(data);
   } catch (err) {
@@ -187,14 +189,13 @@ app.get("/api/profit/total", async (req, res) => {
   }
 });
 
-// LOGISTICS REPORT
-
+// Logistics Report
 app.get("/api/deliveries/truck", async (req, res) => {
   try {
     const { truck, start, end } = req.query as any;
-    if (!truck || !start || !end)
+    if (!truck || !start || !end) {
       return res.status(400).json({ error: "truck, start, end required" });
-
+    }
     const data = await read.getTotalDeliveriesByTruck(
       Number(truck),
       start,
@@ -212,9 +213,9 @@ app.get("/api/deliveries/truck", async (req, res) => {
 app.get("/api/deliveries/distance-duration", async (req, res) => {
   try {
     const { truck, start, end } = req.query as any;
-    if (!truck || !start || !end)
+    if (!truck || !start || !end) {
       return res.status(400).json({ error: "truck, start, end required" });
-
+    }
     const data = await read.getDistanceToDurationRatio(
       Number(truck),
       start,
@@ -229,19 +230,45 @@ app.get("/api/deliveries/distance-duration", async (req, res) => {
   }
 });
 
-// FOR CLIENT VIEW
+// --- API ROUTES (Client View) ---
 
-// MAKE AN ORDER
+// Get Client Info
+app.get("/api/client", async (req, res) => {
+  try {
+    const email_address = req.query.email_address as string;
+    if (!email_address) {
+      return res.status(400).json({ error: "email_address is required" });
+    }
+    const data = await read.getClient(email_address);
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching client info:", err);
+    res.status(500).json({ error: "Failed to fetch client data" });
+  }
+});
 
-// API to get agreements
-// Get client agreements with agreement_no
+// Get Client Agreements
+app.get("/api/client/agreements", async (req, res) => {
+  try {
+    const email_address = req.query.email_address as string;
+    if (!email_address) {
+      return res.status(400).json({ error: "email_address is required" });
+    }
+    const data = await read.getClientAgreements(email_address);
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching client agreements:", err);
+    res.status(500).json({ error: "Failed to fetch client agreements" });
+  }
+});
+
+// Get Client Agreements with Agreement Number
 app.get("/api/client/agreements/number", async (req, res) => {
   try {
     const email_address = req.query.email_address as string;
     if (!email_address) {
       return res.status(400).json({ error: "email_address is required" });
     }
-
     const data = await read.getClientAgreementsWithNumber(email_address);
     res.json(data);
   } catch (err) {
@@ -250,95 +277,22 @@ app.get("/api/client/agreements/number", async (req, res) => {
   }
 });
 
-// Place order for selected agreements
-app.post("/api/client/order", async (req, res) => {
-  try {
-    // Expecting: email_address + array of agreement_no
-    const { email_address, agreements } = req.body as {
-      email_address: string;
-      agreements: number[];
-    };
-
-    if (!email_address || !agreements || agreements.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "Email and agreements are required" });
-    }
-
-    // Fetch restaurant_code from email
-    const [clientRows] = (await pool.query(
-      `SELECT restaurant_code FROM clients WHERE email_address = ?`,
-      [email_address]
-    )) as any[];
-
-    if (!clientRows || clientRows.length === 0) {
-      return res.status(404).json({ error: "Client not found" });
-    }
-
-    const restaurant_code = clientRows[0].restaurant_code;
-
-    // Create delivery
-    const delivery_id = await create.createDelivery({
-      restaurant_code,
-    } as objects.Delivery);
-
-    // Create order lines for each selected agreement
-    for (const agreement_no of agreements) {
-      await create.createOrderLine({
-        order_line_no: delivery_id,
-        agreement_no,
-      } as objects.OrderLine);
-    }
-
-    res.json({ message: "Order placed successfully", delivery_id });
-  } catch (err) {
-    console.error("Error placing order:", err);
-    res.status(500).json({ error: "Failed to place order" });
-  }
-});
-
-// note; use the same api key on table of transactions
-
-// CANCEL AN ORDER
-
-// CLIENT INFO
-
-app.get("/api/client", async (req, res) => {
+// Get Client Transactions
+app.get("/api/client-transactions", async (req, res) => {
   try {
     const email_address = req.query.email_address as string;
-
     if (!email_address) {
       return res.status(400).json({ error: "email_address is required" });
     }
-
-    const data = await read.getClient(email_address);
-
+    const data = await read.getClientTransactions(email_address);
     res.json(data);
   } catch (err) {
-    console.error("Error fetching client info:", err);
-    res.status(500).json({ error: "Failed to fetch client data" });
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch client transactions" });
   }
 });
 
-app.get("/api/client/agreements", async (req, res) => {
-  try {
-    const email_address = req.query.email_address as string;
-
-    if (!email_address) {
-      return res.status(400).json({ error: "email_address is required" });
-    }
-
-    const data = await read.getClientAgreements(email_address);
-
-    res.json(data);
-  } catch (err) {
-    console.error("Error fetching client agreements:", err);
-    res.status(500).json({ error: "Failed to fetch client agreements" });
-  }
-});
-
-// MAKE NEW AGREEMENT
-
+// Create New Agreement
 app.post("/api/client/agreements/create", async (req, res) => {
   try {
     const a: objects.Agreement & { email_address: string } = req.body;
@@ -359,12 +313,12 @@ app.post("/api/client/agreements/create", async (req, res) => {
       `SELECT restaurant_code FROM clients WHERE email_address = ?`,
       [email]
     )) as any[];
-    if (!rows || rows.length === 0)
+    if (!rows || rows.length === 0) {
       return res.status(404).json({ error: "Client not found" });
-
+    }
     a.restaurant_code = rows[0].restaurant_code;
 
-    // Optional numeric fields
+    // Coerce optional numeric fields
     a.weight = Number(a.weight);
     a.fat_content = a.fat_content ? Number(a.fat_content) : null;
     a.protein_content = a.protein_content ? Number(a.protein_content) : null;
@@ -381,41 +335,60 @@ app.post("/api/client/agreements/create", async (req, res) => {
 
     await create.createAgreement(a);
 
-    res.json({ message: "Agreement created successfully" });
+    res.status(201).json({ message: "Agreement created successfully" });
   } catch (err) {
     console.error("Error creating agreement:", err);
     res.status(500).json({ error: "Failed to create agreement" });
   }
 });
 
-// TABLE OF TRANSACTIONS
-
-app.get("/api/client-transactions", async (req, res) => {
+// Place New Order
+app.post("/api/client/order", async (req, res) => {
   try {
-    const email_address = req.query.email_address as string;
+    const { email_address, agreements } = req.body as {
+      email_address: string;
+      agreements: number[];
+    };
 
-    if (!email_address) {
-      return res.status(400).json({ error: "email_address is required" });
+    if (!email_address || !agreements || agreements.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Email and agreements are required" });
     }
 
-    const data = await read.getClientTransactions(email_address);
-    res.json(data);
+    // 1. Fetch restaurant_code from email
+    const [clientRows] = (await pool.query(
+      `SELECT restaurant_code FROM clients WHERE email_address = ?`,
+      [email_address]
+    )) as any[];
+
+    if (!clientRows || clientRows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+    const restaurant_code = clientRows[0].restaurant_code;
+
+    // 2. Create a new delivery
+    const delivery_id = await create.createDelivery({
+      restaurant_code,
+    });
+
+    // 3. Create order lines for each selected agreement
+    for (const agreement_no of agreements) {
+      await create.createOrderLine({
+        order_no: delivery_id, // This is the delivery_id (foreign key)
+        agreement_no,
+      });
+    }
+
+    res.status(201).json({ message: "Order placed successfully", delivery_id });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch client transactions" });
+    console.error("Error placing order:", err);
+    res.status(500).json({ error: "Failed to place order" });
   }
 });
 
-/*
-app.use(express.static(
-    path.join(__dirname), 
-    {extensions: ["html"],})
-);
-app.use(express.static(path.join(__dirname, "../resources")));
-*/
-
+// --- SERVER START ---
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
-  console.log("You can now open:");
-  console.log(`  - http://localhost:${port}`);
+  console.log("Press CTRL+C to stop server.");
 });
