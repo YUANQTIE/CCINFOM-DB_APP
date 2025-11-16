@@ -48,6 +48,19 @@ router.get("/supplier", async (req, res) => {
     }
 });
 
+router.get("/supplier/filter", async (req, res) => {
+    const filterBy = req.query.filterBy as string;
+    const key = req.query.key as string;
+    
+    try {
+        const results = await read.getSupplierFiltered(filterBy, key);
+        res.json({ success: true, data: results });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch data" });
+    }
+});
+
 router.post("/supplier/add", async (req, res) => {
     try {
         const supplier = req.body;

@@ -23,6 +23,47 @@ export async function getLivestockBySupplier(supplierName: string) {
   return records;
 }
 
+export async function getSupplierFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  // Map filter names to actual DB column names
+  const filterMap: Record<string, string> = {
+    "Supplier ID": "supplier_id",
+    "Company Name": "company_name",
+    "Contact No.": "contact_no",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM supplier
+      WHERE supplier_id LIKE ?
+      OR company_name LIKE ?
+      OR contact_no LIKE ?
+      ORDER BY company_name;
+    `;
+    params = Array(3).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM supplier
+      WHERE ${column} LIKE ?
+      ORDER BY company_name;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
+  return records;
+}
+
 // --- LIVESTOCK ---
 export async function getLivestock() {
   const [records] = await pool.query(`
