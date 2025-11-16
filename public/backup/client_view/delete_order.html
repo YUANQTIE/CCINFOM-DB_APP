@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cancel Pending Orders</title>
+
+<style>
+  body { font-family: Arial; padding: 20px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 10px; }
+  th { background: #f3f3f3; }
+  button { padding: 6px 12px; cursor: pointer; }
+</style>
+
+</head>
+<body>
+
+<h2>Pending Orders</h2>
+
+<label>Email Address: </label>
+<input type="text" id="emailInput" placeholder="client@example.com">
+<button onclick="loadPendingOrders()">Load Orders</button>
+
+<div id="ordersContainer"></div>
+
+<script>
+async function loadPendingOrders() {
+  const email = document.getElementById("emailInput").value;
+
+  if (!email) {
+    alert("Enter an email first.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:3000/api/client/pending-orders?email=${email}`);
+    const data = await res.json();
+
+    if (!Array.isArray(data)) {
+      document.getElementById("ordersContainer").innerHTML =
+        "<p>No pending orders found.</p>";
+      return;
+    }
+
+    renderOrders(data);
+
+  } catch (err) {
+    console.error(err);
+    alert("Error loading orders.");
+  }
+}
+
+function renderOrders(orders) {
+  let html = `
+    <table>
+      <tr>
+        <th>Delivery No</th>
+        <th>Order Line ID</th>
+        <th>Cut Type</th>
+        <th>Order Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+  `;
+
+  for (const o of orders) {
+    html += `
+      <tr>
+        <td>${o.delivery_no}</td>
+        <td>${o.id}</td>
+        <td>${o.cut_type_of_choice}</td>
+        <td>${o.order_date}</td>
+        <td>${o.status}</td>
+        <td>
+          <button onclick="cancelOrder(${o.id})">Cancel</button>
+        </td>
+      </tr>
+    `;
+  }
+
+  html += "</table>";
+
+  document.getElementById("ordersContainer").innerHTML = html;
+}
+
+async function cancelOrder(orderLineId) {
+  if (!confirm("Are you sure you want to cancel this order?")) return;
+
+  try {
+    const res = await fetch(`http://localhost:3000/api/order-line/${orderLineId}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Order cancelled successfully.");
+      loadPendingOrders();
+    } else {
+      alert("Failed: " + (data.error || "Unknown error"));
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Error cancelling order.");
+  }
+}
+</script>
+
+</body>
+</html>

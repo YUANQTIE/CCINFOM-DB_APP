@@ -179,6 +179,68 @@ export async function getDeliveryItems(order_no: number) {
   return records;
 }
 
+// --- DELIVER A PRODUCT ---
+
+export async function getCompanyPendingDeliveries() {
+  const [records] = await pool.query<any[]>(
+    `SELECT d.delivery_no, d.driver_name, d.truck_number, c.restaurant_name, c.restaurant_address
+     FROM deliveries d
+     JOIN clients c ON d.restaurant_code = c.restaurant_code
+     WHERE d.status = 'Pending'`
+  );
+  return records;
+}
+
+export async function getCompanyOrderLinesInPendingDelivery(delivery_no: number) {
+  const [records] = await pool.query<any[]>(
+    `SELECT ol.id, ol.item_serial_no, c.restaurant_name, a.cut_type_of_choice, a.weight, 
+            a.tenderness, a.color, a.fat_content, a.protein_content, a.connective_tissue_content, 
+            a.water_holding_capacity, a.pH, a.water_distribution
+     FROM deliveries d
+     JOIN clients c ON d.restaurant_code = c.restaurant_code
+     JOIN order_line ol ON ol.order_no = d.delivery_no
+     JOIN agreements a ON a.agreement_no = ol.agreement_no
+     WHERE d.delivery_no = ?`,
+    [delivery_no]
+  );
+  return records;
+}
+
+export async function getPossibleMeatSelectionForOrder(order_line_id: number) {
+  const [records] = await pool.query<any[]>(
+    `SELECT ms.serial_no, ms.cut_type, ms.weight, n.tenderness, n.color, n.fat_content, n.protein_content,n.connective_tissue_content, n.water_holding_capacity, n.pH, n.water_distribution
+      FROM meat_selection ms
+      JOIN nutrition n ON n.item_serial_no = ms.serial_no
+      JOIN agreements a on a.cut_type_of_choice = ms.cut_type
+      JOIN order_line ol on ol.agreement_no = a.agreement_no
+      WHERE ol.id = ? AND ms.status = "Available";`,
+    [order_line_id]
+  );
+  return records;
+}
+
+export async function getCompanyPendingDeliveriesThatCanBeDelivered() {
+  const [records] = await pool.query<any[]>(`
+    SELECT 
+      d.delivery_no,
+      d.driver_name,
+      d.truck_number,
+      c.restaurant_name,
+      c.restaurant_address,
+      COUNT(ol.id) AS needed_orders,
+      SUM(CASE WHEN ol.item_serial_no IS NOT NULL THEN 1 ELSE 0 END) AS supplied_orders
+    FROM deliveries d
+    JOIN clients c ON d.restaurant_code = c.restaurant_code
+    JOIN order_line ol ON d.delivery_no = ol.order_no
+    WHERE d.status = 'Pending' AND d.driver_name IS NOT NULL AND d.truck_number IS NOT NULL
+    GROUP BY d.delivery_no, d.driver_name, d.truck_number, c.restaurant_name, c.restaurant_address
+    HAVING COUNT(ol.id) = SUM(CASE WHEN ol.item_serial_no IS NOT NULL THEN 1 ELSE 0 END)
+  `);
+
+  return records;
+}
+
+
 // --- REPORT: LIVESTOCK KEEPING ---
 export async function getAverageConditionRatio(
   date_start: string,
@@ -365,6 +427,65 @@ export async function getDistanceToDurationRatio(
   return records || 0;
 }
 
+// --- REPORT: AGREEMENT SATISFACTION ---
+
+// 1. Number of late reports in a given time
+export async function getLateReports(date_start: string, date_end: string) {
+  const [records] = await pool.query(
+    `
+    SELECT COUNT(*) AS late_count
+    FROM deliveries d
+    JOIN order_line ol ON ol.order_no = d.delivery_no
+    JOIN agreements a ON a.agreement_no = ol.agreement_no
+    WHERE d.deliver_date BETWEEN ? AND ?
+      AND WEEK(d.deliver_date, 1) != a.week_of_delivery
+    `,
+    [date_start, date_end]
+  );
+
+  return Number((records as any)[0]?.late_count) || 0;
+}
+
+// 2. Percentage of nutritional quantities on agreements being met
+
+export async function getNutritionFulfillmentPercentages(
+  date_start: string,
+  date_end: string
+) {
+  // Force TypeScript to treat rows as any[]
+  const [rows] = await pool.query<any[]>(`
+    SELECT 
+      (SUM(CASE WHEN n.tenderness = a.tenderness THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS tenderness_pct,
+      (SUM(CASE WHEN n.color = a.color THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS color_pct,
+      (SUM(CASE WHEN n.fat_content >= a.fat_content THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS fat_pct,
+      (SUM(CASE WHEN n.protein_content >= a.protein_content THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS protein_pct,
+      (SUM(CASE WHEN n.connective_tissue_content >= a.connective_tissue_content THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS connective_pct,
+      (SUM(CASE WHEN n.water_holding_capacity >= a.water_holding_capacity THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS water_holding_pct,
+      (SUM(CASE WHEN n.pH >= a.pH THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS pH_pct,
+      (SUM(CASE WHEN n.water_distribution >= a.water_distribution THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS water_distribution_pct,
+      COUNT(*) AS total_delivered
+    FROM deliveries d
+    JOIN order_line ol ON ol.order_no = d.delivery_no
+    JOIN agreements a ON a.agreement_no = ol.agreement_no
+    JOIN meat_selection ms ON ms.serial_no = ol.item_serial_no
+    JOIN nutrition n ON n.item_serial_no = ms.serial_no
+    WHERE d.deliver_date BETWEEN ? AND ?
+      AND d.status = 'Delivered';
+  `, [date_start, date_end]);
+
+  return rows[0] || {
+    tenderness_pct: 0,
+    color_pct: 0,
+    fat_pct: 0,
+    protein_pct: 0,
+    connective_pct: 0,
+    water_holding_pct: 0,
+    pH_pct: 0,
+    water_distribution_pct: 0,
+    total_delivered: 0
+  };
+}
+
 // --- CLIENT VIEW: INFO & AGREEMENTS ---
 export async function getClient(email_address: string) {
   const [records] = await pool.query(
@@ -406,6 +527,25 @@ export async function getClientAgreementsWithNumber(email_address: string) {
     WHERE c.email_address = ?
   `,
     [email_address]
+  );
+  return records;
+}
+
+// --- CLIENT VIEW: Cancel an Order ---
+
+export async function getClientPendingOrders(email: string) {
+  const [records] = await pool.query<any[]>(
+    `
+    SELECT d.delivery_no, ol.id, a.cut_type_of_choice, d.order_date,
+      IF(ol.item_serial_no IS NULL, "Not Supplied", "Supplied") AS status
+    FROM deliveries d
+    JOIN order_line ol ON ol.order_no = d.delivery_no
+    JOIN agreements a ON a.agreement_no = ol.agreement_no
+    JOIN clients c ON c.restaurant_code = d.restaurant_code
+    WHERE c.email_address = ? 
+      AND d.status = 'Pending';
+    `,
+    [email]
   );
   return records;
 }

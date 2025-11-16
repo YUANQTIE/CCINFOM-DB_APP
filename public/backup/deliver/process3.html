@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Deliveries Ready</title>
+<style>
+  body { font-family: Arial; padding: 20px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 10px; }
+  th { background: #f3f3f3; }
+  input, button { padding: 5px; margin: 5px 0; width: 250px; }
+</style>
+</head>
+<body>
+
+<h2>Pending Deliveries Ready to Deliver</h2>
+<div id="deliveriesContainer"></div>
+<div id="actionsContainer"></div>
+
+<script>
+async function loadDeliveries() {
+  try {
+    const res = await fetch("http://localhost:3000/api/company/pending-deliveries-ready");
+    const deliveries = await res.json();
+
+    if (!Array.isArray(deliveries) || deliveries.length === 0) {
+      document.getElementById("deliveriesContainer").innerHTML = "<p>No deliveries ready.</p>";
+      return;
+    }
+
+    let html = `<table>
+      <tr>
+        <th>Delivery No</th><th>Driver</th><th>Truck</th><th>Restaurant</th><th>Address</th><th>Action</th>
+      </tr>`;
+
+    for (const d of deliveries) {
+      html += `<tr>
+        <td>${d.delivery_no}</td>
+        <td>${d.driver_name}</td>
+        <td>${d.truck_number}</td>
+        <td>${d.restaurant_name}</td>
+        <td>${d.restaurant_address}</td>
+        <td><button onclick="selectDelivery(${d.delivery_no})">Select</button></td>
+      </tr>`;
+    }
+
+    html += "</table>";
+    document.getElementById("deliveriesContainer").innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    alert("Error loading deliveries.");
+  }
+}
+
+function selectDelivery(deliveryNo) {
+  document.getElementById("actionsContainer").innerHTML = `
+    <h3>Selected Delivery: ${deliveryNo}</h3>
+    <label>Distance Traveled:</label><br>
+    <input type="number" id="distanceInput" placeholder="km"><br>
+    <label>Delivery Duration:</label><br>
+    <input type="number" id="durationInput" placeholder="minutes"><br>
+    <button onclick="updateDelivery(${deliveryNo})">Update Delivery & Mark as Delivered</button>
+  `;
+}
+
+async function updateDelivery(deliveryNo) {
+  const distance = document.getElementById("distanceInput").value;
+  const duration = document.getElementById("durationInput").value;
+
+  const body = {};
+  if (distance) body.distanceTraveled = Number(distance);
+  if (duration) body.deliveryDuration = Number(duration);
+
+  try {
+    const res = await fetch(`http://localhost:3000/api/delivery/update/${deliveryNo}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+    alert(data.success ? "Delivery updated and marked as delivered" : data.error);
+    loadDeliveries();
+    document.getElementById("actionsContainer").innerHTML = "";
+  } catch (err) {
+    console.error(err);
+    alert("Error updating delivery");
+  }
+}
+
+// Load deliveries on page load
+loadDeliveries();
+</script>
+
+</body>
+</html>

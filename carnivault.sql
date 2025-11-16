@@ -114,10 +114,11 @@ CREATE TABLE `agreements` (
 );
 
 CREATE TABLE IF NOT EXISTS `order_line`(
+	`id` INT auto_increment,
 	`order_no` INT NOT NULL,
     `item_serial_no` VARCHAR(30) DEFAULT NULL,
     `agreement_no` INT NOT NULL,
-    PRIMARY KEY(`order_no`, `agreement_no`),
+    PRIMARY KEY(id),
     CONSTRAINT FOREIGN KEY(`item_serial_no`) REFERENCES `meat_selection`(`serial_no`),
     CONSTRAINT FOREIGN KEY(`order_no`) REFERENCES `deliveries`(`delivery_no`),
     CONSTRAINT FOREIGN KEY(`agreement_no`) REFERENCES `agreements`(`agreement_no`)
