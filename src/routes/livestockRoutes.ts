@@ -35,6 +35,17 @@ router.get("/supplier", async (req, res) => {
     }
 });
 
+router.post("/supplier/add", async (req, res) => {
+    try {
+        const livestock = req.body;
+        const result = await create.createLivestock(livestock);
+        res.json({ success: true, result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to register" });
+    }
+});
+
 router.get("/livestock-by-supplier/:supplier", async (req, res) => {
     const {supplier} = req.params;
 
