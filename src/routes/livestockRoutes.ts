@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as read from "../db_read.ts";
+import * as create from "../db_create.ts";
 
 const router = Router();
 
@@ -44,6 +45,28 @@ router.get("/livestock-by-supplier/:supplier", async (req, res) => {
         console.error(error);
         res.status(500).json({ error: "Failed to fetch meat selection" });
     }
+});
+
+router.post("/add", async (req, res) => {
+    try {
+        const livestock = req.body;
+        const result = await create.createLivestock(livestock);
+        res.json({ success: true, result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to register" });
+    }
+});
+
+router.post("/process/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    await create.processLivestock(id);
+    res.json({ success: true, message: "Livestock processed." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
 });
 
 export default router;
