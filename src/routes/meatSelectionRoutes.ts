@@ -9,7 +9,18 @@ router.get("/", async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to fetch meat selection" });
+        res.status(500).json({ error: "Failed to fetch data" });
+    }
+});
+
+router.get("/:serialNo", async (req, res) => {
+    const {serialNo} = req.params
+    try {
+        const data = await read.getMeatNutrition(serialNo);
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch data" });
     }
 });
 

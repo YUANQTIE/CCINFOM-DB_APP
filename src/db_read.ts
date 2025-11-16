@@ -47,11 +47,20 @@ export async function getMeatByLivestockBreed(breed: string) {
 // --- MEAT SELECTION & NUTRITION ---
 export async function getMeatSelection() {
   const [records] = await pool.query(`
-    SELECT * FROM meat_selection m
-    LEFT JOIN nutrition n ON m.serial_no = n.item_serial_no
-    ORDER BY status, expiry_date;
+    SELECT * FROM meat_selection
+    ORDER BY status, storage_location, expiry_date;
   `);
   return records;
+}
+
+export async function getMeatNutrition(serial_no: string) {
+    const [records] = await pool.query(`
+        SELECT * FROM meat_selection m
+        LEFT JOIN nutrition n ON m.serial_no = n.item_serial_no
+        WHERE m.serial_no = ?;
+        `, [serial_no]
+    );
+    return records;
 }
 
 export async function getTotalStatusMeatCutInventory(status: string) {
