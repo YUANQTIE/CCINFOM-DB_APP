@@ -256,6 +256,56 @@ export async function getClients() {
   return records;
 }
 
+export async function getClientsFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Restaurant Code": "restaurant_code",
+    "Client Name": "client_name",
+    "Restaurant Name": "restaurant_name",
+    "Restaurant Type": "restaurant_type",
+    "Restaurant Address": "restaurant_address",
+    "Contact No.": "contact_no",
+    "Email Address": "email_address",
+    "Year of Establishment": "year_of_establishment",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM clients
+      WHERE restaurant_code LIKE ?
+      OR client_name LIKE ?
+      OR restaurant_name LIKE ?
+      OR restaurant_type LIKE ?
+      OR restaurant_address LIKE ?
+      OR contact_no LIKE ?
+      OR email_address LIKE ?
+      OR year_of_establishment LIKE ?
+      ORDER BY restaurant_name;
+    `;
+    params = Array(8).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM clients
+      WHERE ${column} LIKE ?
+      ORDER BY restaurant_name;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
+  return records;
+}
+
 export async function getCutTypeByClient(restaurant_name: string) {
   const [records] = await pool.query(
     `
