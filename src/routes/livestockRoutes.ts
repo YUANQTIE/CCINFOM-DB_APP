@@ -14,6 +14,19 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/filter", async (req, res) => {
+    const filterBy = req.query.filterBy as string;
+    const key = req.query.key as string;
+    
+    try {
+        const results = await read.getLivestockFiltered(filterBy, key);
+        res.json({ success: true, data: results });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch data" });
+    }
+});
+
 router.get("/meat-by-livestock-breed/:breed", async (req, res) => {
     const {breed} = req.params;
     try {

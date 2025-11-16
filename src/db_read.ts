@@ -27,8 +27,67 @@ export async function getLivestockBySupplier(supplierName: string) {
 export async function getLivestock() {
   const [records] = await pool.query(`
     SELECT * FROM livestock
-    ORDER BY date_arrived DESC;
+    ORDER BY storage_location, date_arrived DESC;
   `);
+  return records;
+}
+
+export async function getLivestockFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  // Map filter names to actual DB column names
+  const filterMap: Record<string, string> = {
+    "Livestock ID": "livestock_id",
+    "Breed": "breed",
+    "Weight": "weight",
+    "Age": "age",
+    "Country of Origin": "country_of_origin",
+    "Medical Condition": "medical_condition",
+    "Vaccination Status": "vaccination_status",
+    "Date Arrived": "date_arrived",
+    "Storage Location": "storage_location",
+    "Supplier ID": "supplier_id",
+    "Status": "status",
+    "Processing Date": "processing_date",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM livestock
+      WHERE livestock_id LIKE ?
+      OR breed LIKE ?
+      OR weight LIKE ?
+      OR age LIKE ?
+      OR country_of_origin LIKE ?
+      OR medical_condition LIKE ?
+      OR vaccination_status LIKE ?
+      OR date_arrived LIKE ?
+      OR storage_location LIKE ?
+      OR supplier_id LIKE ?
+      OR status LIKE ?
+      OR processing_date LIKE ?
+      ORDER BY date_arrived DESC
+    `;
+    params = Array(12).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM livestock
+      WHERE ${column} LIKE ?
+      ORDER BY date_arrived DESC
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
   return records;
 }
 
