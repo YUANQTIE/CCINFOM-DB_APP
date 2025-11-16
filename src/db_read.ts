@@ -26,7 +26,6 @@ export async function getLivestockBySupplier(supplierName: string) {
 export async function getSupplierFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 
-  // Map filter names to actual DB column names
   const filterMap: Record<string, string> = {
     "Supplier ID": "supplier_id",
     "Company Name": "company_name",
@@ -76,7 +75,6 @@ export async function getLivestock() {
 export async function getLivestockFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 
-  // Map filter names to actual DB column names
   const filterMap: Record<string, string> = {
     "Livestock ID": "livestock_id",
     "Breed": "breed",
@@ -148,8 +146,58 @@ export async function getMeatByLivestockBreed(breed: string) {
 export async function getMeatSelection() {
   const [records] = await pool.query(`
     SELECT * FROM meat_selection
-    ORDER BY status, storage_location, expiry_date;
+    ORDER BY status, expiry_date;
   `);
+  return records;
+}
+
+export async function getMeatSelectionFiltered(filterBy: string, key: string) {
+  const wildcard = `%${key}%`;
+
+  const filterMap: Record<string, string> = {
+    "Serial No.": "serial_no",
+    "Cut Type": "cut_type",
+    "Weight": "weight",
+    "Expiry Date": "expiry_date",
+    "Storage Location": "storage_location",
+    "Quality Control Clearance": "quality_control_clearance",
+    "Status": "status",
+    "Origin Livestock ID": "origin_livestock_id",
+  };
+
+  let query = "";
+  let params: any[] = [];
+
+  if (filterBy === "All") {
+    query = `
+      SELECT * FROM meat_selection
+      WHERE serial_no LIKE ?
+      OR cut_type LIKE ?
+      OR weight LIKE ?
+      OR expiry_date LIKE ?
+      OR storage_location LIKE ?
+      OR quality_control_clearance LIKE ?
+      OR status LIKE ?
+      OR origin_livestock_id LIKE ?
+      ORDER BY status, expiry_date;
+    `;
+    params = Array(8).fill(wildcard);
+  } else {
+    const column = filterMap[filterBy];
+
+    if (!column) {
+      throw new Error(`Unknown filter: ${filterBy}`);
+    }
+
+    query = `
+      SELECT * FROM meat_selection
+      WHERE ${column} LIKE ?
+      ORDER BY status, expiry_date;
+    `;
+    params = [wildcard];
+  }
+
+  const [records] = await pool.query(query, params);
   return records;
 }
 
