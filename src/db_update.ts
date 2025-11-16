@@ -1,12 +1,30 @@
 // --- db_update.ts ---
 import { pool } from "./db.ts";
 
+
+// --- UPDATE MEAT ---
+export async function updateMeatSelectionStorage(
+  serial_no: string,
+  storage_location: string
+) {
+  await pool.query(
+    `
+    UPDATE meat_selection
+    SET storage_location = ?
+    WHERE serial_no = ?;
+  `,
+    [storage_location, serial_no]
+  );
+}
+
+
 // --- PROCESS MEAT ---
 export async function updateLivestockStatus(livestock_id: string) {
   await pool.query(
     `
     UPDATE livestock
-    SET status = 'Processed'
+    SET status = 'Processed',
+        processing_date = CURDATE()
     WHERE livestock_id = ?;
   `,
     [livestock_id]
