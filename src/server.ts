@@ -76,6 +76,10 @@ app.get("/deliver-products", (req, res) => {
   res.render("deliver-products");
 });
 
+app.get("/settings", (req, res) => {
+  res.render("settings");
+});
+
 // --- REPORT VIEW ROUTES ---
 app.get("/reports/inventory-keeping", (req, res) => {
   res.render("reports/inventory-keeping");
