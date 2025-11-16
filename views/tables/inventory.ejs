@@ -97,11 +97,15 @@
 
           const dataFragment = document.createDocumentFragment();
           data.forEach((inventory) => {
+            const formattedExpiryDate = inventory.expiry_date
+              ? format(parseISO(inventory.expiry_date), "MMM dd, yyyy")
+              : "-/-";
+
             const row = dataFragment.appendChild(document.createElement("tr"));
             row.insertCell().textContent = inventory.serial_no;
             row.insertCell().textContent = inventory.cut_type;
             row.insertCell().textContent = inventory.weight;
-            row.insertCell().textContent = inventory.expiry_date;
+            row.insertCell().textContent = formattedExpiryDate;
             row.insertCell().textContent = inventory.storage_location;
             row.insertCell().textContent = inventory.quality_control_clearance;
             row.insertCell().textContent = inventory.status;
