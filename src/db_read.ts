@@ -123,7 +123,7 @@ export async function getCutTypeByClient(restaurant_name: string) {
   return records;
 }
 
-export async function getClientWithAgreements() {
+export async function getClientsAgreements(restaurant_code: string) {
   const [records] = await pool.query(`
     SELECT 
         c.restaurant_code, c.restaurant_name,
@@ -134,8 +134,9 @@ export async function getClientWithAgreements() {
         a.pH, a.water_distribution
     FROM clients c
     JOIN agreements a ON c.restaurant_code = a.restaurant_code
-    ORDER BY a.contract_end DESC;
-  `);
+    WHERE c.restaurant_code = ?;
+    `, [restaurant_code]
+  );
   return records;
 }
 

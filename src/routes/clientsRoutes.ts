@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to fetch meat selection" });
+        res.status(500).json({ error: "Failed to fetch data" });
     }
 });
 
@@ -20,17 +20,18 @@ router.get("/cut-type-by-client/:client", async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to fetch clients by cut type" });
+        res.status(500).json({ error: "Failed to fetch data" });
     }
 });
 
-router.get("/agreements", async (req, res) => {
+router.get("/agreement/:restaurantCode", async (req, res) => {
+    const {restaurantCode} = req.params;
     try {
-        const data = await read.getClientWithAgreements();
+        const data = await read.getClientsAgreements(restaurantCode);
         res.json(data);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to fetch meat selection" });
+        res.status(500).json({ error: "Failed to fetch data" });
     }
 });
 
