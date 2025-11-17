@@ -19,10 +19,15 @@
           <section class="flex justify-between">
             <%- include("../partials/searchbar", { label: "Livestock", select_id: "searchbar", placeholder: "Search livestock..." }) %>
             <div class="grid gap-2 grid-flow-col">
+              <a href="/reports/inventory-keeping" class="btn-outline">
+              <i data-lucide="bar-chart-2"></i>
+              View Reports
+            </a>
               <a href="/suppliers" class="btn-outline">
                 <i data-lucide="users" class="h-4.5"></i>
                 View Suppliers
               </a>
+              
               <a href="/livestock/add" class="btn">
                 <i data-lucide="house-plus" class="h-4.5"></i>
                 Add Livestock
@@ -67,6 +72,7 @@
           "Supplier ID",
           "Status",
           "Processing Date",
+          "Actions",
         ];
         const tableSkeleton = document.getElementById("table-skeleton");
         const table = document.getElementById("livestock-table");
@@ -128,6 +134,19 @@
             row.insertCell().textContent = livestock.supplier_id;
             row.insertCell().textContent = livestock.status;
             row.insertCell().textContent = formattedProcessing;
+
+            const actionCell = row.insertCell();
+            if (livestock.status === "For Processing") {
+              const btn = document.createElement("button");
+              btn.className = "btn-secondary";
+              btn.textContent = "Process Livestock";
+              btn.addEventListener("click", () => {
+                handleProcessClick(livestock.livestock_id, btn);
+              });
+              actionCell.appendChild(btn);
+            } else {
+              actionCell.textContent = "-";
+            }
           });
           tableBody.appendChild(fragment);
         } catch (error) {
