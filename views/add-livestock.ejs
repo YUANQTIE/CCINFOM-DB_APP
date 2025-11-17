@@ -14,10 +14,10 @@
         </h1>
         <section class="flex flex-col gap-4 flex-1">
           <form class="form flex flex-col gap-6 flex-1">
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2 md:w-fit">
               <div class="grid gap-2">
                 <label for="breed-select">Breed</label>
-                <select class="w-full" id="breed-select">
+                <select class="w-full md:w-54" id="breed-select">
                   <option value="" disabled selected>Select a breed...</option>
                   <option value="angus">Angus</option>
                   <option value="holstein">Holstein</option>
@@ -28,17 +28,27 @@
 
               <div class="grid gap-2">
                 <label for="weight-input">Weight (kg)</label>
-                <input type="text" id="weight-input" placeholder="e.g., 500" />
+                <input
+                  class="w-full md:w-54"
+                  type="text"
+                  id="weight-input"
+                  placeholder="e.g., 500"
+                />
               </div>
 
               <div class="grid gap-2">
                 <label for="age-input">Age (months)</label>
-                <input type="text" id="age-input" placeholder="e.g., 24" />
+                <input
+                  class="w-full md:w-54"
+                  type="text"
+                  id="age-input"
+                  placeholder="e.g., 24"
+                />
               </div>
 
               <div class="grid gap-2">
                 <label for="country-select">Country of Origin</label>
-                <select class="w-full" id="country-select">
+                <select class="w-full md:w-54" id="country-select">
                   <option value="" disabled selected>
                     Select a country...
                   </option>
@@ -51,7 +61,7 @@
 
               <div class="grid gap-2">
                 <label for="medical-select">Medical Condition</label>
-                <select class="w-full" id="medical-select">
+                <select class="w-full md:w-54" id="medical-select">
                   <option value="healthy">Healthy</option>
                   <option value="under_observation">Under Observation</option>
                   <option value="medicated">Medicated</option>
@@ -61,7 +71,7 @@
 
               <div class="grid gap-2">
                 <label for="vaccination-select">Vaccination Status</label>
-                <select class="w-full" id="vaccination-select">
+                <select class="w-full md:w-54" id="vaccination-select">
                   <option value="fully_vaccinated">Fully Vaccinated</option>
                   <option value="not_vaccinated">Not Vaccinated</option>
                   <option value="pending">Pending</option>
@@ -70,7 +80,7 @@
 
               <div class="grid gap-2">
                 <label for="storage-select">Storage Location</label>
-                <select class="w-full" id="storage-select">
+                <select class="w-full md:w-54" id="storage-select">
                   <option value="" disabled selected>
                     Select a location...
                   </option>
@@ -84,7 +94,7 @@
 
               <div class="grid gap-2">
                 <label for="supplier-id">Supplier ID</label>
-                <select class="w-full" id="supplier-id">
+                <select class="w-full md:w-54" id="supplier-id">
                   <option value="" disabled selected>
                     Select a supplier...
                   </option>
@@ -99,14 +109,22 @@
                 </select>
               </div>
             </div>
-            <div class="mt-auto grid gap-4 grid-cols-2">
-              <button type="submit" class="btn w-full">
+            <div
+              class="mt-auto md:mt-0 grid gap-4 grid-cols-1 md:grid-cols-2 md:w-fit"
+            >
+              <button
+                type="submit"
+                class="btn w-full md:w-fit truncate min-w-fit"
+              >
                 <i data-lucide="plus-circle"></i>
                 Add Livestock
               </button>
-              <button type="reset" class="btn-outline w-full">
+              <button
+                type="reset"
+                class="btn-outline w-full md:w-fit min-w-fit"
+              >
                 <i data-lucide="eraser"></i>
-                Reset
+                Reset Values
               </button>
             </div>
           </form>
