@@ -8,139 +8,124 @@
   <body>
     <div class="flex flex-1">
       <%- include("./partials/sidebar") %>
-      <main class="flex-1 p-10 overflow-y-auto bg-background">
+      <main class="flex-1 p-10 overflow-y-auto bg-background flex flex-col">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Add Livestock
         </h1>
-        <section class="flex flex-col gap-4">
-          <form class="form grid gap-6">
-            <!-- Livestock ID -->
-            <div class="grid gap-2">
-              <label for="demo-form-text">Livestock ID</label>
-              <input type="text" id="demo-form-text" placeholder="hunvreus" />
-              <p class="text-muted-foreground text-sm">
-                This is your public display name.
-              </p>
+        <section class="flex flex-col gap-4 flex-1">
+          <form class="form flex flex-col gap-6 flex-1">
+            <div class="grid grid-cols-2 gap-6">
+              <div class="grid gap-2">
+                <label for="breed-select">Breed</label>
+                <select class="w-full" id="breed-select">
+                  <option value="" disabled selected>Select a breed...</option>
+                  <option value="angus">Angus</option>
+                  <option value="holstein">Holstein</option>
+                  <option value="brahman">Brahman</option>
+                  <option value="hereford">Hereford</option>
+                </select>
+              </div>
+
+              <div class="grid gap-2">
+                <label for="weight-input">Weight (kg)</label>
+                <input type="text" id="weight-input" placeholder="e.g., 500" />
+              </div>
+
+              <div class="grid gap-2">
+                <label for="age-input">Age (months)</label>
+                <input type="text" id="age-input" placeholder="e.g., 24" />
+              </div>
+
+              <div class="grid gap-2">
+                <label for="country-select">Country of Origin</label>
+                <select class="w-full" id="country-select">
+                  <option value="" disabled selected>
+                    Select a country...
+                  </option>
+                  <option value="local">Local</option>
+                  <option value="australia">Australia</option>
+                  <option value="brazil">Brazil</option>
+                  <option value="usa">USA</option>
+                </select>
+              </div>
+
+              <div class="grid gap-2">
+                <label for="medical-select">Medical Condition</label>
+                <select class="w-full" id="medical-select">
+                  <option value="healthy">Healthy</option>
+                  <option value="under_observation">Under Observation</option>
+                  <option value="medicated">Medicated</option>
+                  <option value="injured">Injured</option>
+                </select>
+              </div>
+
+              <div class="grid gap-2">
+                <label for="vaccination-select">Vaccination Status</label>
+                <select class="w-full" id="vaccination-select">
+                  <option value="fully_vaccinated">Fully Vaccinated</option>
+                  <option value="partially_vaccinated">
+                    Partially Vaccinated
+                  </option>
+                  <option value="not_vaccinated">Not Vaccinated</option>
+                </select>
+              </div>
+
+              <div class="grid gap-2">
+                <label for="date-arrived">Date Arrived</label>
+                <input type="date" id="date-arrived" />
+              </div>
+
+              <div class="grid gap-2">
+                <label for="storage-select">Storage Location</label>
+                <select class="w-full" id="storage-select">
+                  <option value="" disabled selected>
+                    Select a location...
+                  </option>
+                  <option value="pen_a1">Pen A1</option>
+                  <option value="pen_b2">Pen B2</option>
+                  <option value="pasture_1">Pasture 1</option>
+                  <option value="quarantine_pen">Quarantine Pen</option>
+                </select>
+              </div>
+
+              <div class="grid gap-2">
+                <label for="supplier-id">Supplier ID</label>
+                <select class="w-full" id="supplier-id">
+                  <option value="" disabled selected>
+                    Select a supplier...
+                  </option>
+                  <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+                  <option value="SUP-042">
+                    SUP-042 (Local Breeders Co-op)
+                  </option>
+                  <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+                  <option value="SUP-210">
+                    SUP-210 (Green Valley Supplies)
+                  </option>
+                </select>
+              </div>
+
+              <div class="grid gap-2">
+                <label for="status-select">Status</label>
+                <select class="w-full" id="status-select">
+                  <option value="active">Active</option>
+                  <option value="quarantined">Quarantined</option>
+                  <option value="sold">Sold</option>
+                  <option value="deceased">Deceased</option>
+                </select>
+              </div>
             </div>
 
-            <!-- Breed -->
-            <div class="grid gap-2">
-              <label for="demo-form-select">Breed</label>
-              <select id="demo-form-select">
-                <option value="bob@example.com">m@example.com</option>
-                <option value="alice@example.com">m@google.com</option>
-                <option value="john@example.com">m@support.com</option>
-              </select>
-              <p class="text-muted-foreground text-sm">
-                You can manage email addresses in your email settings.
-              </p>
+            <div class="mt-auto grid gap-4 grid-cols-2">
+              <button type="submit" class="btn w-full">
+                <i data-lucide="plus-circle"></i>
+                Add Livestock
+              </button>
+              <button type="reset" class="btn-outline w-full">
+                <i data-lucide="eraser"></i>
+                Reset
+              </button>
             </div>
-
-            <!-- Weight -->
-            <div class="grid gap-2">
-              <label for="demo-form-text">Weight</label>
-              <input type="text" id="demo-form-text" placeholder="hunvreus" />
-              <p class="text-muted-foreground text-sm">
-                This is your public display name.
-              </p>
-            </div>
-
-            <!-- Age -->
-            <div class="grid gap-2">
-              <label for="demo-form-text">Age</label>
-              <input type="text" id="demo-form-text" placeholder="hunvreus" />
-              <p class="text-muted-foreground text-sm">
-                This is your public display name.
-              </p>
-            </div>
-
-            <!-- Country of Origin -->
-            <div class="grid gap-2">
-              <label for="demo-form-select">Country of Origin</label>
-              <select id="demo-form-select">
-                <option value="bob@example.com">m@example.com</option>
-                <option value="alice@example.com">m@google.com</option>
-                <option value="john@example.com">m@support.com</option>
-              </select>
-              <p class="text-muted-foreground text-sm">
-                You can manage email addresses in your email settings.
-              </p>
-            </div>
-
-            <!-- Medical Condition -->
-            <div class="grid gap-2">
-              <label for="demo-form-select">Medical Condition</label>
-              <select id="demo-form-select">
-                <option value="bob@example.com">m@example.com</option>
-                <option value="alice@example.com">m@google.com</option>
-                <option value="john@example.com">m@support.com</option>
-              </select>
-              <p class="text-muted-foreground text-sm">
-                You can manage email addresses in your email settings.
-              </p>
-            </div>
-
-            <!-- Vaccination Status -->
-            <div class="grid gap-2">
-              <label for="demo-form-select">Vaccination Status</label>
-              <select id="demo-form-select">
-                <option value="bob@example.com">m@example.com</option>
-                <option value="alice@example.com">m@google.com</option>
-                <option value="john@example.com">m@support.com</option>
-              </select>
-              <p class="text-muted-foreground text-sm">
-                You can manage email addresses in your email settings.
-              </p>
-            </div>
-
-            <!-- Date Arrived -->
-            <div class="grid gap-2">
-              <label for="demo-form-date">Date Arrived</label>
-              <input type="date" id="demo-form-date" />
-              <p class="text-muted-foreground text-sm">
-                Your date of birth is used to calculate your age.
-              </p>
-            </div>
-
-            <!-- Storage Location -->
-            <div class="grid gap-2">
-              <label for="demo-form-select">Storage Location</label>
-              <select id="demo-form-select">
-                <option value="bob@example.com">m@example.com</option>
-                <option value="alice@example.com">m@google.com</option>
-                <option value="john@example.com">m@support.com</option>
-              </select>
-              <p class="text-muted-foreground text-sm">
-                You can manage email addresses in your email settings.
-              </p>
-            </div>
-
-            <!-- Supplier ID -->
-            <div class="grid gap-2">
-              <label for="demo-form-text">Supplier ID</label>
-              <input type="text" id="demo-form-text" placeholder="hunvreus" />
-              <p class="text-muted-foreground text-sm">
-                This is your public display name.
-              </p>
-            </div>
-
-            <!-- Status -->
-            <div class="grid gap-2">
-              <label for="demo-form-select">Status</label>
-              <select id="demo-form-select">
-                <option value="bob@example.com">m@example.com</option>
-                <option value="alice@example.com">m@google.com</option>
-                <option value="john@example.com">m@support.com</option>
-              </select>
-              <p class="text-muted-foreground text-sm">
-                You can manage email addresses in your email settings.
-              </p>
-            </div>
-
-            <button type="submit" class="btn">
-              <i data-lucide="log-in"></i>
-              Register
-            </button>
           </form>
         </section>
       </main>
