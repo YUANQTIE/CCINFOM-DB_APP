@@ -70,8 +70,8 @@ app.get("/livestock/register", (req, res) => {
   res.render("register-new-livestock");
 });
 
-app.get("/livestock/suppliers", (req, res) => {
-  res.render("suppliers");
+app.get("/suppliers", (req, res) => {
+  res.render("tables/suppliers");
 });
 
 app.get("/deliver-products", (req, res) => {
@@ -122,8 +122,10 @@ app.post("/api/company/assign-delivery", async (req, res) => {
     if (!delivery_no || !driver_name || !truck_number)
       return res.status(400).json({ error: "All fields are required" });
 
-    await pool.query(`UPDATE deliveries SET driver_name = ?, truck_number = ? WHERE delivery_no = ?`, 
-      [driver_name, truck_number, delivery_no]);
+    await pool.query(
+      `UPDATE deliveries SET driver_name = ?, truck_number = ? WHERE delivery_no = ?`,
+      [driver_name, truck_number, delivery_no]
+    );
 
     res.json({ message: "Delivery assigned successfully" });
   } catch (err) {
@@ -146,26 +148,35 @@ app.get("/api/company/pending-deliveries", async (req, res) => {
 });
 
 // Get order lines within the chosen pending delivery
-app.get("/api/company/pending-deliveries/:delivery_no/order-lines", async (req, res) => {
-  try {
-    const delivery_no = Number(req.params.delivery_no);
-    if (isNaN(delivery_no)) return res.status(400).json({ error: "Invalid delivery number" });
+app.get(
+  "/api/company/pending-deliveries/:delivery_no/order-lines",
+  async (req, res) => {
+    try {
+      const delivery_no = Number(req.params.delivery_no);
+      if (isNaN(delivery_no))
+        return res.status(400).json({ error: "Invalid delivery number" });
 
-    const orderLines = await read.getCompanyOrderLinesInPendingDelivery(delivery_no);
-    res.json(orderLines);
-  } catch (err) {
-    console.error("Error fetching order lines:", err);
-    res.status(500).json({ error: "Failed to fetch order lines" });
+      const orderLines = await read.getCompanyOrderLinesInPendingDelivery(
+        delivery_no
+      );
+      res.json(orderLines);
+    } catch (err) {
+      console.error("Error fetching order lines:", err);
+      res.status(500).json({ error: "Failed to fetch order lines" });
+    }
   }
-});
+);
 
 // Get the possible meat selection options for that order line
 app.get("/api/order-line/:order_line_id/meat-selection", async (req, res) => {
   try {
     const order_line_id = Number(req.params.order_line_id);
-    if (isNaN(order_line_id)) return res.status(400).json({ error: "Invalid order line ID" });
+    if (isNaN(order_line_id))
+      return res.status(400).json({ error: "Invalid order line ID" });
 
-    const selections = await read.getPossibleMeatSelectionForOrder(order_line_id);
+    const selections = await read.getPossibleMeatSelectionForOrder(
+      order_line_id
+    );
     res.json(selections);
   } catch (err) {
     console.error("Error fetching meat selection:", err);
@@ -178,7 +189,9 @@ app.post("/api/meat-selection/reserve", async (req, res) => {
   try {
     const { serial_no, order_line_id } = req.body;
     if (!serial_no || !order_line_id)
-      return res.status(400).json({ error: "serial_no and order_line_id are required" });
+      return res
+        .status(400)
+        .json({ error: "serial_no and order_line_id are required" });
 
     await upd.updateMeatSelectionReservedStatus(serial_no);
     await upd.updateOrderLineReservedStatus(order_line_id, serial_no);
@@ -195,7 +208,8 @@ app.post("/api/meat-selection/reserve", async (req, res) => {
 // Get the pending deliveries that are ready to be delivered
 app.get("/api/company/pending-deliveries-ready", async (req, res) => {
   try {
-    const deliveries = await read.getCompanyPendingDeliveriesThatCanBeDelivered();
+    const deliveries =
+      await read.getCompanyPendingDeliveriesThatCanBeDelivered();
     res.json(deliveries);
   } catch (err) {
     console.error(err);
@@ -235,7 +249,6 @@ app.put("/api/delivery/update/:deliveryNo", async (req, res) => {
 // --- API ROUTES (Reports) ---
 
 // Livestock Keeping Report
-
 
 app.get("/api/average-condition-ratio", async (req, res) => {
   try {
@@ -408,7 +421,6 @@ app.get("/api/reports/nutrition", async (req, res) => {
   }
 });
 
-
 // --- API ROUTES (Client View) ---
 
 // Get Client Info
@@ -524,61 +536,63 @@ app.post("/api/client/agreements/create", async (req, res) => {
 // Make an order
 // Creates new delivery record
 app.post("/api/client/create-delivery", async (req, res) => {
-    try {
-        const { email_address } = req.body as { email_address: string };
+  try {
+    const { email_address } = req.body as { email_address: string };
 
-        if (!email_address) {
-            return res.status(400).json({ error: "Email is required" });
-        }
-
-        // 1. Fetch restaurant_code from email
-        const [clientRows] = (await pool.query(
-            `SELECT restaurant_code FROM clients WHERE email_address = ?`,
-            [email_address]
-        )) as any[];
-
-        if (!clientRows || clientRows.length === 0) {
-            return res.status(404).json({ error: "Client not found" });
-        }
-        const restaurant_code = clientRows[0].restaurant_code;
-
-        // 2. Create a new delivery (The main goal of this endpoint)
-        const delivery_id = await create.createDelivery({ restaurant_code });
-
-        res.status(201).json({ message: "Delivery session started", delivery_id });
-    } catch (err) {
-        console.error("Error starting delivery session:", err);
-        res.status(500).json({ error: "Failed to start delivery session" });
+    if (!email_address) {
+      return res.status(400).json({ error: "Email is required" });
     }
+
+    // 1. Fetch restaurant_code from email
+    const [clientRows] = (await pool.query(
+      `SELECT restaurant_code FROM clients WHERE email_address = ?`,
+      [email_address]
+    )) as any[];
+
+    if (!clientRows || clientRows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+    const restaurant_code = clientRows[0].restaurant_code;
+
+    // 2. Create a new delivery (The main goal of this endpoint)
+    const delivery_id = await create.createDelivery({ restaurant_code });
+
+    res.status(201).json({ message: "Delivery session started", delivery_id });
+  } catch (err) {
+    console.error("Error starting delivery session:", err);
+    res.status(500).json({ error: "Failed to start delivery session" });
+  }
 });
 
 // Adds order lines to that delivery record
 app.post("/api/client/add-order-lines", async (req, res) => {
-    try {
-        const { delivery_id, agreements } = req.body as {
-            delivery_id: number;
-            agreements: number[];
-        };
+  try {
+    const { delivery_id, agreements } = req.body as {
+      delivery_id: number;
+      agreements: number[];
+    };
 
-        if (!delivery_id || !agreements || agreements.length === 0) {
-            return res
-                .status(400)
-                .json({ error: "Delivery ID and agreements are required" });
-        }
-
-        // 1. Create order lines for each selected agreement
-        for (const agreement_no of agreements) {
-            await create.createOrderLine({
-                order_no: delivery_id, // Use the existing delivery_id
-                agreement_no,
-            });
-        }
-
-        res.status(201).json({ message: "Order lines added successfully to delivery " + delivery_id });
-    } catch (err) {
-        console.error("Error adding order lines:", err);
-        res.status(500).json({ error: "Failed to add order lines" });
+    if (!delivery_id || !agreements || agreements.length === 0) {
+      return res
+        .status(400)
+        .json({ error: "Delivery ID and agreements are required" });
     }
+
+    // 1. Create order lines for each selected agreement
+    for (const agreement_no of agreements) {
+      await create.createOrderLine({
+        order_no: delivery_id, // Use the existing delivery_id
+        agreement_no,
+      });
+    }
+
+    res.status(201).json({
+      message: "Order lines added successfully to delivery " + delivery_id,
+    });
+  } catch (err) {
+    console.error("Error adding order lines:", err);
+    res.status(500).json({ error: "Failed to add order lines" });
+  }
 });
 
 // Delete order
@@ -610,7 +624,6 @@ app.delete("/api/order-line/:id", async (req, res) => {
     }
 
     res.json({ success: true });
-
   } catch (err) {
     console.error("Error cancelling order line:", err);
     res.status(500).json({ error: "Server error" });

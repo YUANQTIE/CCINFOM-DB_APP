@@ -63,16 +63,9 @@
                 <label for="vaccination-select">Vaccination Status</label>
                 <select class="w-full" id="vaccination-select">
                   <option value="fully_vaccinated">Fully Vaccinated</option>
-                  <option value="partially_vaccinated">
-                    Partially Vaccinated
-                  </option>
                   <option value="not_vaccinated">Not Vaccinated</option>
+                  <option value="pending">Pending</option>
                 </select>
-              </div>
-
-              <div class="grid gap-2">
-                <label for="date-arrived">Date Arrived</label>
-                <input type="date" id="date-arrived" />
               </div>
 
               <div class="grid gap-2">
@@ -81,10 +74,11 @@
                   <option value="" disabled selected>
                     Select a location...
                   </option>
-                  <option value="pen_a1">Pen A1</option>
-                  <option value="pen_b2">Pen B2</option>
-                  <option value="pasture_1">Pasture 1</option>
-                  <option value="quarantine_pen">Quarantine Pen</option>
+                  <option value="farm1">Farm 1</option>
+                  <option value="farm2">Farm 2</option>
+                  <option value="farm3">Farm 3</option>
+                  <option value="farm4">Farm 4</option>
+                  <option value="farm5">Farm 5</option>
                 </select>
               </div>
 
@@ -104,18 +98,7 @@
                   </option>
                 </select>
               </div>
-
-              <div class="grid gap-2">
-                <label for="status-select">Status</label>
-                <select class="w-full" id="status-select">
-                  <option value="active">Active</option>
-                  <option value="quarantined">Quarantined</option>
-                  <option value="sold">Sold</option>
-                  <option value="deceased">Deceased</option>
-                </select>
-              </div>
             </div>
-
             <div class="mt-auto grid gap-4 grid-cols-2">
               <button type="submit" class="btn w-full">
                 <i data-lucide="plus-circle"></i>

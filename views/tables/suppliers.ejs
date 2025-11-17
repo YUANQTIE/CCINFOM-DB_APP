@@ -9,7 +9,7 @@
   </head>
   <body>
     <div class="flex flex-1">
-      <%- include("./partials/sidebar") %>
+      <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <div class="flex gap-4">
           <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
@@ -19,7 +19,7 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("./partials/searchbar", { label: "Suppliers", select_id: "searchbar", placeholder: "Search suppliers..." }) %>
+            <%- include("../partials/searchbar", { label: "Suppliers", select_id: "searchbar", placeholder: "Search suppliers..." }) %>
             <div class="grid gap-2 grid-flow-col">
               <a href="/livestock" class="btn-outline">
                 <i data-lucide="rabbit" class="h-4.5"></i>
@@ -32,11 +32,11 @@
             </div>
           </section>
           <div class="overflow-x-auto">
-            <%- include("./partials/table-skeleton", { id: "table-skeleton"}) %>
-            <%- include("./partials/table", { id: "supplier-table"}) %>
+            <%- include("../partials/table-skeleton", { id: "table-skeleton"})
+            %> <%- include("../partials/table", { id: "supplier-table"}) %>
           </div>
           <!-- prettier-ignore -->
-          <%- include("./partials/table-data-zero", { id: "table-data-zero", description: "Supplier data not available..."}) %>
+          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Supplier data not available..."}) %>
         </section>
       </main>
     </div>
