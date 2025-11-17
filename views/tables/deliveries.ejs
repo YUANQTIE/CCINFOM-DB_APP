@@ -18,7 +18,7 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Deliveries", select_id: "searchbar", placeholder: "Search deliveries..." }) %>
+            <%- include("../partials/searchbar", { label: "Deliveries", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search deliveries...", route_api: "deliveries" }) %>
           </section>
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton"})
@@ -29,17 +29,11 @@
         </section>
       </main>
     </div>
+
+    <script src="/scripts/utils/searchbar_utils.js"></script>
+
     <script>
       const { format, parseISO } = dateFns;
-      const initSearchBar = (columns) => {
-        const searchBar = document.getElementById("searchbar");
-        let html = "";
-        html += "<option>All</option>";
-        for (let column of columns) {
-          html += `<option>${column}</option>`;
-        }
-        searchBar.innerHTML = html;
-      };
 
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = [
@@ -78,7 +72,12 @@
         tableHeader.appendChild(columnFragment);
 
         // Init Search Bar
-        initSearchBar(tableColumns);
+        initSearchBar(
+          "searchbarSelect",
+          "searchbarInput",
+          "deliveries-table",
+          tableColumns
+        );
 
         // Fetch from data
         try {

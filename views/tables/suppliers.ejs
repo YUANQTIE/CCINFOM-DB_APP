@@ -19,7 +19,7 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Suppliers", select_id: "searchbar", placeholder: "Search suppliers..." }) %>
+            <%- include("../partials/searchbar", { label: "Suppliers", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search suppliers...", route_api: "suppliers" }) %>
             <div class="grid gap-2 grid-flow-col">
               <a href="/livestock" class="btn-outline">
                 <i data-lucide="rabbit" class="h-4.5"></i>
@@ -33,7 +33,7 @@
           </section>
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton"})
-            %> <%- include("../partials/table", { id: "supplier-table"}) %>
+            %> <%- include("../partials/table", { id: "suppliers-table"}) %>
           </div>
           <!-- prettier-ignore -->
           <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Supplier data not available..."}) %>
@@ -41,21 +41,13 @@
       </main>
     </div>
 
-    <script>
-      const initSearchBar = (columns) => {
-        const searchBar = document.getElementById("searchbar");
-        let html = "";
-        html += "<option>All</option>";
-        for (let column of columns) {
-          html += `<option>${column}</option>`;
-        }
-        searchBar.innerHTML = html;
-      };
+    <script src="/scripts/utils/searchbar_utils.js"></script>
 
+    <script>
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = ["Supplier ID", "Company Name", "Contact No."];
         const tableSkeleton = document.getElementById("table-skeleton");
-        const table = document.getElementById("supplier-table");
+        const table = document.getElementById("suppliers-table");
         const tableDataZeroLabel = document.getElementById("table-data-zero");
         const tableBody = table.tBodies[0];
         const tableHeader = table.tHead;
@@ -78,7 +70,12 @@
         tableHeader.appendChild(columnFragment);
 
         // Init Search Bar
-        initSearchBar(tableColumns);
+        initSearchBar(
+          "searchbarSelect",
+          "searchbarInput",
+          "suppliers-table",
+          tableColumns
+        );
 
         // Fetch from data
         try {

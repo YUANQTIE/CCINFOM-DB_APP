@@ -18,11 +18,12 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Clients", select_id: "searchbar", placeholder: "Search clients..." }) %>
+            <%- include("../partials/searchbar", { label: "Clients", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search clients...", route_api: "clients" }) %>
           </section>
           <div class="overflow-x-auto">
-            <%- include("../partials/table-skeleton", { id: "table-skeleton"})
-            %> <%- include("../partials/table", { id: "clients-table"}) %>
+            <!-- prettier-ignore -->
+            <%- include("../partials/table-skeleton", { id: "table-skeleton"})%>
+            <%- include("../partials/table", { id: "clients-table"}) %>
           </div>
           <!-- prettier-ignore -->
           <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Clients data not available..."}) %>
@@ -30,17 +31,9 @@
       </main>
     </div>
 
+    <script src="/scripts/utils/searchbar_utils.js"></script>
     <script>
       const { format, parseISO } = dateFns;
-      const initSearchBar = (columns) => {
-        const searchBar = document.getElementById("searchbar");
-        let html = "";
-        html += "<option>All</option>";
-        for (let column of columns) {
-          html += `<option>${column}</option>`;
-        }
-        searchBar.innerHTML = html;
-      };
 
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = [
@@ -77,7 +70,12 @@
         tableHeader.appendChild(columnFragment);
 
         // Init Search Bar
-        initSearchBar(tableColumns);
+        initSearchBar(
+          "searchbarSelect",
+          "searchbarInput",
+          "clients-table",
+          tableColumns
+        );
 
         // Fetch from data
         try {

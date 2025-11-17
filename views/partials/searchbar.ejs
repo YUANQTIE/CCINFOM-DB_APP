@@ -1,6 +1,6 @@
 <div class="flex gap-2">
-  <select class="select w-[180px]">
-    <optgroup id="<%= select_id || "" %>" label="<%= label %>"></optgroup>
+  <select id="<%= select_id || '' %>" class="select w-[180px]">
+    <optgroup label="<%= label || '' %>"></optgroup>
   </select>
   <div class="relative">
     <div
@@ -11,9 +11,47 @@
 
     <input
       class="input pl-10 w-full"
-      id="search"
+      id="<%= input_id %>"
       type="text"
       placeholder="<%= placeholder ||  'Search...' %>"
     />
   </div>
 </div>
+
+<script>
+  const route_api = "<%= route_api %>";
+  const searchbar = document.getElementById("search");
+  const delay = 1000;
+
+  let timeout;
+  function debounceSearch() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      search();
+    }, delay);
+  }
+
+  async function search() {
+    const key = searchbar.value;
+    const filterBy = "All";
+
+    try {
+      const url = new URL(`/api/${route_api}/filter`, window.location.origin);
+      url.searchParams.append("filterBy", filterBy);
+      url.searchParams.append("key", key);
+
+      console.log(`filterBy: ${filterBy}, key: ${key}`);
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const results = await response.json();
+      console.log(results);
+      return results;
+    } catch (error) {
+      console.error(`Error: ${error}`);
+    }
+  }
+</script>
