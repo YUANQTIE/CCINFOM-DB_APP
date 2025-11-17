@@ -66,8 +66,8 @@ app.get("/process-meat", (req, res) => {
   res.render("process-meat");
 });
 
-app.get("/livestock/register", (req, res) => {
-  res.render("register-new-livestock");
+app.get("/livestock/add", (req, res) => {
+  res.render("add-livestock");
 });
 
 app.get("/suppliers", (req, res) => {
