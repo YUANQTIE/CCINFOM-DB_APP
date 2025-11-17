@@ -62,8 +62,8 @@ app.get("/clients", (req, res) => {
   res.render("tables/clients");
 });
 
-app.get("/process-meat", (req, res) => {
-  res.render("process-meat");
+app.get("/process-livestock", (req, res) => {
+  res.render("process-livestock");
 });
 
 app.get("/livestock/add", (req, res) => {

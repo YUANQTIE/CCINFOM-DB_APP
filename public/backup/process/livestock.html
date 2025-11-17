@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Livestock Processing</title>
+</head>
+<body>
+    <h1>Livestock For Processing</h1>
+
+    <table border="1" id="livestock-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Breed</th>
+                <th>Weight</th>
+                <th>Age</th>
+                <th>Origin</th>
+                <th>Medical Condition</th>
+                <th>Vaccination</th>
+                <th>Date Arrived</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Process</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function loadLivestock() {
+            const res = await fetch("http://localhost:3000/api/livestock/unprocessed");
+            const data = await res.json();
+
+            const tbody = document.querySelector("#livestock-table tbody");
+            tbody.innerHTML = "";
+
+            data.forEach(item => {
+                const tr = document.createElement("tr");
+
+                tr.innerHTML = `
+                    <td>${item.livestock_id}</td>
+                    <td>${item.breed}</td>
+                    <td>${item.weight}</td>
+                    <td>${item.age}</td>
+                    <td>${item.country_of_origin}</td>
+                    <td>${item.medical_condition}</td>
+                    <td>${item.vaccination_status}</td>
+                    <td>${item.date_arrived}</td>
+                    <td>${item.storage_location}</td>
+                    <td>${item.status}</td>
+                    <td><button onclick="processLivestock('${item.livestock_id}')">Process</button></td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function processLivestock(id) {
+            const res = await fetch(`http://localhost:3000/api/livestock/process/${id}`, {
+                method: "POST"
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                alert("Livestock processed!");
+                loadLivestock();
+            } else {
+                alert("Error processing livestock.");
+            }
+        }
+
+        loadLivestock();
+
+    </script>
+</body>
+</html>
