@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Inventory Keeping Report</title>
 </head>
+
 <body>
   <h1>Inventory Keeping Report</h1>
 
@@ -15,7 +17,7 @@
       <label>Meat Cut: <input type="text" id="total-meat-cut-input" placeholder="e.g. Arm Chuck Roast" required></label>
       <label>Start Date: <input type="date" id="total-meat-start" required></label>
       <label>End Date: <input type="date" id="total-meat-end" required></label>
-      <button type="submit">Load Total Meat Cuts Report</button>
+      <button type="submit">Load Produced Meat</button>
     </form>
 
     <ul id="total-meat-cut"></ul>
@@ -28,7 +30,8 @@
     <h2>Average Nutritional Quantities</h2>
 
     <form id="average-nutritional-quantities-form">
-      <label>Meat Cut: <input type="text" id="avg-nutrition-cut-input" placeholder="e.g. Arm Chuck Roast" required></label>
+      <label>Meat Cut: <input type="text" id="avg-nutrition-cut-input" placeholder="e.g. Arm Chuck Roast"
+          required></label>
       <label>Start Date: <input type="date" id="avg-nutrition-start" required></label>
       <label>End Date: <input type="date" id="avg-nutrition-end" required></label>
       <button type="submit">Load Average Nutritional Quantities Report</button>
@@ -46,7 +49,11 @@
       const start = document.getElementById("total-meat-start").value;
       const end = document.getElementById("total-meat-end").value;
 
-      const res = await fetch(`http://localhost:3000/api/total-produced-meat?cut=${encodeURIComponent(meatCut)}&start=${start}&end=${end}`);
+      // Correct endpoint + correct query params
+      const url = `http://localhost:3000/api/meat-produced?date_start=${start}&date_end=${end}&meat_cut=${encodeURIComponent(meatCut)}`;
+      console.log("Calling:", url); // Debug
+
+      const res = await fetch(url);
       const data = await res.json();
 
       const list = document.getElementById("total-meat-cut");
@@ -58,18 +65,19 @@
       }
 
       if (!data || data.length === 0) {
-        list.innerHTML = "<li>No records found for the given inputs.</li>";
+        list.innerHTML = "<li>No records found.</li>";
         return;
       }
 
       data.forEach(item => {
         const li = document.createElement("li");
-        li.textContent = `Total produced meat (${meatCut}): ${item.total_produced_meat || 0}`;
+        li.textContent = `Serial No: ${item.serial_no} — Processing Date: ${item.processing_date}`;
         list.appendChild(li);
       });
     });
 
-    // --- SECTION 2: Average Nutritional Quantities ---
+
+    // --- SECTION 2 (unchanged) ---
     document.getElementById("average-nutritional-quantities-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -109,6 +117,8 @@
         list.appendChild(li);
       });
     });
+
   </script>
 </body>
+
 </html>

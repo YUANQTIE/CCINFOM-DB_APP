@@ -286,6 +286,30 @@ app.get("/api/total-breed-supplied", async (req, res) => {
 });
 
 // Inventory Upkeep Report
+
+app.get("/api/meat-produced", async (req, res) => {
+  try {
+    const { date_start, date_end, meat_cut } = req.query;
+
+    if (!date_start || !date_end || !meat_cut) {
+      return res.status(400).json({
+        error: "date_start, date_end, and meat_cut are required",
+      });
+    }
+
+    const data = await read.getProducedMeatSelections(
+      date_start as string,
+      date_end as string,
+      meat_cut as string
+    );
+
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching produced meat selections:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.get("/api/total-produced-meat", async (req, res) => {
   try {
     const { cut, start, end } = req.query as any;

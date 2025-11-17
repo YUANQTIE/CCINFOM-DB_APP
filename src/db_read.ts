@@ -202,13 +202,13 @@ export async function getMeatSelectionFiltered(filterBy: string, key: string) {
 }
 
 export async function getMeatNutrition(serial_no: string) {
-    const [records] = await pool.query(`
+  const [records] = await pool.query(`
         SELECT * FROM meat_selection m
         LEFT JOIN nutrition n ON m.serial_no = n.item_serial_no
         WHERE m.serial_no = ?;
         `, [serial_no]
-    );
-    return records;
+  );
+  return records;
 }
 
 export async function getTotalStatusMeatCutInventory(status: string) {
@@ -536,6 +536,24 @@ export async function getTotalBreedSuppliedBySupplier(
 }
 
 // --- REPORT: INVENTORY UPKEEP ---
+
+export async function getProducedMeatSelections(
+  date_start: string,
+  date_end: string,
+  meat_cut: string
+) {
+  const [records] = await pool.query(
+    `
+    SELECT ms.serial_no, l.processing_date
+    FROM meat_selection as ms
+    JOIN livestock as l ON l.livestock_id = ms.origin_livestock_id
+    WHERE l.processing_date BETWEEN ? AND ? AND ms.cut_type = ?;
+  `,
+    [date_start, date_end, meat_cut]
+  );
+  return records;
+}
+
 export async function getTotalProducedMeatSelection(
   date_start: string,
   date_end: string,
