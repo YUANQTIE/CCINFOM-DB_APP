@@ -9,7 +9,7 @@
 <body>
   <h1>Inventory Keeping Report</h1>
 
-  <!-- SECTION 1: Total Produced Meat Selection -->
+  <!-- SECTION 1: Total Produced Meat + List -->
   <section>
     <h2>Total Produced Meat Selection</h2>
 
@@ -17,10 +17,11 @@
       <label>Meat Cut: <input type="text" id="total-meat-cut-input" placeholder="e.g. Arm Chuck Roast" required></label>
       <label>Start Date: <input type="date" id="total-meat-start" required></label>
       <label>End Date: <input type="date" id="total-meat-end" required></label>
-      <button type="submit">Load Produced Meat</button>
+      <button type="submit">Load Produced Meat Report</button>
     </form>
 
-    <ul id="total-meat-cut"></ul>
+    <ul id="total-meat-cut"></ul> <!-- count here -->
+    <ul id="produced-meat-list"></ul> <!-- list of items -->
   </section>
 
   <hr>
@@ -41,7 +42,10 @@
   </section>
 
   <script>
-    // --- SECTION 1: Total Produced Meat Selection ---
+
+    /* ------------------------------------------------------------------
+       SECTION 1 — SHOW COUNT + LIST (2 API CALLS)
+    ------------------------------------------------------------------ */
     document.getElementById("total-meat-cut-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -49,35 +53,54 @@
       const start = document.getElementById("total-meat-start").value;
       const end = document.getElementById("total-meat-end").value;
 
-      // Correct endpoint + correct query params
-      const url = `http://localhost:3000/api/meat-produced?date_start=${start}&date_end=${end}&meat_cut=${encodeURIComponent(meatCut)}`;
-      console.log("Calling:", url); // Debug
+      const countList = document.getElementById("total-meat-cut");
+      const detailsList = document.getElementById("produced-meat-list");
 
-      const res = await fetch(url);
-      const data = await res.json();
+      countList.innerHTML = "";
+      detailsList.innerHTML = "";
 
-      const list = document.getElementById("total-meat-cut");
-      list.innerHTML = "";
+      /* --- 1. Fetch total count --- */
+      const totalURL = `http://localhost:3000/api/total-produced-meat?cut=${encodeURIComponent(meatCut)}&start=${start}&end=${end}`;
+      const totalRes = await fetch(totalURL);
+      const totalData = await totalRes.json();
 
-      if (data.error) {
-        list.innerHTML = `<li>Error: ${data.error}</li>`;
+      if (totalData.error) {
+        countList.innerHTML = `<li>Error: ${totalData.error}</li>`;
         return;
       }
 
-      if (!data || data.length === 0) {
-        list.innerHTML = "<li>No records found.</li>";
+      const total = totalData[0]?.total_produced_meat ?? 0;
+
+      const li1 = document.createElement("li");
+      li1.textContent = `Total produced "${meatCut}" from ${start} to ${end}: ${total}`;
+      countList.appendChild(li1);
+
+      /* --- 2. Fetch list of produced items --- */
+      const listURL = `http://localhost:3000/api/meat-produced?date_start=${start}&date_end=${end}&meat_cut=${encodeURIComponent(meatCut)}`;
+      const listRes = await fetch(listURL);
+      const listData = await listRes.json();
+
+      if (listData.error) {
+        detailsList.innerHTML = `<li>Error: ${listData.error}</li>`;
         return;
       }
 
-      data.forEach(item => {
+      if (!listData || listData.length === 0) {
+        detailsList.innerHTML = "<li>No meat selections found.</li>";
+        return;
+      }
+
+      listData.forEach(item => {
         const li = document.createElement("li");
         li.textContent = `Serial No: ${item.serial_no} — Processing Date: ${item.processing_date}`;
-        list.appendChild(li);
+        detailsList.appendChild(li);
       });
     });
 
 
-    // --- SECTION 2 (unchanged) ---
+    /* ------------------------------------------------------------------
+       SECTION 2 — AVERAGE NUTRITION VALUES (no change)
+    ------------------------------------------------------------------ */
     document.getElementById("average-nutritional-quantities-form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
@@ -119,6 +142,7 @@
     });
 
   </script>
+
 </body>
 
 </html>
