@@ -17,7 +17,7 @@
         <section class="flex flex-col gap-4">
           <!-- prettier-ignore -->
           <section class="flex justify-between">
-            <%- include("../partials/searchbar", { label: "Livestock", select_id: "searchbar", placeholder: "Search livestock..." }) %>
+            <%- include("../partials/searchbar", { label: "Livestock", select_id: "searchbar", placeholder: "Search livestock...", api_page_name: "livestock" }) %>
             <div class="grid gap-2 grid-flow-col">
               <a href="/reports/inventory-keeping" class="btn-outline">
               <i data-lucide="bar-chart-2"></i>
@@ -154,6 +154,13 @@
           table.classList.replace("table", "hidden");
           tableDataZeroLabel.classList.replace("hidden", "flex");
         }
+
+        // search
+        const searchbar = document.getElementById("search");
+        searchbar.addEventListener("input", async () => {
+          const results = await debounceSearch();
+          console.log(results);
+        });
       });
     </script>
   </body>

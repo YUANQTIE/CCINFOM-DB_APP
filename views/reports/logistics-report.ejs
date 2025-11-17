@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Carnivault - Logistics Report</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
+      defer
+    ></script>
   </head>
   <body>
     <div class="flex flex-1">
@@ -12,6 +16,179 @@
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Logistics Report
         </h1>
+
+        <!-- Tabs -->
+        <!-- TODO: The report will display list of meat cuts -->
+        <div class="tabs w-full" id="demo-tabs-with-panels">
+          <nav role="tablist" aria-orientation="horizontal" class="w-full">
+            <button
+              type="button"
+              role="tab"
+              id="demo-tabs-with-panels-tab-1"
+              aria-controls="demo-tabs-with-panels-panel-1"
+              aria-selected="true"
+              tabindex="0"
+            >
+              Total Deliveries By Truck
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              id="demo-tabs-with-panels-tab-2"
+              aria-controls="demo-tabs-with-panels-panel-2"
+              aria-selected="false"
+              tabindex="0"
+            >
+              Distance-to-Duration Ratio
+            </button>
+          </nav>
+
+          <div
+            role="tabpanel"
+            id="demo-tabs-with-panels-panel-1"
+            aria-labelledby="demo-tabs-with-panels-tab-1"
+            tabindex="-1"
+            aria-selected="true"
+          >
+            <section class="flex gap-10 mt-4 w-full">
+              <form class="form grid gap-6">
+                <div class="grid gap-2">
+                  <label for="meat-cut-input">Truck ID</label>
+                  <select class="w-full" id="meat-cut-select">
+                    <option value="" disabled selected>
+                      Select meat cut...
+                    </option>
+                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+                    <option value="SUP-042">
+                      SUP-042 (Local Breeders Co-op)
+                    </option>
+                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+                    <option value="SUP-210">
+                      SUP-210 (Green Valley Supplies)
+                    </option>
+                  </select>
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="start-date-input">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input" />
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="end-date-input">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input" />
+                </div>
+
+                <div class="grid gap-2.5">
+                  <button type="submit" class="btn w-full">
+                    <i data-lucide="bar-chart-2"></i>
+                    Load Total Deliveries
+                  </button>
+                  <a
+                    href="/deliveries"
+                    type="submit"
+                    class="btn-outline w-full"
+                  >
+                    <i data-lucide="shopping-basket"></i>
+                    View Deliveries
+                  </a>
+                </div>
+              </form>
+              <table class="table">
+                <thead>
+                  <tr class="font-bold">
+                    <td>Column #1</td>
+                    <td>Column #2</td>
+                    <td>Column #3</td>
+                    <td>Column #4</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                  </tr>
+                  <tr>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                  </tr>
+                  <tr>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                  </tr>
+                  <tr>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                    <td>Test</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+
+          <div
+            role="tabpanel"
+            id="demo-tabs-with-panels-panel-2"
+            aria-labelledby="demo-tabs-with-panels-tab-2"
+            tabindex="-1"
+            aria-selected="false"
+            hidden
+          >
+            <section class="flex gap-10 mt-4">
+              <form class="form grid gap-6">
+                <div class="grid gap-2">
+                  <label for="meat-cut-input">Truck ID</label>
+                  <select class="w-full" id="meat-cut-select">
+                    <option value="" disabled selected>
+                      Select meat cut...
+                    </option>
+                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+                    <option value="SUP-042">
+                      SUP-042 (Local Breeders Co-op)
+                    </option>
+                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+                    <option value="SUP-210">
+                      SUP-210 (Green Valley Supplies)
+                    </option>
+                  </select>
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="start-date-input">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input" />
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="end-date-input">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input" />
+                </div>
+
+                <div class="grid gap-2.5">
+                  <button type="submit" class="btn w-full">
+                    <i data-lucide="bar-chart-2"></i>
+                    Load Distance-to-Duration Ratio
+                  </button>
+                  <a
+                    href="/deliveries"
+                    type="submit"
+                    class="btn-outline w-full"
+                  >
+                    <i data-lucide="shopping-basket"></i>
+                    View Deliveries
+                  </a>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
       </main>
     </div>
   </body>

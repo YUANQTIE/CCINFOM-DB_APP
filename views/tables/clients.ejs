@@ -18,7 +18,7 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Clients", select_id: "searchbar", placeholder: "Search clients..." }) %>
+            <%- include("../partials/searchbar", { label: "Clients", select_id: "searchbar", placeholder: "Search clients...", api_page_name: "clients" }) %>
           </section>
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton"})

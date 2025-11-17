@@ -77,16 +77,16 @@ export async function getLivestockFiltered(filterBy: string, key: string) {
 
   const filterMap: Record<string, string> = {
     "Livestock ID": "livestock_id",
-    "Breed": "breed",
-    "Weight": "weight",
-    "Age": "age",
+    Breed: "breed",
+    Weight: "weight",
+    Age: "age",
     "Country of Origin": "country_of_origin",
     "Medical Condition": "medical_condition",
     "Vaccination Status": "vaccination_status",
     "Date Arrived": "date_arrived",
     "Storage Location": "storage_location",
     "Supplier ID": "supplier_id",
-    "Status": "status",
+    Status: "status",
     "Processing Date": "processing_date",
   };
 
@@ -157,11 +157,11 @@ export async function getMeatSelectionFiltered(filterBy: string, key: string) {
   const filterMap: Record<string, string> = {
     "Serial No.": "serial_no",
     "Cut Type": "cut_type",
-    "Weight": "weight",
+    Weight: "weight",
     "Expiry Date": "expiry_date",
     "Storage Location": "storage_location",
     "Quality Control Clearance": "quality_control_clearance",
-    "Status": "status",
+    Status: "status",
     "Origin Livestock ID": "origin_livestock_id",
   };
 
@@ -202,11 +202,13 @@ export async function getMeatSelectionFiltered(filterBy: string, key: string) {
 }
 
 export async function getMeatNutrition(serial_no: string) {
-  const [records] = await pool.query(`
+  const [records] = await pool.query(
+    `
         SELECT * FROM meat_selection m
         LEFT JOIN nutrition n ON m.serial_no = n.item_serial_no
         WHERE m.serial_no = ?;
-        `, [serial_no]
+        `,
+    [serial_no]
   );
   return records;
 }
@@ -322,7 +324,8 @@ export async function getCutTypeByClient(restaurant_name: string) {
 }
 
 export async function getClientsAgreements(restaurant_code: string) {
-  const [records] = await pool.query(`
+  const [records] = await pool.query(
+    `
     SELECT 
         c.restaurant_code, c.restaurant_name,
         a.contract_end, a.contract_start, a.client_pricing,
@@ -333,7 +336,8 @@ export async function getClientsAgreements(restaurant_code: string) {
     FROM clients c
     JOIN agreements a ON c.restaurant_code = a.restaurant_code
     WHERE c.restaurant_code = ?;
-    `, [restaurant_code]
+    `,
+    [restaurant_code]
   );
   return records;
 }
@@ -358,9 +362,9 @@ export async function getDeliveriesFiltered(filterBy: string, key: string) {
     "Order Date": "order_date",
     "Distance Traveled": "distance_traveled",
     "Delivery Duration": "delivery_duration",
-    "Weight": "weight",
+    Weight: "weight",
     "Restaurant Code": "restaurant_code",
-    "Status": "status",
+    Status: "status",
   };
 
   let query = "";
@@ -443,7 +447,9 @@ export async function getCompanyPendingDeliveries() {
   return records;
 }
 
-export async function getCompanyOrderLinesInPendingDelivery(delivery_no: number) {
+export async function getCompanyOrderLinesInPendingDelivery(
+  delivery_no: number
+) {
   const [records] = await pool.query<any[]>(
     `SELECT ol.id, ol.item_serial_no, c.restaurant_name, a.cut_type_of_choice, a.weight, 
             a.tenderness, a.color, a.fat_content, a.protein_content, a.connective_tissue_content, 
@@ -491,7 +497,6 @@ export async function getCompanyPendingDeliveriesThatCanBeDelivered() {
 
   return records;
 }
-
 
 // --- REPORT: LIVESTOCK KEEPING ---
 export async function getAverageConditionRatio(
@@ -723,7 +728,8 @@ export async function getNutritionFulfillmentPercentages(
   date_end: string
 ) {
   // Force TypeScript to treat rows as any[]
-  const [rows] = await pool.query<any[]>(`
+  const [rows] = await pool.query<any[]>(
+    `
     SELECT 
       (SUM(CASE WHEN n.tenderness = a.tenderness THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS tenderness_pct,
       (SUM(CASE WHEN n.color = a.color THEN 1 ELSE 0 END) / COUNT(*)) * 100 AS color_pct,
@@ -741,19 +747,23 @@ export async function getNutritionFulfillmentPercentages(
     JOIN nutrition n ON n.item_serial_no = ms.serial_no
     WHERE d.deliver_date BETWEEN ? AND ?
       AND d.status = 'Delivered';
-  `, [date_start, date_end]);
+  `,
+    [date_start, date_end]
+  );
 
-  return rows[0] || {
-    tenderness_pct: 0,
-    color_pct: 0,
-    fat_pct: 0,
-    protein_pct: 0,
-    connective_pct: 0,
-    water_holding_pct: 0,
-    pH_pct: 0,
-    water_distribution_pct: 0,
-    total_delivered: 0
-  };
+  return (
+    rows[0] || {
+      tenderness_pct: 0,
+      color_pct: 0,
+      fat_pct: 0,
+      protein_pct: 0,
+      connective_pct: 0,
+      water_holding_pct: 0,
+      pH_pct: 0,
+      water_distribution_pct: 0,
+      total_delivered: 0,
+    }
+  );
 }
 
 // --- CLIENT VIEW: INFO & AGREEMENTS ---
