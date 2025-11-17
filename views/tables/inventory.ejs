@@ -18,7 +18,7 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Inventory", select_id: "searchbar", placeholder: "Search inventory...", api_page_name: "meat-selection" }) %>
+            <%- include("../partials/searchbar", { label: "Inventory", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search inventory...", route_api: "meat-selection" }) %>
             <a href="/reports/inventory-keeping" class="btn-outline">
               <i data-lucide="bar-chart-2"></i>
               View Reports
@@ -33,18 +33,9 @@
         </section>
       </main>
     </div>
-
+    <script src="/scripts/utils/searchbar_utils.js"></script>
     <script>
       const { format, parseISO } = dateFns;
-      const initSearchBar = (columns) => {
-        const searchBar = document.getElementById("searchbar");
-        let html = "";
-        html += "<option>All</option>";
-        for (let column of columns) {
-          html += `<option>${column}</option>`;
-        }
-        searchBar.innerHTML = html;
-      };
 
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = [
@@ -81,7 +72,12 @@
         tableHeader.appendChild(columnFragment);
 
         // Init Search Bar
-        initSearchBar(tableColumns);
+        initSearchBar(
+          "searchbarSelect",
+          "searchbarInput",
+          "inventory-table",
+          tableColumns
+        );
 
         // Fetch from data
         try {

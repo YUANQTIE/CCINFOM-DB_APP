@@ -1,6 +1,6 @@
 <div class="flex gap-2">
-  <select class="select w-[180px]">
-    <optgroup id="<%= select_id || '' %>" label="<%= label || '' %>"></optgroup>
+  <select id="<%= select_id || '' %>" class="select w-[180px]">
+    <optgroup label="<%= label || '' %>"></optgroup>
   </select>
   <div class="relative">
     <div
@@ -11,7 +11,7 @@
 
     <input
       class="input pl-10 w-full"
-      id="search"
+      id="<%= input_id %>"
       type="text"
       placeholder="<%= placeholder ||  'Search...' %>"
     />
@@ -19,7 +19,7 @@
 </div>
 
 <script>
-  const api_page_name = "<%= api_page_name %>";
+  const route_api = "<%= route_api %>";
   const searchbar = document.getElementById("search");
   const delay = 1000;
 
@@ -36,10 +36,7 @@
     const filterBy = "All";
 
     try {
-      const url = new URL(
-        `/api/${api_page_name}/filter`,
-        window.location.origin
-      );
+      const url = new URL(`/api/${route_api}/filter`, window.location.origin);
       url.searchParams.append("filterBy", filterBy);
       url.searchParams.append("key", key);
 
