@@ -1,4 +1,4 @@
-<aside class="bg-gray-100 p-4 w-60">
+<aside class="bg-gray-100 p-4 w-72 min-w-fit">
   <%- include("header") %>
   <nav class="text-sm">
     <ul class="flex flex-col gap-2">
@@ -23,42 +23,47 @@
           <li>
             <a
               href="/inventory"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate flex items-center gap-1.5"
             >
-              Inventory</a
-            >
+              <i data-lucide="shopping-basket" class="h-4"></i>
+              Inventory
+            </a>
           </li>
           <li>
             <a
               href="/livestock"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
-              Livestock</a
-            >
+              <i data-lucide="beef" class="h-4"></i>
+              Livestock
+            </a>
           </li>
           <li>
             <a
               href="/deliveries"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
-              Deliveries</a
-            >
+              <i data-lucide="package" class="h-4"></i>
+              Deliveries
+            </a>
           </li>
           <li>
             <a
               href="/clients"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
-              Clients</a
-            >
+              <i data-lucide="users" class="h-4"></i>
+              Clients
+            </a>
           </li>
           <li>
             <a
               href="/suppliers"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
-              Suppliers</a
-            >
+              <i data-lucide="container" class="h-4"></i>
+              Suppliers
+            </a>
           </li>
         </ul>
       </li>
@@ -83,32 +88,36 @@
           <li>
             <a
               href="/reports/inventory-keeping"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
+              <i data-lucide="layers-2" class="h-4"></i>
               Inventory Keeping
             </a>
           </li>
           <li>
             <a
               href="/reports/livestock-keeping"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
+              <i data-lucide="layers-2" class="h-4"></i>
               Livestock Keeping
             </a>
           </li>
           <li>
             <a
               href="/reports/logistics-report"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
+              <i data-lucide="layers-2" class="h-4"></i>
               Logistics Report
             </a>
           </li>
           <li>
             <a
               href="/reports/sales-report"
-              class="block py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
             >
+              <i data-lucide="layers-2" class="h-4"></i>
               Sales Report
             </a>
           </li>
@@ -118,10 +127,10 @@
       <li>
         <a
           class="flex cursor-default items-center gap-1.5 py-1.5 px-2.5 rounded-(--radius-md) text-black hover:bg-gray-200"
-          href="/process-meat"
+          href="/process-livestock"
         >
           <i data-lucide="beef" class="h-4.5"></i>
-          <span class="text-nowrap truncate">Process Meat</span>
+          <span class="text-nowrap truncate">Process Livestock</span>
         </a>
       </li>
       <li>
