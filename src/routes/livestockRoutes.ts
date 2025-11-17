@@ -48,7 +48,7 @@ router.get("/supplier", async (req, res) => {
   }
 });
 
-router.get("/supplier/filter", async (req, res) => {
+router.get("/suppliers/filter", async (req, res) => {
   const filterBy = req.query.filterBy as string;
   const key = req.query.key as string;
 
