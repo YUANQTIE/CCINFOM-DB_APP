@@ -49,11 +49,11 @@ router.get("/supplier", async (req, res) => {
 });
 
 router.get("/suppliers/filter", async (req, res) => {
-  const filterBy = req.query.filterBy as string;
-  const key = req.query.key as string;
+  const column = req.query.column as string;
+  const search = req.query.search as string;
 
   try {
-    const results = await read.getSupplierFiltered(filterBy, key);
+    const results = await read.getSupplierFiltered(column, search);
     res.json({ success: true, data: results });
   } catch (error) {
     console.error(error);
