@@ -18,6 +18,7 @@
         </h1>
 
         <!-- Tabs -->
+        <!-- TODO: The report will display list of meat cuts -->
         <div class="tabs w-full" id="demo-tabs-with-panels">
           <nav role="tablist" aria-orientation="horizontal" class="w-full">
             <button
@@ -50,11 +51,11 @@
             tabindex="-1"
             aria-selected="true"
           >
-            <section class="flex gap-10 mt-4">
+            <section class="flex gap-10 mt-4 w-full">
               <form class="form grid gap-6">
                 <div class="grid gap-2">
                   <label for="meat-cut-input">Meat Cut</label>
-                  <select id="meat-cut-select">
+                  <select class="w-full" id="meat-cut-select">
                     <option value="" disabled selected>
                       Select meat cut...
                     </option>
@@ -137,31 +138,77 @@
             aria-selected="false"
             hidden
           >
-            <div class="card">
-              <header>
-                <h2>Password</h2>
-                <p>
-                  Change your password here. After saving, you'll be logged out.
-                </p>
-              </header>
-              <section>
-                <form class="form grid gap-6">
-                  <div class="grid gap-3">
-                    <label for="demo-tabs-password-current"
-                      >Current password</label
-                    >
-                    <input type="password" id="demo-tabs-password-current" />
-                  </div>
-                  <div class="grid gap-3">
-                    <label for="demo-tabs-password-new">New password</label>
-                    <input type="password" id="demo-tabs-password-new" />
-                  </div>
-                </form>
+            <section class="flex gap-10 mt-4">
+              <form class="form grid gap-6">
+                <div class="grid gap-2">
+                  <label for="meat-cut-input">Meat Cut</label>
+                  <select class="w-full" id="meat-cut-select">
+                    <option value="" disabled selected>
+                      Select meat cut...
+                    </option>
+                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+                    <option value="SUP-042">
+                      SUP-042 (Local Breeders Co-op)
+                    </option>
+                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+                    <option value="SUP-210">
+                      SUP-210 (Green Valley Supplies)
+                    </option>
+                  </select>
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="start-date-input">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input" />
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="end-date-input">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input" />
+                </div>
+
+                <div class="grid gap-2.5">
+                  <button type="submit" class="btn w-full">
+                    <i data-lucide="bar-chart-2"></i>
+                    Load Average Nutritional Quantities Report
+                  </button>
+                  <a href="/inventory" type="submit" class="btn-outline w-full">
+                    <i data-lucide="shopping-basket"></i>
+                    View Inventory
+                  </a>
+                </div>
+              </form>
+              <section class="w-full space-y-2">
+                <h1 class="text-3xl font-bold">Arm Chuck Roast</h1>
+                <hr />
+                <table class="table">
+                  <tr>
+                    <td class="font-bold">Average Fat</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Average Protein</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Average Connective Tissue</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Average Water Holding Capacity</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Average Water Distribution</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Average pH</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Most Frequent Tenderness</td>
+                  </tr>
+                  <tr>
+                    <td class="font-bold">Most Frequent Color</td>
+                  </tr>
+                </table>
               </section>
-              <footer>
-                <button type="button" class="btn">Save Password</button>
-              </footer>
-            </div>
+            </section>
           </div>
         </div>
       </main>
