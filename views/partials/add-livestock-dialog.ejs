@@ -14,17 +14,38 @@
 
   <div class="grid gap-2">
     <label for="breed-select">Breed</label>
-    <input class="w-full" type="text" id="breed-select" placeholder="e.g., Holstein" name="breed" **required** />
+    <input
+      class="w-full"
+      type="text"
+      id="breed-select"
+      placeholder="e.g., Holstein"
+      name="breed"
+      **required**
+    />
   </div>
 
   <div class="grid gap-2">
     <label for="weight-input">Weight (kg)</label>
-    <input class="w-full" type="text" id="weight-input" placeholder="e.g., 500" name="weight" **required** />
+    <input
+      class="w-full"
+      type="text"
+      id="weight-input"
+      placeholder="e.g., 500"
+      name="weight"
+      **required**
+    />
   </div>
 
   <div class="grid gap-2">
     <label for="age-input">Age (years)</label>
-    <input class="w-full" type="text" id="age-input" placeholder="e.g., 24" name="age" **required** />
+    <input
+      class="w-full"
+      type="text"
+      id="age-input"
+      placeholder="e.g., 24"
+      name="age"
+      **required**
+    />
   </div>
 
   <!--
@@ -42,8 +63,14 @@
 
   <div class="grid gap-2">
     <label for="country-select">Country of Origin</label>
-    <input class="w-full" type="text" id="country-select" placeholder="e.g., Philippines" name="country_of_origin"
-      **required** />
+    <input
+      class="w-full"
+      type="text"
+      id="country-select"
+      placeholder="e.g., Philippines"
+      name="country_of_origin"
+      **required**
+    />
   </div>
 
   <!--
@@ -59,13 +86,24 @@
   -->
   <div class="grid gap-2">
     <label for="medical-select">Medical Condition</label>
-    <input class="w-full" type="text" id="medical-select" placeholder="e.g., Healthy" name="medical_condition"
-      **required** />
+    <input
+      class="w-full"
+      type="text"
+      id="medical-select"
+      placeholder="e.g., Healthy"
+      name="medical_condition"
+      **required**
+    />
   </div>
 
   <div class="grid gap-2">
     <label for="vaccination-select">Vaccination Status</label>
-    <select class="w-full" id="vaccination-select" name="vaccination_status" **required**>
+    <select
+      class="w-full"
+      id="vaccination-select"
+      name="vaccination_status"
+      **required**
+    >
       <option value="Vaccinated">Vaccinated</option>
       <option value="Not Vaccinated">Not Vaccinated</option>
       <option value="Pending">Pending</option>
@@ -74,7 +112,12 @@
 
   <div class="grid gap-2">
     <label for="storage-select">Storage Location</label>
-    <select class="w-full" id="storage-select" name="storage_location" **required**>
+    <select
+      class="w-full"
+      id="storage-select"
+      name="storage_location"
+      **required**
+    >
       <option value="" disabled selected>Select a location...</option>
       <option value="Farm 1">Farm 1</option>
       <option value="Farm 2">Farm 2</option>
@@ -83,21 +126,19 @@
       <option value="Farm 5">Farm 5</option>
     </select>
   </div>
-  <!--
+
   <div class="grid gap-2">
     <label for="supplier-id">Supplier ID</label>
-    <select class="w-full" id="supplier-id" name="supplier_id" **required**>
+    <select class="w-full" id="supplier-select" name="supplier_id" **required**>
       <option value="" disabled selected>Select a supplier...</option>
-      <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-      <option value="SUP-042">SUP-042 (Local Breeders Co-op)</option>
-      <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-      <option value="SUP-210">SUP-210 (Green Valley Supplies)</option>
     </select>
   </div>
-  -->
-  <div class="grid gap-2">
-    <label for="supplier-id">Supplier ID</label>
-    <input class="w-full" type="text" id="supplier-id" placeholder="e.g., ABC123" name="supplier_id" **required** />
-  </div>
-
 </div>
+
+<script src="scripts/components/add-livestock-dialog.js" defer></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    initAddLivestockDialog("supplier-select");
+  });
+</script>
