@@ -45,20 +45,35 @@
           "Email Address",
           "Year of Establishment",
         ];
+        const buttons = {
+          editBtn: {
+            action: () => {
+              console.log("Edit");
+            },
+            icon: lucide.icons.Pencil,
+          },
+          deleteBtn: {
+            action: () => {
+              console.log("Delete");
+            },
+            icon: lucide.icons.Trash,
+          },
+        };
+
         initTable(
           tableColumns,
           "clients-table",
           "table-skeleton",
           "table-data-zero",
           "clients",
-          (e) => {},
-          (e) => {}
+          buttons
         );
         // Init Search Bar
         initSearchBar(
           "searchbarSelect",
           "searchbarInput",
           "clients-table",
+          "clients",
           tableColumns
         );
       });

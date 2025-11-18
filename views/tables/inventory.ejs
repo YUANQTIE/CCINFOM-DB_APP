@@ -48,14 +48,28 @@
           "Origin Livestock ID",
         ];
 
+        const buttons = {
+          editBtn: {
+            action: () => {
+              console.log("Edit");
+            },
+            icon: lucide.icons.Pencil,
+          },
+          deleteBtn: {
+            action: () => {
+              console.log("Delete");
+            },
+            icon: lucide.icons.Trash,
+          },
+        };
+
         initTable(
           tableColumns,
           "inventory-table",
           "table-skeleton",
           "table-data-zero",
           "meat-selection",
-          (e) => {},
-          (e) => {}
+          buttons
         );
 
         // Init Search Bar
@@ -63,6 +77,7 @@
           "searchbarSelect",
           "searchbarInput",
           "inventory-table",
+          "meat-selection",
           tableColumns
         );
       });

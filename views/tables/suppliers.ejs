@@ -68,19 +68,6 @@
                       id="add-supplier-form"
                     >
                       <div class="grid gap-3">
-                        <label for="add-supplier-dialog-supplier-id">
-                          Supplier ID
-                        </label>
-                        <input
-                          type="text"
-                          id="add-supplier-dialog-supplier-id"
-                          placeholder="Enter supplier id"
-                          autofocus
-                          name="supplier_id"
-                          required
-                        />
-                      </div>
-                      <div class="grid gap-3">
                         <label for="add-supplier-dialog-company-name">
                           Company Name
                         </label>
@@ -139,14 +126,28 @@
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = ["Supplier ID", "Company Name", "Contact No."];
 
+        const buttons = {
+          editBtn: {
+            action: () => {
+              console.log("Edit");
+            },
+            icon: lucide.icons.Pencil,
+          },
+          deleteBtn: {
+            action: () => {
+              console.log("Delete");
+            },
+            icon: lucide.icons.Trash,
+          },
+        };
+
         initTable(
           tableColumns,
           "suppliers-table",
           "table-skeleton",
           "table-data-zero",
           "livestock/supplier",
-          (e) => {},
-          (e) => {}
+          buttons
         );
 
         // Init Search Bar
@@ -154,6 +155,7 @@
           "searchbarSelect",
           "searchbarInput",
           "suppliers-table",
+          "livestock/suppliers",
           tableColumns
         );
 
