@@ -10,11 +10,10 @@ export async function deleteSupplier(supplier_id: string) {
   return result;
 }
 
-export async function deleteOrderLine(id : number){
-  const [result] = await pool.execute(
-    'DELETE FROM order_line WHERE id = ?',
-    [id]
-  );
+export async function deleteOrderLine(id: number) {
+  const [result] = await pool.execute("DELETE FROM order_line WHERE id = ?", [
+    id,
+  ]);
 }
 
 export async function cancelOrderLine(order_line_id: number) {
@@ -52,10 +51,7 @@ export async function cancelOrderLine(order_line_id: number) {
 
   // 3. Delete the order_line record itself
   console.log("Deleting order_line:", order_line_id);
-  await pool.query(
-    `DELETE FROM order_line WHERE id = ?`,
-    [order_line_id]
-  );
+  await pool.query(`DELETE FROM order_line WHERE id = ?`, [order_line_id]);
 
   // 4. Check how many order lines remain (needed count)
   const [needed] = await pool.query<any[]>(
