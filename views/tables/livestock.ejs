@@ -82,8 +82,23 @@
           icon: lucide.icons.Pencil,
         },
         processLivestockBtn: {
-          action: (event, rowData, rowIndex) => {
-            console.log("Process Livestock", rowData);
+          action: async (event, rowData, rowIndex) => {
+            const livestock_id = rowData.livestock_id; // or whatever your key is
+
+            try {
+              const response = await fetch(`/api/livestock/process/${livestock_id}`, {
+                method: "POST",
+              });
+
+              if (!response.ok) {
+                throw new Error("Failed to process livestock");
+              }
+
+              alert("Livestock processed successfully!");
+            } catch (err) {
+              console.error(err);
+              alert("Error processing livestock.");
+            }
           },
           label: "Process",
           condition: (rowData) => rowData.status === "For Processing"
