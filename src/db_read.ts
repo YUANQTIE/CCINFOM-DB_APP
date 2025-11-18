@@ -530,6 +530,7 @@ export async function getAverageConditionRatio(
   return records;
 }
 
+
 export async function getTotalBreedSuppliedBySupplier(
   breed: string,
   company_name: string,
