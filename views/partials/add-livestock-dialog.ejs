@@ -1,4 +1,5 @@
 <div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2 md:w-fit">
+  <!--
   <div class="grid gap-2">
     <label for="breed-select">Breed</label>
     <select class="w-full" id="breed-select" name="breed" **required**>
@@ -9,6 +10,12 @@
       <option value="hereford">Hereford</option>
     </select>
   </div>
+  -->
+
+  <div class="grid gap-2">
+    <label for="breed-select">Breed</label>
+    <input class="w-full" type="text" id="breed-select" placeholder="e.g., Holstein" name="breed" **required** />
+  </div>
 
   <div class="grid gap-2">
     <label for="weight-input">Weight (kg)</label>
@@ -16,10 +23,11 @@
   </div>
 
   <div class="grid gap-2">
-    <label for="age-input">Age (months)</label>
+    <label for="age-input">Age (years)</label>
     <input class="w-full" type="text" id="age-input" placeholder="e.g., 24" name="age" **required** />
   </div>
 
+  <!--
   <div class="grid gap-2">
     <label for="country-select">Country of Origin</label>
     <select class="w-full" id="country-select" name="country_of_origin" **required**>
@@ -30,21 +38,35 @@
       <option value="usa">USA</option>
     </select>
   </div>
+  -->
 
+  <div class="grid gap-2">
+    <label for="country-select">Breed</label>
+    <input class="w-full" type="text" id="country-select" placeholder="e.g., Philippines" name="country_of_origin"
+      **required** />
+  </div>
+
+  <!--
   <div class="grid gap-2">
     <label for="medical-select">Medical Condition</label>
     <select class="w-full" id="medical-select" name="medical_condition" **required**>
-      <option value="healthy">Healthy</option>
+      <option value="Healthy">Healthy</option>
       <option value="under_observation">Under Observation</option>
       <option value="medicated">Medicated</option>
       <option value="injured">Injured</option>
     </select>
   </div>
+  -->
+  <div class="grid gap-2">
+    <label for="medical-select">Breed</label>
+    <input class="w-full" type="text" id="medical-select" placeholder="e.g., Healthy" name="medical_condition"
+      **required** />
+  </div>
 
   <div class="grid gap-2">
     <label for="vaccination-select">Vaccination Status</label>
     <select class="w-full" id="vaccination-select" name="vaccination_status" **required**>
-      <option value="Vaccinated">Fully Vaccinated</option>
+      <option value="Vaccinated">Vaccinated</option>
       <option value="Not Vaccinated">Not Vaccinated</option>
       <option value="Pending">Pending</option>
     </select>
@@ -61,7 +83,7 @@
       <option value="Farm 5">Farm 5</option>
     </select>
   </div>
-
+  <!--
   <div class="grid gap-2">
     <label for="supplier-id">Supplier ID</label>
     <select class="w-full" id="supplier-id" name="supplier_id" **required**>
@@ -72,4 +94,10 @@
       <option value="SUP-210">SUP-210 (Green Valley Supplies)</option>
     </select>
   </div>
+  -->
+  <div class="grid gap-2">
+    <label for="supplier-id">Supplier ID</label>
+    <input class="w-full" type="text" id="supplier-id" placeholder="e.g., ABC123" name="supplier_id" **required** />
+  </div>
+
 </div>
