@@ -268,10 +268,6 @@ app.get("/company/deliver-product", (req, res) => {
 
 app.get("/api/average-condition-ratio", async (req, res) => {
   try {
-    const { start, end, supplier_name } = req.query as { start: string; end: string; supplier_name: string };
-    if (!start || !end || !supplier_name) {
-      return res.status(400).json({ error: "start, end, and supplier_name are required" });
-    }
     // allow undefined
     const { start, end } = req.query as { start?: string; end?: string };
 
@@ -281,7 +277,6 @@ app.get("/api/average-condition-ratio", async (req, res) => {
     res.json(data);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to fetch average condition ratio" });
     res.status(500).json({ error: "Failed to fetch data" });
   }
 });
