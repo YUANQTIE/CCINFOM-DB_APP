@@ -17,6 +17,35 @@ export async function updateMeatSelectionStorage(
   );
 }
 
+// --- UPDATE LIVESTOCK ---
+export async function updateLivestockMedCondition(
+  livestock_id: string,
+  medical_condition: string
+) {
+  await pool.query(
+    `
+    UPDATE livestock
+    SET medical_condition = ?
+    WHERE livestock_id = ?;
+  `,
+    [medical_condition, livestock_id]
+  );
+}
+
+export async function updateLivestockVacStatus(
+  livestock_id: string,
+  vaccination_status: string
+) {
+  await pool.query(
+    `
+    UPDATE livestock
+    SET vaccination_status = ?
+    WHERE livestock_id = ?;
+  `,
+    [vaccination_status, livestock_id]
+  );
+}
+
 // --- PROCESS MEAT ---
 export async function updateLivestockStatus(livestock_id: string) {
   await pool.query(

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as read from "../db_read.ts";
+import * as update from "../db_update.ts";
 import * as create from "../db_create.ts";
 
 const router = Router();
@@ -35,6 +36,32 @@ router.get("/meat-by-livestock-breed/:breed", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch data" });
+  }
+});
+
+router.put("/:livestock_id/condition", async (req, res) => {
+  const livestock_id = req.params.livestock_id;
+  const { condition } = req.body;
+
+  try {
+    await update.updateLivestockMedCondition(livestock_id, condition);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+});
+
+router.put("/:livestock_id/vaccination", async (req, res) => {
+  const livestock_id = req.params.livestock_id;
+  const { vaccination_status } = req.body;
+
+  try {
+    await update.updateLivestockVacStatus(livestock_id, vaccination_status);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
   }
 });
 
