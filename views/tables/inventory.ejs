@@ -39,6 +39,16 @@
               formMethod: 'PUT' , 
               submitText: 'Update' , 
               formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
+            
+            <%- include('../partials/dialog', { 
+              dialogId: 'add-nutrition-dialog' , 
+              title: 'Edit Meat Selection' ,
+              description: 'Edit Meat Selection' , 
+              formId: 'add-nutrition-form' , 
+              formAction: '' ,
+              formMethod: 'POST' , 
+              submitText: 'Add' , 
+              formFieldsPartial: '../partials/add-nutrition-dialog' }) %>
           
           </div>
           <!-- prettier-ignore -->
@@ -76,8 +86,14 @@
           icon: lucide.icons.Pencil,
         },
         addNutritionBtn: {
-            action: async (event, rowData, rowIndex) => {
+            action: (event, rowData, rowIndex) => {
               console.log("Add nutrition", rowData)
+              const dialog = document.getElementById('add-nutrition-dialog');
+              const form = document.getElementById('add-nutrition-form');
+
+              form.action = `/api/meat-selection/add-nutrition/${rowData.serial_no}`;
+
+              dialog.showModal();
             },
             label: "Process",
             condition: (rowData) => rowData.quality_control_clearance === "Pending",
@@ -128,6 +144,27 @@
         } catch (err) {
           console.error(err);
           alert('Error updating meat selection.');
+        }
+      });
+
+      document.getElementById('add-nutrition-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData);
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) throw new Error('Failed to add nutrition');
+          form.closest('dialog').close();
+          window.location.reload();
+        } catch (err) {
+          console.error(err);
+          alert('Error adding nutrition.');
         }
       });
 

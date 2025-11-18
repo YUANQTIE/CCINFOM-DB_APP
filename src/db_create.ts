@@ -257,10 +257,6 @@ export async function createNutrition(
       pH, 
       water_distribution
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-
-    UPDATE meat_selection
-    SET quality_control_clearance = "Approved"
-    WHERE serial_no = ?;
     `,
     [
       serial_no,
@@ -275,6 +271,8 @@ export async function createNutrition(
       serial_no
     ]
   );
+
+  await update.updateQualityControlClearance(serial_no)
   return result;
 }
 
