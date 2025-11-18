@@ -256,7 +256,11 @@ export async function createNutrition(
       water_holding_capacity, 
       pH, 
       water_distribution
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+    UPDATE meat_selection
+    SET quality_control_clearance = "Approved"
+    WHERE serial_no = ?;
     `,
     [
       serial_no,
@@ -268,6 +272,7 @@ export async function createNutrition(
       n.water_holding_capacity,
       n.pH,
       n.water_distribution,
+      serial_no
     ]
   );
   return result;

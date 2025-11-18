@@ -30,6 +30,16 @@
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
                 id: "inventory-table" }) %>
+            <%- include('../partials/dialog', { 
+              dialogId: 'edit-meat-selection-dialog' , 
+              title: 'Edit Meat Selection' ,
+              description: 'Edit Meat Selection' , 
+              formId: 'edit-meat-selection-form' , 
+              formAction: '' ,
+              formMethod: 'PUT' , 
+              submitText: 'Update' , 
+              formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
+          
           </div>
           <!-- prettier-ignore -->
           <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
@@ -55,9 +65,29 @@
       const buttons = {
         editBtn: {
           action: (event, rowData, rowIndex) => {
-            console.log("Edit");
+            console.log("Edit", rowData);
+            const dialog = document.getElementById('edit-meat-selection-dialog');
+            const form = document.getElementById('edit-meat-selection-form');
+
+            form.action = `/api/meat-selection/${rowData.serial_no}/location`;
+
+            dialog.showModal();
           },
           icon: lucide.icons.Pencil,
+        },
+        addNutritionBtn: {
+            action: async (event, rowData, rowIndex) => {
+              console.log("Add nutrition", rowData)
+            },
+            label: "Process",
+            condition: (rowData) => rowData.quality_control_clearance === "Pending",
+        },
+        viewNutritionBtn: {
+            action: async (event, rowData, rowIndex) => {
+              console.log("View nutrition", rowData)
+            },
+            label: "Process",
+            condition: (rowData) => rowData.quality_control_clearance === "Approved",
         },
       };
 
@@ -79,6 +109,28 @@
         tableColumns,
         buttons
       );
+
+      document.getElementById('edit-meat-selection-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData);
+        try {
+          const response = await fetch(form.action, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) throw new Error('Failed to update meat selection');
+          form.closest('dialog').close();
+          window.location.reload();
+        } catch (err) {
+          console.error(err);
+          alert('Error updating meat selection.');
+        }
+      });
+
     });
   </script>
 </body>

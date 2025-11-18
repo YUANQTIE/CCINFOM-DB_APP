@@ -52,19 +52,6 @@ router.put("/:serial_no/location", async (req, res) => {
   }
 });
 
-router.put("/:serial_no/location", async (req, res) => {
-  const serial_no = req.params.serial_no;
-  const { storage_location } = req.body;
-
-  try {
-    await update.updateMeatSelectionStorage(serial_no, storage_location);
-    res.json({ success: true });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
-  }
-});
-
 router.put("/:serial_no/status", async (req, res) => {
   const serial_no = req.params.serial_no;
   const { status } = req.body;
