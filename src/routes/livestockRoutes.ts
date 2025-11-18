@@ -61,14 +61,16 @@ router.get("/suppliers/filter", async (req, res) => {
   }
 });
 
-router.post("/supplier/add", async (req, res) => {
+router.post("/suppliers/add", async (req, res) => {
   try {
     const supplier = req.body;
     const result = await create.createSupplier(supplier);
-    res.json({ success: true, result });
+    res.json({ success: true, data: result });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to register" });
+    console.error("--- ERROR START ---");
+    console.error(error); // This will print the SQL error code, message, etc.
+    console.error("--- ERROR END ---");
+    res.status(500).json({ error: "Failed to add supplier" });
   }
 });
 

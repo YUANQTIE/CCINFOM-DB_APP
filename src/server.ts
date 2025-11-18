@@ -25,8 +25,9 @@ const port = 3000;
 
 // --- MIDDLEWARE ---
 app.use(cors());
-app.use(express.json()); // Body parser for JSON
+app.use(express.json());
 app.use(ejsLayouts);
+app.use(express.urlencoded({ extended: true }));
 
 // --- STATIC ASSETS ---
 app.use(express.static(path.join(__dirname, "..", "public")));

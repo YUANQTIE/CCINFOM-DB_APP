@@ -25,10 +25,102 @@
                 <i data-lucide="rabbit" class="h-4.5"></i>
                 View Livestock
               </a>
-              <button class="btn">
+              <button class="btn" id="add-supplier-btn">
                 <i data-lucide="user-plus" class="h-4.5"></i>
                 Add Supplier
               </button>
+              <dialog
+                id="add-supplier-dialog"
+                class="dialog w-full sm:max-w-[425px] max-h-[612px] rounded-md m-auto"
+                aria-labelledby="add-supplier-dialog-title"
+                aria-describedby="add-supplier-dialog-description"
+                onclick="if (event.target === this) this.close()"
+              >
+                <div class="relative grid gap-4 p-6">
+                  <button
+                    type="button"
+                    aria-label="Close dialog"
+                    onclick="this.closest('dialog').close()"
+                    class="absolute top-4 right-2.5 text-gray-500 hover:text-gray-800"
+                  >
+                    <i data-lucide="x" class="h-4.5"></i>
+                  </button>
+
+                  <header>
+                    <h2
+                      id="add-supplier-dialog-title"
+                      class="font-semibold text-lg"
+                    >
+                      Add Supplier
+                    </h2>
+                    <p
+                      id="add-supplier-dialog-description"
+                      class="text-sm text-gray-500"
+                    >
+                      Add suppliers for your company.
+                    </p>
+                  </header>
+
+                  <section>
+                    <form
+                      class="form grid gap-4"
+                      action="/api/livestock/suppliers/add"
+                      method="POST"
+                      id="add-supplier-form"
+                    >
+                      <div class="grid gap-3">
+                        <label for="add-supplier-dialog-supplier-id">
+                          Supplier ID
+                        </label>
+                        <input
+                          type="text"
+                          id="add-supplier-dialog-supplier-id"
+                          placeholder="Enter supplier id"
+                          autofocus
+                          name="supplier_id"
+                          required
+                        />
+                      </div>
+                      <div class="grid gap-3">
+                        <label for="add-supplier-dialog-company-name">
+                          Company Name
+                        </label>
+                        <input
+                          type="text"
+                          id="add-supplier-dialog-company-name"
+                          placeholder="Enter company name"
+                          name="company_name"
+                          required
+                        />
+                      </div>
+                      <div class="grid gap-3">
+                        <label for="add-supplier-dialog-contact">
+                          Contact No.
+                        </label>
+                        <input
+                          type="number"
+                          id="add-supplier-dialog-contact"
+                          placeholder="Enter contact no."
+                          name="contact_no"
+                          required
+                        />
+                      </div>
+                    </form>
+                  </section>
+
+                  <footer class="flex justify-end gap-3">
+                    <button
+                      class="btn-outline"
+                      onclick="this.closest('dialog').close()"
+                    >
+                      Cancel
+                    </button>
+                    <button type="submit" class="btn" form="add-supplier-form">
+                      Add
+                    </button>
+                  </footer>
+                </div>
+              </dialog>
             </div>
           </section>
           <div class="overflow-x-auto">
@@ -61,11 +153,15 @@
         // Add columns to table header
         const columnFragment = document.createDocumentFragment();
         const row = columnFragment.appendChild(document.createElement("tr"));
+        row.insertCell();
         tableColumns.forEach((col) => {
           const cell = row.insertCell();
           cell.textContent = col;
           cell.classList.add("font-bold");
         });
+        const actionsRow = row.insertCell();
+        actionsRow.textContent = "Actions";
+        actionsRow.className = "font-bold";
 
         tableHeader.appendChild(columnFragment);
 
@@ -96,9 +192,23 @@
           const dataFragment = document.createDocumentFragment();
           data.forEach((supplier) => {
             const row = dataFragment.appendChild(document.createElement("tr"));
+            const firstCell = row.insertCell();
+            const checkbox = firstCell.appendChild(
+              document.createElement("input")
+            );
+            checkbox.type = "checkbox";
+            checkbox.className = "input";
+
             row.insertCell().textContent = supplier.supplier_id;
             row.insertCell().textContent = supplier.company_name;
             row.insertCell().textContent = supplier.contact_no;
+
+            const actionsRow = row.insertCell();
+            const actionsBtn = actionsRow.appendChild(
+              document.createElement("button")
+            );
+            actionsBtn.className = "btn-outline";
+            actionsBtn.textContent = "Delete";
           });
 
           tableBody.appendChild(dataFragment);
@@ -107,6 +217,45 @@
           table.classList.replace("table", "hidden");
           tableDataZeroLabel.classList.replace("hidden", "flex");
         }
+
+        // Implement Add Supplier button
+
+        const supplierBtn = document.getElementById("add-supplier-btn");
+        supplierBtn.addEventListener("click", () => {
+          document.getElementById("add-supplier-dialog").showModal();
+        });
+
+        // Forms
+        const supplierForm = document.getElementById("add-supplier-form");
+        const supplierDialog = document.getElementById("add-supplier-dialog");
+
+        supplierForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(supplierForm);
+          const dataObject = Object.fromEntries(formData.entries());
+
+          try {
+            const response = await fetch("/api/livestock/suppliers/add", {
+              method: "POST",
+              body: new URLSearchParams(formData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              console.log("Success:", result);
+              supplierDialog.close();
+              supplierForm.reset();
+              location.reload();
+            } else {
+              console.error("Server error:", result.error);
+              alert(`Error: ${result.error}`);
+            }
+          } catch (error) {
+            console.error("Network error:", error);
+            alert("A network error occurred. Please try again.");
+          }
+        });
       });
     </script>
   </body>
