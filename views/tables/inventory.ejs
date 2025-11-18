@@ -33,10 +33,9 @@
         </section>
       </main>
     </div>
+    <script src="/scripts/components/table.js"></script>
     <script src="/scripts/components/searchbar.js"></script>
     <script>
-      const { format, parseISO } = dateFns;
-
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = [
           "Serial No.",
@@ -48,28 +47,16 @@
           "Status",
           "Origin Livestock ID",
         ];
-        const tableSkeleton = document.getElementById("table-skeleton");
-        const table = document.getElementById("inventory-table");
-        const tableDataZeroLabel = document.getElementById("table-data-zero");
-        const tableBody = table.tBodies[0];
-        const tableHeader = table.tHead;
 
-        // Check elements
-        if (!tableSkeleton || !table || !tableDataZeroLabel || !tableBody) {
-          console.error("A required table element is missing!");
-          return;
-        }
-
-        // Add columns to table header
-        const columnFragment = document.createDocumentFragment();
-        const row = columnFragment.appendChild(document.createElement("tr"));
-        tableColumns.forEach((col) => {
-          const cell = row.insertCell();
-          cell.textContent = col;
-          cell.classList.add("font-bold");
-        });
-
-        tableHeader.appendChild(columnFragment);
+        initTable(
+          tableColumns,
+          "inventory-table",
+          "table-skeleton",
+          "table-data-zero",
+          "meat-selection",
+          (e) => {},
+          (e) => {}
+        );
 
         // Init Search Bar
         initSearchBar(
@@ -78,46 +65,6 @@
           "inventory-table",
           tableColumns
         );
-
-        // Fetch from data
-        try {
-          const response = await fetch("/api/meat-selection");
-          const data = await response.json();
-
-          // hide skeleton and show table after data load
-          tableSkeleton.classList.add("hidden");
-          table.classList.replace("hidden", "table");
-
-          // show message and hide table when data is empty
-          if (data.length === 0) {
-            table.classList.replace("table", "hidden");
-            tableDataZeroLabel.classList.replace("hidden", "flex");
-            return;
-          }
-
-          const dataFragment = document.createDocumentFragment();
-          data.forEach((inventory) => {
-            const formattedExpiryDate = inventory.expiry_date
-              ? format(parseISO(inventory.expiry_date), "MMM dd, yyyy")
-              : "-/-";
-
-            const row = dataFragment.appendChild(document.createElement("tr"));
-            row.insertCell().textContent = inventory.serial_no;
-            row.insertCell().textContent = inventory.cut_type;
-            row.insertCell().textContent = inventory.weight;
-            row.insertCell().textContent = formattedExpiryDate;
-            row.insertCell().textContent = inventory.storage_location;
-            row.insertCell().textContent = inventory.quality_control_clearance;
-            row.insertCell().textContent = inventory.status;
-            row.insertCell().textContent = inventory.origin_livestock_id;
-          });
-
-          tableBody.appendChild(dataFragment);
-        } catch (error) {
-          console.error("Error fetching inventory data:", error);
-          table.classList.replace("table", "hidden");
-          tableDataZeroLabel.classList.replace("hidden", "flex");
-        }
       });
     </script>
   </body>

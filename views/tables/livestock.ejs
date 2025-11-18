@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Carnivault - Livestock</title>
-
     <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
   </head>
   <body>
@@ -45,12 +44,11 @@
       </main>
     </div>
 
+    <script src="/scripts/components/table.js"></script>
     <script src="/scripts/components/searchbar.js"></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
-        const { format, parseISO } = dateFns;
-
         const tableColumns = [
           "Livestock ID",
           "Breed",
@@ -64,21 +62,17 @@
           "Supplier ID",
           "Status",
           "Processing Date",
-          "Actions",
         ];
-        const tableSkeleton = document.getElementById("table-skeleton");
-        const table = document.getElementById("livestock-table");
-        const tableDataZeroLabel = document.getElementById("table-data-zero");
-        const tableBody = table.tBodies[0];
-        const tableHeader = table.tHead;
 
-        const headerFragment = document.createDocumentFragment();
-        const row = headerFragment.appendChild(document.createElement("tr"));
-        row.classList.add("font-bold");
-        tableColumns.forEach((col) => {
-          row.insertCell().textContent = col;
-        });
-        tableHeader.appendChild(headerFragment);
+        initTable(
+          tableColumns,
+          "livestock-table",
+          "table-skeleton",
+          "table-data-zero",
+          "livestock",
+          (e) => {},
+          (e) => {}
+        );
 
         initSearchBar(
           "searchbarSelect",
@@ -86,71 +80,6 @@
           "livestock-table",
           tableColumns
         );
-
-        if (!tableSkeleton || !table || !tableDataZeroLabel || !tableBody) {
-          console.error("A required table element is missing!");
-          return;
-        }
-
-        try {
-          const response = await fetch("/api/livestock");
-          const data = await response.json();
-
-          // hide skeleton and show table after data load
-          tableSkeleton.classList.add("hidden");
-          table.classList.replace("hidden", "table");
-
-          // show message and hide table when data is empty
-          if (data.length === 0) {
-            table.classList.replace("table", "hidden");
-            tableDataZeroLabel.classList.replace("hidden", "flex");
-            return;
-          }
-
-          // append data to inner html
-          const fragment = document.createDocumentFragment();
-          data.forEach((livestock) => {
-            const formattedArrived = livestock.date_arrived
-              ? format(parseISO(livestock.date_arrived), "MMM dd, yyyy")
-              : "-/-";
-
-            const formattedProcessing = livestock.processing_date
-              ? format(parseISO(livestock.processing_date), "MMM dd, yyyy")
-              : "-/-";
-
-            const row = fragment.appendChild(document.createElement("tr"));
-            row.insertCell().textContent = livestock.livestock_id;
-            row.insertCell().textContent = livestock.breed;
-            row.insertCell().textContent = livestock.weight;
-            row.insertCell().textContent = livestock.age;
-            row.insertCell().textContent = livestock.country_of_origin;
-            row.insertCell().textContent = livestock.medical_condition;
-            row.insertCell().textContent = livestock.vaccination_status;
-            row.insertCell().textContent = formattedArrived;
-            row.insertCell().textContent = livestock.storage_location;
-            row.insertCell().textContent = livestock.supplier_id;
-            row.insertCell().textContent = livestock.status;
-            row.insertCell().textContent = formattedProcessing;
-
-            const actionCell = row.insertCell();
-            if (livestock.status === "For Processing") {
-              const btn = document.createElement("button");
-              btn.className = "btn-secondary";
-              btn.textContent = "Process Livestock";
-              btn.addEventListener("click", () => {
-                handleProcessClick(livestock.livestock_id, btn);
-              });
-              actionCell.appendChild(btn);
-            } else {
-              actionCell.textContent = "-";
-            }
-          });
-          tableBody.appendChild(fragment);
-        } catch (error) {
-          console.error("Error fetching livestock data:", error);
-          table.classList.replace("table", "hidden");
-          tableDataZeroLabel.classList.replace("hidden", "flex");
-        }
       });
     </script>
   </body>
