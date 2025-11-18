@@ -1,4 +1,4 @@
-const initSearchBar = (selectId, inputId, tableId, columns) => {
+const initSearchBar = (selectId, inputId, tableId, route_api, columns) => {
   const searchbarSelect = document.getElementById(selectId);
   const searchbarInput = document.getElementById(inputId);
   const table = document.getElementById(tableId);

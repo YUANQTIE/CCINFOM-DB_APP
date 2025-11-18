@@ -65,7 +65,7 @@ const initTable = async (
 
     // Initialize row data fragments
     const dataFragment = document.createDocumentFragment();
-    rowData.forEach((data) => {
+    rowData.forEach((data, index) => {
       const row = dataFragment.appendChild(document.createElement("tr"));
       for (value of Object.values(data)) {
         const cell = row.insertCell();
@@ -92,7 +92,9 @@ const initTable = async (
         btn.className = "btn-outline";
         const iconElement = lucide.createElement(props.icon);
         btn.appendChild(iconElement);
-        btn.addEventListener("click", props.action);
+        btn.addEventListener("click", (event) => {
+          props.action(event, data, index);
+        });
       });
 
       actionsGroup.className = "flex gap-2";

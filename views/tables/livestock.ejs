@@ -66,14 +66,14 @@
 
         const buttons = {
           editBtn: {
-            action: () => {
+            action: (event, rowData, rowIndex) => {
               console.log("Edit");
             },
             icon: lucide.icons.Pencil,
           },
           deleteBtn: {
-            action: () => {
-              console.log("Delete");
+            action: (event, rowData, rowIndex) => {
+              console.log(rowData, rowIndex);
             },
             icon: lucide.icons.Trash,
           },
@@ -92,6 +92,7 @@
           "searchbarSelect",
           "searchbarInput",
           "livestock-table",
+          "livestock",
           tableColumns
         );
 

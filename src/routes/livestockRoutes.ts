@@ -67,9 +67,7 @@ router.post("/suppliers/add", async (req, res) => {
     const result = await create.createSupplier(supplier);
     res.json({ success: true, data: result });
   } catch (error) {
-    console.error("--- ERROR START ---");
-    console.error(error); // This will print the SQL error code, message, etc.
-    console.error("--- ERROR END ---");
+    console.error(error);
     res.status(500).json({ error: "Failed to add supplier" });
   }
 });
