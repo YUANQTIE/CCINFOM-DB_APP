@@ -112,7 +112,6 @@ const initRowDataFragments = (rowData, tableBody, actionButtons) => {
         const btn = actionsGroup.appendChild(document.createElement("button"));
         btn.id = key;
         btn.className = `btn-outline ${props.className}`;
-
         const iconElement = lucide.createElement(props.icon);
         btn.append(iconElement, props.content || "");
         btn.addEventListener("click", (event) => {
