@@ -272,11 +272,17 @@ app.get("/api/average-condition-ratio", async (req, res) => {
     if (!start || !end || !supplier_name) {
       return res.status(400).json({ error: "start, end, and supplier_name are required" });
     }
-    const data = await read.getAverageConditionRatio(start, end, supplier_name);
+    // allow undefined
+    const { start, end } = req.query as { start?: string; end?: string };
+
+    // No more "if (!start)" check. Just pass whatever we have.
+    const data = await read.getAverageConditionRatio(start, end);
+
     res.json(data);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch average condition ratio" });
+    res.status(500).json({ error: "Failed to fetch data" });
   }
 });
 
