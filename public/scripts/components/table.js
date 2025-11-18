@@ -18,8 +18,7 @@ const initTable = async (
   skeletonId,
   dataEmptyId,
   apiName,
-  editBtnOnClicked,
-  trashBtnOnClicked
+  actionButtons
 ) => {
   const skeleton = document.getElementById(skeletonId);
   const table = document.getElementById(tableId);
@@ -82,21 +81,21 @@ const initTable = async (
 
       // Create action cell
       const actionsCell = row.insertCell();
-      const iconGroup = document.createElement("div");
-      actionsCell.appendChild(iconGroup);
+      const actionsGroup = document.createElement("div");
+      actionsGroup.id = "actionsGroup";
+      actionsCell.appendChild(actionsGroup);
 
-      // Edit and trash button action
-      const editBtn = iconGroup.appendChild(document.createElement("button"));
-      const trashBtn = iconGroup.appendChild(document.createElement("button"));
-      editBtn.addEventListener("click", editBtnOnClicked);
-      trashBtn.addEventListener("click", trashBtnOnClicked);
-      editBtn.className = "btn-outline";
-      trashBtn.className = "btn-outline";
-      iconGroup.className = "flex gap-2";
-      const editIcon = lucide.createElement(lucide.icons.Pencil);
-      const trashIcon = lucide.createElement(lucide.icons.Trash);
-      editBtn.appendChild(editIcon);
-      trashBtn.appendChild(trashIcon);
+      // Initialize buttons
+      Object.entries(actionButtons).forEach(([key, props]) => {
+        const btn = actionsGroup.appendChild(document.createElement("button"));
+        btn.id = key;
+        btn.className = "btn-outline";
+        const iconElement = lucide.createElement(props.icon);
+        btn.appendChild(iconElement);
+        btn.addEventListener("click", props.action);
+      });
+
+      actionsGroup.className = "flex gap-2";
     });
 
     // Populate with built fragment

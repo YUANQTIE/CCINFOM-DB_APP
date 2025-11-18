@@ -64,14 +64,28 @@
           "Processing Date",
         ];
 
+        const buttons = {
+          editBtn: {
+            action: () => {
+              console.log("Edit");
+            },
+            icon: lucide.icons.Pencil,
+          },
+          deleteBtn: {
+            action: () => {
+              console.log("Delete");
+            },
+            icon: lucide.icons.Trash,
+          },
+        };
+
         initTable(
           tableColumns,
           "livestock-table",
           "table-skeleton",
           "table-data-zero",
           "livestock",
-          (e) => {},
-          (e) => {}
+          buttons
         );
 
         initSearchBar(
@@ -80,6 +94,10 @@
           "livestock-table",
           tableColumns
         );
+
+        // For processing
+        const actionsGroup = document.getElementById("actionsGroup");
+        console.log(actionsGroup);
       });
     </script>
   </body>

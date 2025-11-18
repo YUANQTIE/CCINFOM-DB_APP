@@ -139,14 +139,28 @@
       document.addEventListener("DOMContentLoaded", async () => {
         const tableColumns = ["Supplier ID", "Company Name", "Contact No."];
 
+        const buttons = {
+          editBtn: {
+            action: () => {
+              console.log("Edit");
+            },
+            icon: lucide.icons.Pencil,
+          },
+          deleteBtn: {
+            action: () => {
+              console.log("Delete");
+            },
+            icon: lucide.icons.Trash,
+          },
+        };
+
         initTable(
           tableColumns,
           "suppliers-table",
           "table-skeleton",
           "table-data-zero",
           "livestock/supplier",
-          (e) => {},
-          (e) => {}
+          buttons
         );
 
         // Init Search Bar
