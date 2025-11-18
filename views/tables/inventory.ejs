@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Inventory</title>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Inventory</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <div class="flex gap-4">
           <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
@@ -18,63 +20,67 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Inventory", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search inventory...", route_api: "meat-selection" }) %>
-            <a href="/reports/inventory-keeping" class="btn-outline">
-              <i data-lucide="bar-chart-2"></i>
-              View Reports
-            </a>
+            <%- include("../partials/searchbar", { label: "Inventory" , select_id: "searchbarSelect" ,
+              input_id: "searchbarInput" , placeholder: "Search inventory..." , route_api: "meat-selection" }) %>
+              <a href="/reports/inventory-keeping" class="btn-outline">
+                <i data-lucide="bar-chart-2"></i>
+                View Reports
+              </a>
           </section>
           <div class="overflow-x-auto">
-            <%- include("../partials/table-skeleton", { id: "table-skeleton"})
-            %> <%- include("../partials/table", { id: "inventory-table"}) %>
+            <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
+                id: "inventory-table" }) %>
           </div>
           <!-- prettier-ignore -->
-          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Inventory data not available..."}) %>
+          <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+            description: "Inventory data not available..." }) %>
         </section>
       </main>
-    </div>
-    <script src="/scripts/components/table.js" defer></script>
-    <script src="/scripts/components/searchbar.js" defer></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", async () => {
-        const tableColumns = [
-          "Serial No.",
-          "Cut Type",
-          "Weight",
-          "Expiry Date",
-          "Storage Location",
-          "Quality Control Clearance",
-          "Status",
-          "Origin Livestock ID",
-        ];
+  </div>
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tableColumns = [
+        "Serial No.",
+        "Cut Type",
+        "Weight",
+        "Expiry Date",
+        "Storage Location",
+        "Quality Control Clearance",
+        "Status",
+        "Origin Livestock ID",
+      ];
 
-        const buttons = {
-          editBtn: {
-            action: (event, rowData, rowIndex) => {
-              console.log("Edit");
-            },
-            icon: lucide.icons.Pencil,
+      const buttons = {
+        editBtn: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Edit");
           },
-        };
+          icon: lucide.icons.Pencil,
+        },
+      };
 
-        initTable(
-          tableColumns,
-          "inventory-table",
-          "table-skeleton",
-          "table-data-zero",
-          "meat-selection",
-          buttons
-        );
+      initTable(
+        tableColumns,
+        "inventory-table",
+        "table-skeleton",
+        "table-data-zero",
+        "meat-selection",
+        buttons
+      );
 
-        // Init Search Bar
-        initSearchBar(
-          "searchbarSelect",
-          "searchbarInput",
-          "inventory-table",
-          "meat-selection",
-          tableColumns
-        );
-      });
-    </script>
-  </body>
+      // Init Search Bar
+      initSearchBar(
+        "searchbarSelect",
+        "searchbarInput",
+        "inventory-table",
+        "meat-selection",
+        tableColumns,
+        buttons
+      );
+    });
+  </script>
+</body>
+
 </html>

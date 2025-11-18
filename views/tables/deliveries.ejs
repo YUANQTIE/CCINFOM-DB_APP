@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Deliveries</title>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Deliveries</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <div class="flex gap-4">
           <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
@@ -18,63 +20,67 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Deliveries", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search deliveries...", route_api: "deliveries" }) %>
+            <%- include("../partials/searchbar", { label: "Deliveries" , select_id: "searchbarSelect" ,
+              input_id: "searchbarInput" , placeholder: "Search deliveries..." , route_api: "deliveries" }) %>
           </section>
           <div class="overflow-x-auto">
-            <%- include("../partials/table-skeleton", { id: "table-skeleton"})
-            %> <%- include("../partials/table", { id: "deliveries-table"}) %>
+            <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
+                id: "deliveries-table" }) %>
           </div>
           <!-- prettier-ignore -->
-          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Deliveries data not available..."}) %>
+          <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+            description: "Deliveries data not available..." }) %>
         </section>
       </main>
-    </div>
+  </div>
 
-    <script src="/scripts/components/table.js" defer></script>
-    <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", async () => {
-        const tableColumns = [
-          "Delivery No.",
-          "Driver Name",
-          "Truck Number",
-          "Deliver Date",
-          "Order Date",
-          "Distance Traveled",
-          "Delivery Duration",
-          "Weight",
-          "Restaurant Code",
-          "Status",
-        ];
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tableColumns = [
+        "Delivery No.",
+        "Driver Name",
+        "Truck Number",
+        "Deliver Date",
+        "Order Date",
+        "Distance Traveled",
+        "Delivery Duration",
+        "Weight",
+        "Restaurant Code",
+        "Status",
+      ];
 
-        const buttons = {
-          editBtn: {
-            action: (event, rowData, rowIndex) => {
-              console.log("Edit");
-            },
-            icon: lucide.icons.Pencil,
+      const buttons = {
+        editBtn: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Edit");
           },
-        };
+          icon: lucide.icons.Pencil,
+        },
+      };
 
-        initTable(
-          tableColumns,
-          "deliveries-table",
-          "table-skeleton",
-          "table-data-zero",
-          "deliveries",
-          buttons
-        );
+      initTable(
+        tableColumns,
+        "deliveries-table",
+        "table-skeleton",
+        "table-data-zero",
+        "deliveries",
+        buttons
+      );
 
-        // Init Search Bar
-        initSearchBar(
-          "searchbarSelect",
-          "searchbarInput",
-          "deliveries-table",
-          "deliveries",
-          tableColumns
-        );
-      });
-    </script>
-  </body>
+      // Init Search Bar
+      initSearchBar(
+        "searchbarSelect",
+        "searchbarInput",
+        "deliveries-table",
+        "deliveries",
+        tableColumns,
+        buttons
+      );
+    });
+  </script>
+</body>
+
 </html>

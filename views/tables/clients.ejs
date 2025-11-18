@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Clients</title>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Clients</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <div class="flex gap-4">
           <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
@@ -18,58 +20,62 @@
         <section class="flex flex-col gap-4">
           <section class="flex justify-between">
             <!-- prettier-ignore -->
-            <%- include("../partials/searchbar", { label: "Clients", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search clients...", route_api: "clients" }) %>
+            <%- include("../partials/searchbar", { label: "Clients" , select_id: "searchbarSelect" ,
+              input_id: "searchbarInput" , placeholder: "Search clients..." , route_api: "clients" }) %>
           </section>
           <div class="overflow-x-auto">
             <!-- prettier-ignore -->
-            <%- include("../partials/table-skeleton", { id: "table-skeleton"})%>
-            <%- include("../partials/table", { id: "clients-table"}) %>
+            <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
+              <%- include("../partials/table", { id: "clients-table" }) %>
           </div>
           <!-- prettier-ignore -->
-          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Clients data not available..."}) %>
+          <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+            description: "Clients data not available..." }) %>
         </section>
       </main>
-    </div>
+  </div>
 
-    <script src="/scripts/components/table.js" defer></script>
-    <script src="/scripts/components/searchbar.js" defer></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", async () => {
-        const tableColumns = [
-          "Restaurant Code",
-          "Client Name",
-          "Restaurant Name",
-          "Restaurant Type",
-          "Restaurant Address",
-          "Contact No.",
-          "Email Address",
-          "Year of Establishment",
-        ];
-        const buttons = {
-          editBtn: {
-            action: (event, rowData, rowIndex) => {
-              console.log("Edit");
-            },
-            icon: lucide.icons.Pencil,
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tableColumns = [
+        "Restaurant Code",
+        "Client Name",
+        "Restaurant Name",
+        "Restaurant Type",
+        "Restaurant Address",
+        "Contact No.",
+        "Email Address",
+        "Year of Establishment",
+      ];
+      const buttons = {
+        editBtn: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Edit");
           },
-        };
+          icon: lucide.icons.Pencil,
+        },
+      };
 
-        initTable(
-          tableColumns,
-          "clients-table",
-          "table-skeleton",
-          "table-data-zero",
-          "clients"
-        );
-        // Init Search Bar
-        initSearchBar(
-          "searchbarSelect",
-          "searchbarInput",
-          "clients-table",
-          "clients",
-          tableColumns
-        );
-      });
-    </script>
-  </body>
+      initTable(
+        tableColumns,
+        "clients-table",
+        "table-skeleton",
+        "table-data-zero",
+        "clients"
+      );
+      // Init Search Bar
+      initSearchBar(
+        "searchbarSelect",
+        "searchbarInput",
+        "clients-table",
+        "clients",
+        tableColumns,
+        buttons
+      );
+    });
+  </script>
+</body>
+
 </html>

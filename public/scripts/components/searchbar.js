@@ -1,4 +1,4 @@
-const initSearchBar = (selectId, inputId, tableId, route_api, columns) => {
+const initSearchBar = (selectId, inputId, tableId, route_api, columns, actionButtons = {}) => {
   const searchbarSelect = document.getElementById(selectId);
   const searchbarInput = document.getElementById(inputId);
   const table = document.getElementById(tableId);
@@ -49,7 +49,8 @@ const initSearchBar = (selectId, inputId, tableId, route_api, columns) => {
         // Populate the table with data fragment
         const tableDataFragment = document.createDocumentFragment();
         const result = results.data;
-        for (data of result) {
+        // for (data of result) {
+        result.forEach((data, index) => {
           const values = Object.values(data);
           const row = tableDataFragment.appendChild(
             document.createElement("tr")
@@ -57,7 +58,31 @@ const initSearchBar = (selectId, inputId, tableId, route_api, columns) => {
           for (dataValue of values) {
             row.insertCell().textContent = dataValue;
           }
-        }
+          // Create action cell
+          if (Object.keys(actionButtons).length !== 0) {
+            const actionsCell = row.insertCell();
+            const actionsGroup = document.createElement("div");
+            actionsGroup.id = "actionsGroup";
+            actionsCell.appendChild(actionsGroup);
+
+            // Initialize buttons
+            Object.entries(actionButtons).forEach(([key, props]) => {
+              if (props.condition && !props.condition(data)) {
+                return;
+              }
+              const btn = actionsGroup.appendChild(document.createElement("button"));
+              btn.id = key;
+              btn.className = `btn-outline ${props.className}`;
+              const iconElement = lucide.createElement(props.icon);
+              btn.append(iconElement, props.content || "");
+              btn.addEventListener("click", (event) => {
+                props.action(event, data, index);
+              });
+            });
+
+            actionsGroup.className = "flex gap-2";
+          }
+        });
         table.tBodies[0].appendChild(tableDataFragment);
       } catch (error) {
         console.error(`Error: ${error}`);
