@@ -9,7 +9,7 @@ export async function createSupplier(s: obj.SupplierInput) {
   let letters = s.company_name.substring(0, 3);
   letters = letters.toUpperCase();
   const numbers = (Math.floor(Math.random() * 900) + 100).toString();
-  const key = letters + '-' + numbers;
+  const key = letters + numbers;
 
   const [result] = await pool.query(
     `
