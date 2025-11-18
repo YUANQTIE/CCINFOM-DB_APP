@@ -34,6 +34,35 @@ const initTable = async (
 
   // Add columns to table header
   // Initialize column data fragments
+  initHeaderDataFragments(columns, header, actionButtons);
+
+  // Fetch data from API
+  try {
+    const response = await fetch(`/api/${apiName}`);
+    const rowData = await response.json();
+
+    if (response.ok) {
+      // Hide skeleton and show table after data load
+      skeleton.classList.add("hidden");
+      table.classList.replace("hidden", "table");
+
+      // Show message and hide table when data is empty
+      if (rowData.length === 0) {
+        table.classList.replace("table", "hidden");
+        dataEmpty.classList.replace("hidden", "flex");
+        return;
+      }
+
+      initRowDataFragments(rowData, body, actionButtons);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    table.classList.replace("table", "hidden");
+    dataEmpty.classList.replace("hidden", "flex");
+  }
+};
+
+const initHeaderDataFragments = (columns, header, actionButtons) => {
   const columnFragment = document.createDocumentFragment();
   const row = columnFragment.appendChild(document.createElement("tr"));
   columns.forEach((col) => {
@@ -49,69 +78,48 @@ const initTable = async (
   }
 
   header.appendChild(columnFragment);
+};
 
-  // Fetch data from API
-  try {
-    const response = await fetch(`/api/${apiName}`);
-    const rowData = await response.json();
-
-    // Hide skeleton and show table after data load
-    skeleton.classList.add("hidden");
-    table.classList.replace("hidden", "table");
-
-    // Show message and hide table when data is empty
-    if (rowData.length === 0) {
-      table.classList.replace("table", "hidden");
-      dataEmpty.classList.replace("hidden", "flex");
-      return;
+const initRowDataFragments = (rowData, tableBody, actionButtons) => {
+  // Initialize row data fragments
+  const dataFragment = document.createDocumentFragment();
+  rowData.forEach((data, index) => {
+    const row = dataFragment.appendChild(document.createElement("tr"));
+    for (value of Object.values(data)) {
+      const cell = row.insertCell();
+      let content = value;
+      if (typeof value === "string") {
+        const dateObj = parseISO(value);
+        if (isValid(dateObj)) {
+          content = format(dateObj, "MMM dd, yyyy");
+        }
+      }
+      cell.textContent = content;
     }
 
-    // Initialize row data fragments
-    const dataFragment = document.createDocumentFragment();
-    rowData.forEach((data, index) => {
-      const row = dataFragment.appendChild(document.createElement("tr"));
-      for (value of Object.values(data)) {
-        const cell = row.insertCell();
-        let content = value;
-        if (typeof value === "string") {
-          const dateObj = parseISO(value);
-          if (isValid(dateObj)) {
-            content = format(dateObj, "MMM dd, yyyy");
-          }
-        }
-        cell.textContent = content;
-      }
+    // Create action cell
+    if (Object.keys(actionButtons).length !== 0) {
+      const actionsCell = row.insertCell();
+      const actionsGroup = document.createElement("div");
+      actionsGroup.id = "actionsGroup";
+      actionsCell.appendChild(actionsGroup);
 
-      // Create action cell
-      if (Object.keys(actionButtons).length !== 0) {
-        const actionsCell = row.insertCell();
-        const actionsGroup = document.createElement("div");
-        actionsGroup.id = "actionsGroup";
-        actionsCell.appendChild(actionsGroup);
-
-        // Initialize buttons
-        Object.entries(actionButtons).forEach(([key, props]) => {
-          const btn = actionsGroup.appendChild(
-            document.createElement("button")
-          );
-          btn.id = key;
-          btn.className = `btn-outline ${props.className}`;
-          const iconElement = lucide.createElement(props.icon);
-          btn.append(iconElement, props.content || "");
-          btn.addEventListener("click", (event) => {
-            props.action(event, data, index);
-          });
+      // Initialize buttons
+      Object.entries(actionButtons).forEach(([key, props]) => {
+        const btn = actionsGroup.appendChild(document.createElement("button"));
+        btn.id = key;
+        btn.className = `btn-outline ${props.className}`;
+        const iconElement = lucide.createElement(props.icon);
+        btn.append(iconElement, props.content || "");
+        btn.addEventListener("click", (event) => {
+          props.action(event, data, index);
         });
+      });
 
-        actionsGroup.className = "flex gap-2";
-      }
-    });
+      actionsGroup.className = "flex gap-2";
+    }
+  });
 
-    // Populate with built fragment
-    body.appendChild(dataFragment);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    table.classList.replace("table", "hidden");
-    dataEmpty.classList.replace("hidden", "flex");
-  }
+  // Populate with built fragment
+  tableBody.appendChild(dataFragment);
 };
