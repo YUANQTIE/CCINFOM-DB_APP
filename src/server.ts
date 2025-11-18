@@ -253,9 +253,9 @@ app.put("/api/delivery/update/:deliveryNo", async (req, res) => {
 
 app.get("/api/average-condition-ratio", async (req, res) => {
   try {
-    const { start, end } = req.query as { start: string; end: string };
-    if (!start || !end) {
-      return res.status(400).json({ error: "start and end are required" });
+    const { start, end, supplier_name } = req.query as { start: string; end: string; supplier_name: string };
+    if (!start || !end || !supplier_name) {
+      return res.status(400).json({ error: "start, end, and supplier_name are required" });
     }
     const data = await read.getAverageConditionRatio(start, end);
     res.json(data);

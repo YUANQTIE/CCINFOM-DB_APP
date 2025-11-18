@@ -501,21 +501,23 @@ export async function getCompanyPendingDeliveriesThatCanBeDelivered() {
 // --- REPORT: LIVESTOCK KEEPING ---
 export async function getAverageConditionRatio(
   date_start: string,
-  date_end: string
+  date_end: string,
+  supplier: string
 ) {
   const [records] = await pool.query(
     `
     SELECT 
-        SUM(CASE WHEN medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS healthy_count,
-        SUM(CASE WHEN medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS unhealthy_count,
+        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS healthy_count,
+        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS unhealthy_count,
         ROUND(
-            SUM(CASE WHEN medical_condition = 'Healthy' THEN 1 ELSE 0 END) / 
+            SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) / 
             IFNULL(NULLIF(SUM(CASE WHEN medical_condition <> 'Healthy' THEN 1 ELSE 0 END), 0), 1),
         2) AS healthy_to_unhealthy_ratio
-    FROM livestock
-    WHERE date_arrived BETWEEN ? AND ?;
+    FROM livestock l
+    JOIN supplier s ON s.supplier_id = l.supplier_id
+    WHERE l.date_arrived BETWEEN ? AND ? AND s.company_name = ?;
   `,
-    [date_start, date_end]
+    [date_start, date_end, supplier]
   );
   return records;
 }
