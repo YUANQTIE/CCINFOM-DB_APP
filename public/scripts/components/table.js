@@ -106,6 +106,9 @@ const initRowDataFragments = (rowData, tableBody, actionButtons) => {
 
       // Initialize buttons
       Object.entries(actionButtons).forEach(([key, props]) => {
+        if (props.condition && !props.condition(data)) {
+          return;
+        }
         const btn = actionsGroup.appendChild(document.createElement("button"));
         btn.id = key;
         btn.className = `btn-outline ${props.className}`;
