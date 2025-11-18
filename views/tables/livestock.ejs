@@ -84,25 +84,30 @@
             action: async (event, rowData, rowIndex) => {
               const livestock_id = rowData.livestock_id;
 
-              try {
-                const response = await fetch(
-                  `/api/livestock/process/${livestock_id}`,
-                  {
-                    method: "POST",
-                  }
-                );
+              alert(
+                `Are you sure you want to process livestock id ${rowData.livestock_id}?`
+              );
 
-                if (!response.ok) {
-                  throw new Error("Failed to process livestock");
-                }
+              // try {
+              //   const response = await fetch(
+              //     `/api/livestock/process/${livestock_id}`,
+              //     {
+              //       method: "POST",
+              //     }
+              //   );
 
-                window.location.reload();
-              } catch (err) {
-                console.error(err);
-                alert("Error processing livestock.");
-              }
+              //   if (!response.ok) {
+              //     throw new Error("Failed to process livestock");
+              //   }
+
+              //   window.location.reload();
+              // } catch (err) {
+              //   console.error(err);
+              //   alert("Error processing livestock.");
+              // }
             },
-            label: "Process",
+            icon: lucide.icons.Cog,
+            content: "Process",
             condition: (rowData) => rowData.status === "For Processing",
           },
         };
