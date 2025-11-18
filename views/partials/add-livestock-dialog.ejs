@@ -1,20 +1,109 @@
-<div class="grid gap-3">
-  <label for="add-supplier-dialog-company-name"> Company Name </label>
-  <input
-    type="text"
-    id="add-supplier-dialog-company-name"
-    placeholder="Enter company name"
-    name="company_name"
-    required
-  />
-</div>
-<div class="grid gap-3">
-  <label for="add-supplier-dialog-contact"> Contact No. </label>
-  <input
-    type="number"
-    id="add-supplier-dialog-contact"
-    placeholder="Enter contact no."
-    name="contact_no"
-    required
-  />
+<div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2 md:w-fit">
+  <div class="grid gap-2">
+    <label for="breed-select">Breed</label>
+    <select class="w-full" id="breed-select" name="breed" **required**>
+      <option value="" disabled selected>Select a breed...</option>
+      <option value="angus">Angus</option>
+      <option value="holstein">Holstein</option>
+      <option value="brahman">Brahman</option>
+      <option value="hereford">Hereford</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="weight-input">Weight (kg)</label>
+    <input
+      class="w-full"
+      type="text"
+      id="weight-input"
+      placeholder="e.g., 500"
+      name="weight"
+      **required**
+    />
+  </div>
+
+  <div class="grid gap-2">
+    <label for="age-input">Age (months)</label>
+    <input
+      class="w-full"
+      type="text"
+      id="age-input"
+      placeholder="e.g., 24"
+      name="age"
+      **required**
+    />
+  </div>
+
+  <div class="grid gap-2">
+    <label for="country-select">Country of Origin</label>
+    <select
+      class="w-full"
+      id="country-select"
+      name="country_of_origin"
+      **required**
+    >
+      <option value="" disabled selected>Select a country...</option>
+      <option value="local">Local</option>
+      <option value="australia">Australia</option>
+      <option value="brazil">Brazil</option>
+      <option value="usa">USA</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="medical-select">Medical Condition</label>
+    <select
+      class="w-full"
+      id="medical-select"
+      name="medical_condition"
+      **required**
+    >
+      <option value="healthy">Healthy</option>
+      <option value="under_observation">Under Observation</option>
+      <option value="medicated">Medicated</option>
+      <option value="injured">Injured</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="vaccination-select">Vaccination Status</label>
+    <select
+      class="w-full"
+      id="vaccination-select"
+      name="vaccination_status"
+      **required**
+    >
+      <option value="fully_vaccinated">Fully Vaccinated</option>
+      <option value="not_vaccinated">Not Vaccinated</option>
+      <option value="pending">Pending</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="storage-select">Storage Location</label>
+    <select
+      class="w-full"
+      id="storage-select"
+      name="storage_location"
+      **required**
+    >
+      <option value="" disabled selected>Select a location...</option>
+      <option value="farm1">Farm 1</option>
+      <option value="farm2">Farm 2</option>
+      <option value="farm3">Farm 3</option>
+      <option value="farm4">Farm 4</option>
+      <option value="farm5">Farm 5</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="supplier-id">Supplier ID</label>
+    <select class="w-full" id="supplier-id" name="supplier_id" **required**>
+      <option value="" disabled selected>Select a supplier...</option>
+      <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+      <option value="SUP-042">SUP-042 (Local Breeders Co-op)</option>
+      <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+      <option value="SUP-210">SUP-210 (Green Valley Supplies)</option>
+    </select>
+  </div>
 </div>

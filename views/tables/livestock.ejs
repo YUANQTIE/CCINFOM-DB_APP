@@ -27,10 +27,10 @@
                 View Suppliers
               </a>
               
-              <a href="/livestock/add" class="btn">
+              <button class="btn" id="add-livestock-btn">
                 <i data-lucide="house-plus" class="h-4.5"></i>
                 Add Livestock
-              </a>
+              </button>
 
               <!-- prettier-ignore -->
               <%- include('../partials/dialog', {
@@ -56,8 +56,9 @@
       </main>
     </div>
 
-    <script src="/scripts/components/table.js"></script>
-    <script src="/scripts/components/searchbar.js"></script>
+    <script src="/scripts/components/table.js" defer></script>
+    <script src="/scripts/components/searchbar.js" defer></script>
+    <script src="/scripts/components/dialog.js" defer></script>
 
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
@@ -100,6 +101,15 @@
           "livestock-table",
           "livestock",
           tableColumns
+        );
+
+        // Dialog
+        initDialog(
+          "add-livestock-btn",
+          "add-livestock-dialog",
+          "add-livestock-form",
+          "/api/livestock/add",
+          "POST"
         );
 
         // For processing
