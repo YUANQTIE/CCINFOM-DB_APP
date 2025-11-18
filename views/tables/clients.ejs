@@ -52,12 +52,6 @@
             },
             icon: lucide.icons.Pencil,
           },
-          deleteBtn: {
-            action: () => {
-              console.log("Delete");
-            },
-            icon: lucide.icons.Trash,
-          },
         };
 
         initTable(
@@ -65,8 +59,7 @@
           "clients-table",
           "table-skeleton",
           "table-data-zero",
-          "clients",
-          buttons
+          "clients"
         );
         // Init Search Bar
         initSearchBar(

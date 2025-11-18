@@ -31,6 +31,18 @@
                 <i data-lucide="house-plus" class="h-4.5"></i>
                 Add Livestock
               </a>
+
+              <!-- prettier-ignore -->
+              <%- include('../partials/dialog', {
+                dialogId: 'add-livestock-dialog',
+                title: 'Add Livestock',
+                description: 'Add livestock.',
+                formId: 'add-livestock-form',
+                formAction: '/api/livestock/add',
+                formMethod: 'POST',
+                submitText: 'Add',
+                formFieldsPartial: '../partials/add-livestock-dialog' 
+              }) %>
             </div>
           </section>
           <div class="overflow-x-auto">
@@ -70,12 +82,6 @@
               console.log("Edit");
             },
             icon: lucide.icons.Pencil,
-          },
-          deleteBtn: {
-            action: (event, rowData, rowIndex) => {
-              console.log(rowData, rowIndex);
-            },
-            icon: lucide.icons.Trash,
           },
         };
 

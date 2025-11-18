@@ -18,7 +18,7 @@ const initTable = async (
   skeletonId,
   dataEmptyId,
   apiName,
-  actionButtons
+  actionButtons = {}
 ) => {
   const skeleton = document.getElementById(skeletonId);
   const table = document.getElementById(tableId);
@@ -42,9 +42,12 @@ const initTable = async (
     cell.classList.add("font-bold");
   });
 
-  const actionsRow = row.insertCell();
-  actionsRow.textContent = "Actions";
-  actionsRow.className = "font-bold";
+  if (Object.keys(actionButtons).length !== 0) {
+    const actionsRow = row.insertCell();
+    actionsRow.textContent = "Actions";
+    actionsRow.className = "font-bold";
+  }
+
   header.appendChild(columnFragment);
 
   // Fetch data from API
@@ -80,24 +83,28 @@ const initTable = async (
       }
 
       // Create action cell
-      const actionsCell = row.insertCell();
-      const actionsGroup = document.createElement("div");
-      actionsGroup.id = "actionsGroup";
-      actionsCell.appendChild(actionsGroup);
+      if (Object.keys(actionButtons).length !== 0) {
+        const actionsCell = row.insertCell();
+        const actionsGroup = document.createElement("div");
+        actionsGroup.id = "actionsGroup";
+        actionsCell.appendChild(actionsGroup);
 
-      // Initialize buttons
-      Object.entries(actionButtons).forEach(([key, props]) => {
-        const btn = actionsGroup.appendChild(document.createElement("button"));
-        btn.id = key;
-        btn.className = "btn-outline";
-        const iconElement = lucide.createElement(props.icon);
-        btn.appendChild(iconElement);
-        btn.addEventListener("click", (event) => {
-          props.action(event, data, index);
+        // Initialize buttons
+        Object.entries(actionButtons).forEach(([key, props]) => {
+          const btn = actionsGroup.appendChild(
+            document.createElement("button")
+          );
+          btn.id = key;
+          btn.className = `btn-outline ${props.className}`;
+          const iconElement = lucide.createElement(props.icon);
+          btn.append(iconElement, props.content || "");
+          btn.addEventListener("click", (event) => {
+            props.action(event, data, index);
+          });
         });
-      });
 
-      actionsGroup.className = "flex gap-2";
+        actionsGroup.className = "flex gap-2";
+      }
     });
 
     // Populate with built fragment

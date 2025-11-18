@@ -50,16 +50,10 @@
 
         const buttons = {
           editBtn: {
-            action: () => {
+            action: (event, rowData, rowIndex) => {
               console.log("Edit");
             },
             icon: lucide.icons.Pencil,
-          },
-          deleteBtn: {
-            action: () => {
-              console.log("Delete");
-            },
-            icon: lucide.icons.Trash,
           },
         };
 
