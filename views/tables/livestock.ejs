@@ -94,7 +94,7 @@
                 throw new Error("Failed to process livestock");
               }
 
-              alert("Livestock processed successfully!");
+              window.location.reload();
             } catch (err) {
               console.error(err);
               alert("Error processing livestock.");
