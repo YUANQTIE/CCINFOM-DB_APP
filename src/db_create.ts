@@ -5,13 +5,22 @@ import * as update from "./db_update.ts";
 import * as obj from "./objects.ts";
 
 // --- SUPPLIER ---
-export async function createSupplier(s: obj.Supplier) {
+export async function createSupplier(s: obj.SupplierInput) {
+  let letters = s.company_name.substring(0, 3);
+  letters = letters.toUpperCase();
+  const numbers = (Math.floor(Math.random() * 900) + 100).toString();
+  const key = letters + '-' + numbers;
+
   const [result] = await pool.query(
     `
     INSERT INTO supplier (supplier_id, company_name, contact_no)
-    VALUES (?, ?, ?)
+    VALUES (
+      ?, 
+      ?, 
+      ?
+    )
     `,
-    [s.supplier_id, s.company_name, s.contact_no]
+    [key, s.company_name, s.contact_no]
   );
   return result;
 }
