@@ -1,0 +1,29 @@
+<div class="grid gap-6 mb-4">
+
+    <!-- Edit Medical Condition -->
+    <form id="edit-medical-form" class="grid gap-4" method="POST">
+        <div class="grid gap-2">
+            <label for="medical-input">Medical Condition</label>
+            <input class="w-full" type="text" id="medical-input" name="medical_condition" required />
+        </div>
+
+        <button type="submit" class="btn w-full">Update Medical Condition</button>
+    </form>
+
+    <hr />
+
+    <!-- Edit Vaccination Status -->
+    <form id="edit-vaccine-form" class="grid gap-4" method="POST">
+        <div class="grid gap-2">
+            <label for="vaccination-select">Vaccination Status</label>
+            <select class="w-full" id="vaccination-select" name="vaccination_status" required>
+                <option value="Vaccinated">Vaccinated</option>
+                <option value="Not Vaccinated">Not Vaccinated</option>
+                <option value="Pending">Pending</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn w-full">Update Vaccination Status</button>
+    </form>
+
+</div>

@@ -39,6 +39,11 @@
                 <%- include('../partials/dialog', { dialogId: 'add-livestock-dialog' , title: 'Add Livestock' ,
                   description: 'Add livestock.' , formId: 'add-livestock-form' , formAction: '/api/livestock/add' ,
                   formMethod: 'POST' , submitText: 'Add' , formFieldsPartial: '../partials/add-livestock-dialog' }) %>
+
+                  <%- include('../partials/dialog', { dialogId: 'edit-livestock-dialog' , title: 'Edit Livestock' ,
+                    description: 'Update the medical condition and vaccination status.' , formId: 'edit-livestock-form'
+                    , formAction: '' , formMethod: 'POST' , submitText: 'Update' ,
+                    formFieldsPartial: '../partials/edit-livestock-dialog' }) %>
               </div>
           </section>
           <div class="overflow-x-auto">
@@ -59,6 +64,52 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
+      document.getElementById("edit-medical-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const dialog = document.getElementById("edit-livestock-dialog");
+        const id = dialog.dataset.livestock_id;
+
+        const condition = document.getElementById("medical-input").value;
+
+        const response = await fetch(`/api/livestock/${id}/condition`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ medical_condition: condition })
+        });
+
+        if (response.ok) {
+          console.log("Medical condition updated!");
+          dialog.close();
+          window.location.reload();
+        } else {
+          console.log("Error updating medical condition.");
+        }
+      });
+
+
+      document.getElementById("edit-vaccine-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const dialog = document.getElementById("edit-livestock-dialog");
+        const id = dialog.dataset.livestock_id;
+
+        const vaccine = document.getElementById("vaccination-select").value;
+
+        const response = await fetch(`/api/livestock/${id}/vaccination`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ vaccination_status: vaccine })
+        });
+
+        if (response.ok) {
+          console.log("Vaccination status updated!");
+          dialog.close();
+          window.location.reload();
+        } else {
+          console.log("Error updating vaccination status.");
+        }
+      });
       const tableColumns = [
         "Livestock ID",
         "Breed",
@@ -77,6 +128,16 @@
       const buttons = {
         editBtn: {
           action: (event, rowData, rowIndex) => {
+            const dialog = document.getElementById("edit-livestock-dialog");
+
+            // Pre-fill values
+            document.getElementById("medical-input").value = rowData.medical_condition;
+            document.getElementById("vaccination-select").value = rowData.vaccination_status;
+
+            // Store ID for both forms
+            dialog.dataset.livestockId = rowData.livestock_id;
+
+            dialog.showModal();
             console.log("Edit");
           },
           icon: lucide.icons.Pencil,
