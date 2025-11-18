@@ -362,7 +362,6 @@ export async function getDeliveriesFiltered(filterBy: string, key: string) {
     "Order Date": "order_date",
     "Distance Traveled": "distance_traveled",
     "Delivery Duration": "delivery_duration",
-    Weight: "weight",
     "Restaurant Code": "restaurant_code",
     Status: "status",
   };
@@ -380,7 +379,6 @@ export async function getDeliveriesFiltered(filterBy: string, key: string) {
       OR order_date LIKE ?
       OR distance_traveled LIKE ?
       OR delivery_duration LIKE ?
-      OR weight LIKE ?
       OR restaurant_code LIKE ?
       OR status LIKE ?
       ORDER BY delivery_no DESC;

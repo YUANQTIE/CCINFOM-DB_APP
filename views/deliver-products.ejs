@@ -1,18 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Deliver Products</title>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("./partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Deliver Products</title>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("./partials/sidebar") %>
+
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Deliver Products
         </h1>
+
+        <div class="space-y-4">
+          <!-- Button 1 -->
+          <a href="/company/assign-driver"
+            class="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+            Assign truck driver and truck number
+          </a>
+
+          <!-- Button 2 -->
+          <a href="/company/assign-meat-selection"
+            class="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+            Assign meat selections
+          </a>
+
+          <!-- Button 3 -->
+          <a href="/company/deliver-product"
+            class="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg text-center">
+            Deliver the product
+          </a>
+        </div>
       </main>
-    </div>
-  </body>
+  </div>
+</body>
+
 </html>

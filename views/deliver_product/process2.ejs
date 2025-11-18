@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Delivery & Meat Selection</title>
+</head>
+
+<body>
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <%- include("../partials/sidebar") %>
+
+            <main class="flex-1 p-10 overflow-y-auto bg-background">
+                <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+                    Assign Driver & Truck / Meat Selections
+                </h1>
+
+                <div class="space-y-6 max-w-3xl">
+
+                    <!-- -----------------------------
+             Delivery + Driver/Truck Assignment
+             ----------------------------- -->
+                    <div class="space-y-4 p-4 border rounded-lg bg-white">
+                        <h2 class="font-bold text-lg">Assign Driver & Truck</h2>
+
+                        <div class="flex flex-col">
+                            <label class="font-semibold mb-1">Select Pending Delivery:</label>
+                            <select id="deliverySelect" class="border border-gray-300 rounded-lg px-3 py-2">
+                                <option value="">-- Loading deliveries --</option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="font-semibold mb-1">Driver Name:</label>
+                            <input type="text" id="driverName" placeholder="Enter driver name"
+                                class="border border-gray-300 rounded-lg px-3 py-2" />
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="font-semibold mb-1">Truck Number:</label>
+                            <input type="number" id="truckNumber" placeholder="Enter truck number"
+                                class="border border-gray-300 rounded-lg px-3 py-2" />
+                        </div>
+
+                        <button id="assignBtn"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg">
+                            Assign Delivery
+                        </button>
+
+                        <p id="status" class="font-bold text-red-600"></p>
+                    </div>
+
+                    <!-- -----------------------------
+             Meat Selection
+             ----------------------------- -->
+                    <div id="orderLinesContainer" class="space-y-4 p-4 border rounded-lg bg-white">
+                        <h2 class="font-bold text-lg">Assign Meat Selections</h2>
+                        <!-- order lines will be populated here -->
+                    </div>
+
+                </div>
+            </main>
+    </div>
+
+    <script>
+        const deliverySelect = document.getElementById("deliverySelect");
+        const driverNameInput = document.getElementById("driverName");
+        const truckNumberInput = document.getElementById("truckNumber");
+        const assignBtn = document.getElementById("assignBtn");
+        const statusEl = document.getElementById("status");
+        const orderLinesContainer = document.getElementById("orderLinesContainer");
+
+        // -----------------------------
+        // Load Pending Deliveries
+        // -----------------------------
+        async function loadPendingDeliveries() {
+            statusEl.textContent = "Loading deliveries...";
+            deliverySelect.innerHTML = "<option value=''>-- Loading deliveries --</option>";
+
+            try {
+                const res = await fetch("http://localhost:3000/api/company/pending-deliveries");
+                if (!res.ok) { statusEl.textContent = `Failed: ${res.status}`; return; }
+
+                const deliveries = await res.json();
+                deliverySelect.innerHTML = "<option value=''>-- Select delivery --</option>";
+
+                deliveries.forEach(d => {
+                    const opt = document.createElement("option");
+                    opt.value = d.delivery_no;
+                    const driver = d.driver_name ?? "N/A";
+                    const truck = d.truck_number ?? "N/A";
+                    opt.textContent = `#${d.delivery_no} - ${d.restaurant_name} (${d.restaurant_address}) | Driver: ${driver}, Truck: ${truck}`;
+                    deliverySelect.appendChild(opt);
+                });
+
+                statusEl.textContent = "";
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent = "Error loading deliveries. Check console.";
+            }
+        }
+
+        // -----------------------------
+        // Assign Driver & Truck
+        // -----------------------------
+        assignBtn.addEventListener("click", async () => {
+            const delivery_no = deliverySelect.value;
+            const driver_name = driverNameInput.value.trim();
+            const truck_number = Number(truckNumberInput.value);
+
+            if (!delivery_no) return alert("Select a delivery");
+            if (!driver_name) return alert("Enter driver name");
+            if (!truck_number) return alert("Enter truck number");
+
+            statusEl.textContent = "Assigning delivery...";
+            try {
+                const res = await fetch("http://localhost:3000/api/company/assign-delivery", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ delivery_no, driver_name, truck_number })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    statusEl.textContent = data.message || "Delivery assigned successfully!";
+                    driverNameInput.value = "";
+                    truckNumberInput.value = "";
+                    loadPendingDeliveries();
+                } else {
+                    statusEl.textContent = data.error || "Failed to assign delivery.";
+                }
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent = "Error assigning delivery. Check console.";
+            }
+        });
+
+        // -----------------------------
+        // Load Order Lines for Meat Selection
+        // -----------------------------
+        async function fetchOrderLines(deliveryNo) {
+            orderLinesContainer.innerHTML = "<h2 class='font-bold text-lg'>Assign Meat Selections</h2>";
+
+            try {
+                const res = await fetch(`http://localhost:3000/api/company/pending-deliveries/${deliveryNo}/order-lines`);
+                const orderLines = await res.json();
+
+                orderLines.forEach(async ol => {
+                    const div = document.createElement("div");
+                    div.className = "order-line border p-2 rounded mb-2 bg-gray-50";
+                    div.innerHTML = `
+            <strong>Cut Type:</strong> ${ol.cut_type_of_choice}<br>
+            <strong>Weight:</strong> ${ol.weight}<br><br>
+            <label>Pick Meat Selection:</label>
+            <select class="meatSelect border border-gray-300 rounded px-2 py-1">
+              <option value="">-- Select --</option>
+            </select><br><br>
+            <button class="reserveBtn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+              Reserve
+            </button>
+          `;
+                    orderLinesContainer.appendChild(div);
+
+                    // Fetch available meat selections
+                    const meatRes = await fetch(`http://localhost:3000/api/order-line/${ol.id}/meat-selection`);
+                    const meatData = await meatRes.json();
+                    const meatSelect = div.querySelector(".meatSelect");
+
+                    if (meatData.length === 0) {
+                        const opt = document.createElement("option");
+                        opt.value = "";
+                        opt.textContent = "No available match";
+                        meatSelect.appendChild(opt);
+                    } else {
+                        meatData.forEach(m => {
+                            const opt = document.createElement("option");
+                            opt.value = m.serial_no;
+                            opt.textContent = `${m.cut_type} (${m.weight}kg)`;
+                            meatSelect.appendChild(opt);
+                        });
+                    }
+
+                    // Reserve button
+                    div.querySelector(".reserveBtn").addEventListener("click", async () => {
+                        const serial_no = meatSelect.value;
+                        if (!serial_no) return alert("Select a meat first.");
+
+                        await fetch("http://localhost:3000/api/meat-selection/reserve", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ serial_no, order_line_id: ol.id })
+                        });
+
+                        alert("Meat reserved successfully!");
+                        fetchOrderLines(deliveryNo);
+                    });
+                });
+
+            } catch (err) {
+                console.error(err);
+                orderLinesContainer.innerHTML += "<p class='text-red-600'>Error loading order lines.</p>";
+            }
+        }
+
+        // -----------------------------
+        // Delivery select change listener
+        // -----------------------------
+        deliverySelect.addEventListener("change", e => {
+            const deliveryNo = e.target.value;
+            if (deliveryNo) fetchOrderLines(deliveryNo);
+        });
+
+        // -----------------------------
+        // Initial load
+        // -----------------------------
+        loadPendingDeliveries();
+    </script>
+</body>
+
+</html>

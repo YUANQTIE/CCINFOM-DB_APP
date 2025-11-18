@@ -92,10 +92,10 @@ VALUES
 ('BFS-010', 'Rica Navarro', 'Beef & Fire Smokehouse', 'Barbecue Restaurant', '95 Macapagal Blvd, Pasay City, Metro Manila', '09381245679', 'rica.navarro@beeffire.ph', 2017);
 
 INSERT INTO deliveries (
-    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, weight, restaurant_code, status
+    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, restaurant_code, status
 ) VALUES
-('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 16.35, 'BBQ-101', 'Delivered'),
-('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 6.35, 'STK-202', 'Delivered');
+('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 'BBQ-101', 'Delivered'),
+('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 'STK-202', 'Delivered');
 
 INSERT INTO agreements (
   restaurant_code,

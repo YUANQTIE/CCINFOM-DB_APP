@@ -85,7 +85,6 @@ CREATE TABLE IF NOT EXISTS `deliveries` (
 	`order_date` DATE NOT NULL,
     `distance_traveled` DECIMAL(8,2) DEFAULT NULL,
     `delivery_duration` DECIMAL(5,2) DEFAULT NULL,
-    `weight` DECIMAL(6,2) DEFAULT NULL,
     `restaurant_code` VARCHAR(8) NOT NULL,
     `status` ENUM('Pending', 'Delivered', 'Cancelled', 'Returned'),
     PRIMARY KEY (`delivery_no`),

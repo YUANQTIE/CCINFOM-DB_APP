@@ -237,6 +237,8 @@ app.put("/api/delivery/update/:deliveryNo", async (req, res) => {
       await upd.updateDeliveryDuration(deliveryNo, deliveryDuration);
     }
 
+    await upd.updateDeliveryDate(deliveryNo);
+
     // 4. Mark delivery as delivered
     await upd.updateDeliveredDelivery(deliveryNo, "Delivered");
 
@@ -246,6 +248,19 @@ app.put("/api/delivery/update/:deliveryNo", async (req, res) => {
     res.status(500).json({ error: "Error updating delivery" });
   }
 });
+
+app.get("/company/assign-driver", (req, res) => {
+  res.render("deliver_product/process1");
+});
+
+app.get("/company/assign-meat-selection", (req, res) => {
+  res.render("deliver_product/process2");
+});
+
+app.get("/company/deliver-product", (req, res) => {
+  res.render("deliver_product/process3");
+});
+
 
 // --- API ROUTES (Reports) ---
 
@@ -257,7 +272,7 @@ app.get("/api/average-condition-ratio", async (req, res) => {
     if (!start || !end || !supplier_name) {
       return res.status(400).json({ error: "start, end, and supplier_name are required" });
     }
-    const data = await read.getAverageConditionRatio(start, end);
+    const data = await read.getAverageConditionRatio(start, end, supplier_name);
     res.json(data);
   } catch (err) {
     console.error(err);
