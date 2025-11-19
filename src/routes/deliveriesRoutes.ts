@@ -14,6 +14,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/unique-trucks", async (req, res) => {
+  try {
+    const trucks = await read.getUniqueTrucks();
+    res.json(trucks);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch unique trucks" });
+  }
+});
+
 router.get("/filter", async (req, res) => {
   const column = req.query.column as string;
   const search = req.query.search as string;

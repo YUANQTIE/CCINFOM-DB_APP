@@ -368,6 +368,14 @@ export async function getDeliveries() {
   return records;
 }
 
+export async function getUniqueTrucks() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT truck_number FROM deliveries
+    ORDER BY truck_number;
+  `);
+  return records;
+}
+
 export async function getDeliveriesFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 
