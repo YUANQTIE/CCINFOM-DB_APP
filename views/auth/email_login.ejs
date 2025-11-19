@@ -31,7 +31,6 @@
 
         let clientEmails = [];
 
-        // Fetch all client emails once from server
         fetch("/api/client-emails")
             .then(res => res.json())
             .then(data => {
@@ -41,7 +40,6 @@
             })
             .catch(err => console.error(err));
 
-        // Live check as user types
         emailInput.addEventListener("input", () => {
             const value = emailInput.value.trim();
             if (value === "") {
@@ -66,7 +64,6 @@
             }
         });
 
-        // Prevent form submission if email not found
         form.addEventListener("submit", (e) => {
             const value = emailInput.value.trim();
             let exists = false;
