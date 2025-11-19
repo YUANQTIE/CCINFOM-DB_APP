@@ -1,0 +1,284 @@
+<aside class="bg-gray-100 p-4 w-72 min-w-fit">
+  <%- include("header") %>
+  <nav class="text-sm">
+    <ul class="flex flex-col gap-2">
+      <!-- View Tables -->
+      <li>
+        <a
+          id="view-tables-toggle"
+          class="flex cursor-pointer items-center justify-between py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 dropdown-toggle"
+          href="#"
+        >
+          <div class="flex gap-1.5 items-center">
+            <i data-lucide="table" class="h-4.5"></i>
+            <span class="text-nowrap truncate">View Tables</span>
+          </div>
+          <i
+            data-lucide="chevron-right"
+            class="h-4.5 dropdown-chevron transition-transform duration-300"
+          ></i>
+        </a>
+        <ul
+          class="ml-5.5 mt-1 space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out border-l border-gray-300 pl-4"
+        >
+          <li>
+            <a
+              href="/inventory"
+              class="py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate flex items-center gap-1.5"
+            >
+              <i data-lucide="shopping-basket" class="h-4"></i>
+              Inventory
+            </a>
+          </li>
+          <li>
+            <a
+              href="/livestock"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="beef" class="h-4"></i>
+              Livestock
+            </a>
+          </li>
+          <li>
+            <a
+              href="/deliveries"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="package" class="h-4"></i>
+              Deliveries
+            </a>
+          </li>
+          <li>
+            <a
+              href="/clients"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="users" class="h-4"></i>
+              Clients
+            </a>
+          </li>
+          <li>
+            <a
+              href="/suppliers"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="container" class="h-4"></i>
+              Suppliers
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Reports -->
+      <li>
+        <a
+          id="reports-toggle"
+          class="flex cursor-pointer items-center justify-between py-1.5 px-2.5 rounded-(--radius-md) text-black hover:bg-gray-200 dropdown-toggle"
+          href="#"
+        >
+          <div class="flex gap-1.5 items-center">
+            <i data-lucide="notepad-text" class="h-4.5"></i>
+            <span class="text-nowrap truncate">Reports</span>
+          </div>
+          <i
+            data-lucide="chevron-right"
+            class="h-4.5 dropdown-chevron transition-transform duration-300"
+          ></i>
+        </a>
+        <ul
+          class="ml-5.5 mt-1 space-y-1 max-h-0 overflow-hidden transition-all duration-300 ease-in-out border-l border-gray-300 pl-4"
+        >
+          <li>
+            <a
+              href="/reports/inventory-keeping"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="layers-2" class="h-4"></i>
+              Inventory Keeping
+            </a>
+          </li>
+          <li>
+            <a
+              href="/reports/livestock-keeping"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="layers-2" class="h-4"></i>
+              Livestock Keeping
+            </a>
+          </li>
+          <li>
+            <a
+              href="/reports/logistics-report"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="layers-2" class="h-4"></i>
+              Logistics Report
+            </a>
+          </li>
+          <li>
+            <a
+              href="/reports/sales-report"
+              class="flex items-center gap-1.5 py-1.5 px-2.5 rounded-md text-black hover:bg-gray-200 text-nowrap truncate"
+            >
+              <i data-lucide="layers-2" class="h-4"></i>
+              Sales Report
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <hr class="my-1" />
+      <li>
+        <a
+          class="flex cursor-default items-center gap-1.5 py-1.5 px-2.5 rounded-(--radius-md) text-black hover:bg-gray-200"
+          href="/process-livestock"
+        >
+          <i data-lucide="beef" class="h-4.5"></i>
+          <span class="text-nowrap truncate">Process Livestock</span>
+        </a>
+      </li>
+      <li>
+        <a
+          class="flex cursor-default items-center gap-1.5 py-1.5 px-2.5 rounded-(--radius-md) text-black hover:bg-gray-200"
+          href="/livestock/add"
+        >
+          <i data-lucide="tractor" class="h-4.5"></i>
+          <span class="text-nowrap truncate">Add Livestock</span>
+        </a>
+      </li>
+      <li>
+        <a
+          class="flex cursor-default items-center gap-1.5 py-1.5 px-2.5 rounded-(--radius-md) text-black hover:bg-gray-200"
+          href="/deliver-products"
+        >
+          <i data-lucide="package" class="h-4.5"></i>
+          <span class="text-nowrap">Deliver Products</span>
+        </a>
+      </li>
+      <hr class="my-1" />
+      <li>
+        <a
+          class="flex cursor-default items-center gap-1.5 py-1.5 px-2.5 rounded-(--radius-md) text-black hover:bg-gray-200"
+          href="/settings"
+        >
+          <i data-lucide="settings" class="h-4.5"></i>
+          <span class="text-nowrap truncate">Settings</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</aside>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // --- 1. DEFINE HELPERS ---
+    const STORAGE_KEY = "dropdownStates";
+
+    const getStates = () => {
+      const states = sessionStorage.getItem(STORAGE_KEY);
+      return states ? JSON.parse(states) : {};
+    };
+
+    const saveStates = (states) => {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(states));
+    };
+
+    // Get initial states
+    let savedStates = getStates();
+
+    // --- 2. NEW: SET ACTIVE LINK BASED ON ROUTE ---
+    const currentPath = window.location.pathname;
+
+    // Find the link that matches the current page's URL
+    const activeLink = document.querySelector(`nav a[href="${currentPath}"]`);
+
+    if (activeLink) {
+      // Apply a "selected" style to the active link
+      activeLink.classList.add("bg-gray-200");
+
+      // Check if this link is inside a dropdown submenu
+      const submenu = activeLink.closest("ul");
+
+      // Check if it's a submenu (has max-h-0) and has a previous sibling
+      if (
+        submenu &&
+        submenu.classList.contains("max-h-0") &&
+        submenu.previousElementSibling
+      ) {
+        const trigger = submenu.previousElementSibling; // This is the <a> toggle
+
+        // If the trigger has an ID, force it to be "open" in session storage
+        // This ensures the dropdown opens on page load to show the active link
+        if (trigger && trigger.id) {
+          savedStates[trigger.id] = true;
+          saveStates(savedStates); // Save the new "open" state
+        }
+      }
+    }
+
+    // --- 3. GET DROPDOWN ELEMENTS ---
+    const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+
+    // Get all submenus AND all chevrons
+    const allSubmenus = Array.from(dropdownToggles).map(
+      (trigger) => trigger.nextElementSibling
+    );
+    const allChevrons = Array.from(dropdownToggles).map((trigger) =>
+      trigger.querySelector(".dropdown-chevron")
+    );
+
+    // --- 4. DISABLE ANIMATIONS ON LOAD ---
+    // (This prevents the weird "load animation")
+    allSubmenus.forEach((submenu) => {
+      submenu.classList.remove("transition-all", "duration-300", "ease-in-out");
+    });
+    allChevrons.forEach((chevron) => {
+      chevron.classList.remove("transition-transform", "duration-300");
+    });
+
+    // --- 5. RESTORE STATE & ADD LISTENERS ---
+    dropdownToggles.forEach((trigger) => {
+      // Restore state instantly (using the potentially updated savedStates)
+      if (savedStates[trigger.id] === true) {
+        const submenu = trigger.nextElementSibling;
+        const chevron = trigger.querySelector(".dropdown-chevron");
+
+        // Set state instantly
+        chevron.classList.add("rotate-90");
+        submenu.style.maxHeight = submenu.scrollHeight + "px";
+      }
+
+      // Add the click listener
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        const submenu = trigger.nextElementSibling;
+        const chevron = trigger.querySelector(".dropdown-chevron");
+        const currentState = getStates(); // Get latest states on click
+
+        chevron.classList.toggle("rotate-90");
+
+        if (submenu.style.maxHeight) {
+          submenu.style.maxHeight = null;
+          currentState[trigger.id] = false;
+        } else {
+          submenu.style.maxHeight = submenu.scrollHeight + "px";
+          currentState[trigger.id] = true;
+        }
+
+        saveStates(currentState);
+      });
+    });
+
+    // --- 6. RE-ENABLE ALL ANIMATIONS ---
+    setTimeout(() => {
+      // Add submenu transitions back
+      allSubmenus.forEach((submenu) => {
+        submenu.classList.add("transition-all", "duration-300", "ease-in-out");
+      });
+      // Add chevron transitions back
+      allChevrons.forEach((chevron) => {
+        chevron.classList.add("transition-transform", "duration-300");
+      });
+    }, 0);
+  });
+</script>

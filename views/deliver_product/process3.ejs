@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deliveries Ready</title>
+</head>
+
+<body>
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <%- include("../partials/sidebar") %>
+
+            <main class="flex-1 p-10 overflow-y-auto bg-background">
+                <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+                    Pending Deliveries Ready to Deliver
+                </h1>
+
+                <div id="deliveriesContainer" class="overflow-x-auto"></div>
+                <div id="actionsContainer" class="mt-6"></div>
+            </main>
+    </div>
+
+    <script>
+        async function loadDeliveries() {
+            try {
+                const res = await fetch("http://localhost:3000/api/company/pending-deliveries-ready");
+                const deliveries = await res.json();
+
+                const container = document.getElementById("deliveriesContainer");
+                if (!Array.isArray(deliveries) || deliveries.length === 0) {
+                    container.innerHTML = "<p>No deliveries ready.</p>";
+                    return;
+                }
+
+                let html = `<table class="min-w-full border border-gray-300">
+            <thead class="bg-gray-100">
+                <tr>
+                <th class="border px-4 py-2">Delivery No</th>
+                <th class="border px-4 py-2">Driver</th>
+                <th class="border px-4 py-2">Truck</th>
+                <th class="border px-4 py-2">Restaurant</th>
+                <th class="border px-4 py-2">Address</th>
+                <th class="border px-4 py-2">Action</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+                for (const d of deliveries) {
+                    html += `<tr class="hover:bg-gray-50">
+                <td class="border px-4 py-2">${d.delivery_no}</td>
+                <td class="border px-4 py-2">${d.driver_name}</td>
+                <td class="border px-4 py-2">${d.truck_number}</td>
+                <td class="border px-4 py-2">${d.restaurant_name}</td>
+                <td class="border px-4 py-2">${d.restaurant_address}</td>
+                <td class="border px-4 py-2">
+                <button onclick="selectDelivery(${d.delivery_no})" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">Select</button>
+                </td>
+            </tr>`;
+                }
+
+                html += "</tbody></table>";
+                container.innerHTML = html;
+
+                // Do NOT auto-select any delivery
+            } catch (err) {
+                console.error(err);
+                alert("Error loading deliveries.");
+            }
+        }
+
+
+        function selectDelivery(deliveryNo) {
+            document.getElementById("actionsContainer").innerHTML = `
+        <form id="deliveryForm" class="flex flex-col space-y-2 max-w-sm">
+          <h2 class="font-semibold text-lg mb-2">Selected Delivery: ${deliveryNo}</h2>
+
+          <label>Distance Traveled (km)</label>
+          <input id="distanceInput" type="number" class="border border-gray-300 px-3 py-2 rounded" placeholder="km" required>
+
+          <label>Delivery Duration (minutes)</label>
+          <input id="durationInput" type="number" class="border border-gray-300 px-3 py-2 rounded" placeholder="minutes" required>
+
+          <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-semibold">
+            Update & Mark as Delivered
+          </button>
+        </form>
+      `;
+
+            const form = document.getElementById("deliveryForm");
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                updateDelivery(deliveryNo);
+            });
+        }
+
+        async function updateDelivery(deliveryNo) {
+            const distance = document.getElementById("distanceInput").value;
+            const duration = document.getElementById("durationInput").value;
+
+            const body = {};
+            if (distance) body.distanceTraveled = Number(distance);
+            if (duration) body.deliveryDuration = Number(duration);
+
+            try {
+                const res = await fetch(`http://localhost:3000/api/delivery/update/${deliveryNo}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                alert(data.success ? "Delivery updated and marked as delivered" : data.error);
+                loadDeliveries();
+                document.getElementById("actionsContainer").innerHTML = "";
+            } catch (err) {
+                console.error(err);
+                alert("Error updating delivery");
+            }
+        }
+
+        // Initial load
+        loadDeliveries();
+    </script>
+</body>
+
+</html>

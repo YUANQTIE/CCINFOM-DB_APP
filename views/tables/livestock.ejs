@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Livestock</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js" defer></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
+      <main class="flex-1 p-10 overflow-y-auto bg-background">
+        <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+          Livestock
+        </h1>
+        <section class="flex flex-col gap-4">
+          <!-- prettier-ignore -->
+          <section class="flex justify-between">
+            <%- include("../partials/searchbar", { label: "Livestock" , select_id: "searchbarSelect" ,
+              input_id: "searchbarInput" , placeholder: "Search livestock..." , route_api: "livestock" }) %>
+              <div class="grid gap-2 grid-flow-col">
+                <a href="/reports/inventory-keeping" class="btn-outline">
+                  <i data-lucide="bar-chart-2"></i>
+                  View Reports
+                </a>
+                <a href="/suppliers" class="btn-outline">
+                  <i data-lucide="users" class="h-4.5"></i>
+                  View Suppliers
+                </a>
+
+                <button class="btn" id="add-livestock-btn">
+                  <i data-lucide="house-plus" class="h-4.5"></i>
+                  Add Livestock
+                </button>
+
+                <!-- prettier-ignore -->
+                <%- include('../partials/dialog', { dialogId: 'add-livestock-dialog' , title: 'Add Livestock' ,
+                  description: 'Add livestock.' , formId: 'add-livestock-form' , formAction: '/api/livestock/add' ,
+                  formMethod: 'POST' , submitText: 'Add' , formFieldsPartial: '../partials/add-livestock-dialog' }) %>
+              </div>
+          </section>
+          <div class="tabs" id="demo-tabs-with-panels">
+            <nav role="tablist" aria-orientation="horizontal">
+              <button type="button" role="tab" id="livestock-btn" aria-controls="livestock-btn-control"
+                aria-selected="true" tabindex="0">
+                Livestock
+              </button>
+
+              <button type="button" role="tab" id="filter-meat-by-livestock-btn"
+                aria-controls="filter-meat-by-livestock-btn-control" aria-selected="false" tabindex="0">
+                Filter Meat by Livestock Breed
+              </button>
+            </nav>
+
+            <div role="tabpanel" id="livestock-btn-control" aria-labelledby="livestock-btn" tabindex="-1"
+              aria-selected="true">
+              <section>
+                <div class="overflow-x-auto">
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
+                    <%- include("../partials/table", { id: "livestock-table" })%>
+                </div>
+                <!-- prettier-ignore -->
+                <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+                  description: "Livestock data not available..." }) %>
+              </section>
+            </div>
+            <div role="tabpanel" id="filter-meat-by-livestock-btn-control"
+              aria-labelledby="filter-meat-by-livestock-btn" tabindex="-1" aria-selected="false" hidden>
+              <div class="card">
+                <header>
+                  <h1 class="font-bold">Filter Meat by Livestock Breed</h1>
+                </header>
+                <section>
+                  <form id="livestock-form" class="form grid gap-6">
+                    <div class="grid gap-3">
+                      <label for="livestock-input">Enter Breed</label>
+                      <div class="flex gap-2">
+                        <input class="w-fit" type="text" id="livestock-input" name="breed" />
+                        <button type="submit" id="livestock-form-btn" class="btn-outline">
+                          <i data-lucide="eye"></i>
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </section>
+                <section>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td class="font-bold">Serial No.</td>
+                        <td class="font-bold">Cut Type</td>
+                      </tr>
+                    </thead>
+                    <tbody id="meatTableBody"></tbody>
+                  </table>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+  </div>
+
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/dialog.js" defer></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tableColumns = [
+        "Livestock ID",
+        "Breed",
+        "Weight",
+        "Age",
+        "Country of Origin",
+        "Medical Condition",
+        "Vaccination Status",
+        "Date Arrived",
+        "Storage Location",
+        "Supplier ID",
+        "Status",
+        "Processing Date",
+      ];
+
+      const buttons = {
+        /*
+        editBtn: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Edit");
+          },
+          icon: lucide.icons.Pencil,
+        },
+        */
+        processLivestockBtn: {
+          action: async (event, rowData, rowIndex) => {
+            const livestock_id = rowData.livestock_id;
+            try {
+              const response = await fetch(
+                `/api/livestock/process/${livestock_id}`,
+                {
+                  method: "POST",
+                }
+              );
+
+              if (!response.ok) {
+                throw new Error("Failed to process livestock");
+              }
+
+              window.location.reload();
+            } catch (err) {
+              console.error(err);
+              alert("Error processing livestock.");
+            }
+          },
+          icon: lucide.icons.Cog,
+          content: "Process",
+          condition: (rowData) => rowData.status === "For Processing",
+        },
+      };
+
+      initTable(
+        tableColumns,
+        "livestock-table",
+        "table-skeleton",
+        "table-data-zero",
+        "livestock",
+        buttons
+      );
+
+      initSearchBar(
+        "searchbarSelect",
+        "searchbarInput",
+        "livestock-table",
+        "livestock",
+        tableColumns,
+        buttons
+      );
+
+      // Dialog
+      initDialog(
+        "add-livestock-btn",
+        "add-livestock-dialog",
+        "add-livestock-form",
+        "/api/livestock/add",
+        "POST"
+      );
+
+      const livestockForm = document.getElementById("livestock-form");
+      livestockForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(livestockForm);
+        const breed = formData.get("breed");
+        const response = await fetch(
+          `/api/livestock/meat-by-livestock-breed/${encodeURIComponent(breed)}`
+        );
+        const data = await response.json()
+
+        const tbody = document.getElementById("meatTableBody");
+        tbody.innerHTML = ""; // clear old results
+
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+              <td>${item.serial_no}</td>
+              <td>${item.cut_type}</td>
+            `;
+          tbody.appendChild(row);
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

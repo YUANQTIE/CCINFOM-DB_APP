@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-8">
+    <div class="flex flex-1">
+        <%- include("../clients_partials/sidebar") %>
+            <main class="flex-1 p-10 overflow-y-auto bg-background">
+                <div id="agreements-section" class="space-y-4 w-full">
+                    <header class="w-full max-w-6xl mb-8">
+                        <h1 class="text-4xl font-extrabold text-gray-900 text-center">
+                            Place Orders for <%= clientName %>
+                        </h1>
+                    </header>
+                    <h2 class="text-2xl font-bold text-gray-800">Click an Agreement to Add to Order</h2>
+                    <p>Current Delivery ID: <span id="current-delivery-id" class="font-semibold text-indigo-700"></span>
+                    </p>
+                    <div id="agreements-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+                    <p id="order-status" class="text-gray-600"></p>
+                </div>
+            </main>
+    </div>
+
+    <script>
+        const clientEmail = "<%= clientEmail %>";
+        let latestDeliveryID = null;
+
+        (async function startDeliveryAndLoadAgreements() {
+            const status = document.getElementById("order-status");
+            status.textContent = "Starting delivery session...";
+
+            try {
+                const deliveryRes = await fetch("/api/client/create-delivery", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email_address: clientEmail })
+                });
+                const deliveryResult = await deliveryRes.json();
+
+                if (!deliveryRes.ok) throw new Error(deliveryResult.error || "Failed to start delivery session");
+
+                latestDeliveryID = deliveryResult.delivery_id;
+                document.getElementById("current-delivery-id").textContent = latestDeliveryID;
+                status.textContent = `Delivery ${latestDeliveryID} started. Loading agreements...`;
+
+                const agreementsRes = await fetch(`/api/client/agreements/number?email_address=${clientEmail}`);
+                const agreements = await agreementsRes.json();
+
+                if (!agreements || agreements.length === 0) {
+                    status.textContent = "No agreements found for this client.";
+                    return;
+                }
+
+                const list = document.getElementById("agreements-list");
+                list.innerHTML = "";
+
+                agreements.forEach(a => {
+                    const btn = document.createElement("button");
+                    btn.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow-sm font-semibold";
+                    btn.textContent = `Add: ${a.cut_type_of_choice} (Agreement #${a.agreement_no})`;
+                    btn.onclick = () => placeOrderLine(a.agreement_no);
+                    list.appendChild(btn);
+                });
+
+            } catch (err) {
+                status.textContent = "Error during order setup: " + (err.message || "Server Error");
+                console.error(err);
+            }
+        })();
+
+        async function placeOrderLine(agreement_no) {
+            if (!latestDeliveryID) {
+                alert("Delivery session not started.");
+                return;
+            }
+
+            const status = document.getElementById("order-status");
+            status.textContent = `Adding agreement ${agreement_no} to delivery ${latestDeliveryID}...`;
+
+            try {
+                const res = await fetch("/api/client/add-order-lines", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ delivery_id: latestDeliveryID, agreements: [agreement_no] })
+                });
+
+                const result = await res.json();
+
+                if (!res.ok) {
+                    status.textContent = `Error: ${result.error}`;
+                } else {
+                    status.textContent = `Success! Agreement #${agreement_no} added to Delivery ID ${latestDeliveryID}.`;
+                }
+            } catch (err) {
+                status.textContent = "Failed to add order line.";
+                console.error(err);
+            }
+        }
+    </script>
+
+    <footer class="w-full max-w-6xl mt-12 text-center text-xs text-gray-400">
+        &copy; 2025 Carnivault. All rights reserved.
+    </footer>
+
+</body>
+
+</html>

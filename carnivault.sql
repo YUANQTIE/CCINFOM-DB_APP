@@ -85,7 +85,6 @@ CREATE TABLE IF NOT EXISTS `deliveries` (
 	`order_date` DATE NOT NULL,
     `distance_traveled` DECIMAL(8,2) DEFAULT NULL,
     `delivery_duration` DECIMAL(5,2) DEFAULT NULL,
-    `weight` DECIMAL(6,2) DEFAULT NULL,
     `restaurant_code` VARCHAR(8) NOT NULL,
     `status` ENUM('Pending', 'Delivered', 'Cancelled', 'Returned'),
     PRIMARY KEY (`delivery_no`),
@@ -114,10 +113,11 @@ CREATE TABLE `agreements` (
 );
 
 CREATE TABLE IF NOT EXISTS `order_line`(
+	`id` INT auto_increment,
 	`order_no` INT NOT NULL,
     `item_serial_no` VARCHAR(30) DEFAULT NULL,
     `agreement_no` INT NOT NULL,
-    PRIMARY KEY(`order_no`, `agreement_no`),
+    PRIMARY KEY(id),
     CONSTRAINT FOREIGN KEY(`item_serial_no`) REFERENCES `meat_selection`(`serial_no`),
     CONSTRAINT FOREIGN KEY(`order_no`) REFERENCES `deliveries`(`delivery_no`),
     CONSTRAINT FOREIGN KEY(`agreement_no`) REFERENCES `agreements`(`agreement_no`)

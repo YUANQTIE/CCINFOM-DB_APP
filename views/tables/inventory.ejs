@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carnivault - Inventory</title>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/basecoat.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
+      defer
+    ></script>
+  </head>
+
+  <body>
+    <div class="flex flex-1">
+      <%- include("../partials/sidebar") %>
+      <main class="flex-1 p-10 overflow-y-auto bg-background">
+        <div class="flex gap-4">
+          <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+            Inventory
+          </h1>
+        </div>
+        <section class="flex flex-col gap-4">
+          <section class="flex justify-between">
+            <!-- prettier-ignore -->
+            <%- include("../partials/searchbar", { label: "Inventory" , select_id: "searchbarSelect" ,
+              input_id: "searchbarInput" , placeholder: "Search inventory..." , route_api: "meat-selection" }) %>
+            <a href="/reports/inventory-keeping" class="btn-outline">
+              <i data-lucide="bar-chart-2"></i>
+              View Reports
+            </a>
+          </section>
+
+          <div class="tabs" id="demo-tabs-with-panels">
+            <nav role="tablist" aria-orientation="horizontal">
+              <button
+                type="button"
+                role="tab"
+                id="inventory-btn"
+                aria-controls="inventory-btn-control"
+                aria-selected="true"
+                tabindex="0"
+              >
+                Inventory
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                id="filter-client-by-cut-type-btn"
+                aria-controls="filter-client-by-cut-type-btn-control"
+                aria-selected="false"
+                tabindex="0"
+              >
+                Filter Client By Cut Type
+              </button>
+            </nav>
+
+            <div
+              role="tabpanel"
+              id="inventory-btn-control"
+              aria-labelledby="inventory-btn"
+              tabindex="-1"
+              aria-selected="true"
+            >
+              <div>
+                <section>
+                  <div class="overflow-x-auto">
+                    <!-- prettier-ignore -->
+                    <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
+                    id: "inventory-table" }) %>
+                    <!-- prettier-ignore -->
+                    <%- include('../partials/dialog', { 
+                    dialogId: 'edit-meat-selection-dialog' , 
+                    title: 'Edit Meat Selection' ,
+                    description: 'Edit Meat Selection' , 
+                    formId: 'edit-meat-selection-form' , 
+                    formAction: '' ,
+                    formMethod: 'PUT' , 
+                    submitText: 'Update' , 
+                    formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
+            
+            
+                    <%- include('../partials/dialog', { 
+                    dialogId: 'add-nutrition-dialog' , 
+                    title: 'Add Nutritional Information' ,
+                    description: 'Add Nutritional Information.' , 
+                    formId: 'add-nutrition-form' , 
+                    formAction: '' ,
+                    formMethod: 'POST' , 
+                    submitText: 'Add' , 
+                    formFieldsPartial: '../partials/add-nutrition-dialog' }) %>
+                  
+                    <%- include("../partials/view-nutrition-dialog") %>
+                  </div>
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+                  description: "Inventory data not available..." }) %>
+                </section>
+              </div>
+            </div>
+
+            <div
+              role="tabpanel"
+              id="filter-client-by-cut-type-btn-control"
+              aria-labelledby="filter-client-by-cut-type-btn"
+              tabindex="-1"
+              aria-selected="false"
+              hidden
+            >
+              <div class="card">
+                <header>
+                  <h1 class="font-bold">Filter Client by Cut Type</h1>
+                </header>
+                <section>
+                  <form id="cut-type-form" class="form grid gap-6">
+                    <div class="grid gap-3">
+                      <label for="cut-type-input">Enter Cut Type</label>
+                      <div class="flex gap-2">
+                        <input
+                          class="w-fit"
+                          type="text"
+                          id="cut-type-input"
+                          name="cut_type"
+                        />
+                        <button
+                          type="submit"
+                          id="cut-type-form-btn"
+                          class="btn-outline"
+                        >
+                          <i data-lucide="eye"></i>
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </section>
+                <section>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td class="font-bold">Restaurant Name</td>
+                      </tr>
+                    </thead>
+                    <tbody id="restaurantTableBody"></tbody>
+                  </table>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/scripts/components/table.js" defer></script>
+    <script src="/scripts/components/searchbar.js" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const tableColumns = [
+          "Serial No.",
+          "Cut Type",
+          "Weight",
+          "Expiry Date",
+          "Storage Location",
+          "Quality Control Clearance",
+          "Status",
+          "Origin Livestock ID",
+        ];
+
+        const buttons = {
+          editBtn: {
+            action: (event, rowData, rowIndex) => {
+              console.log("Edit", rowData);
+              const dialog = document.getElementById(
+                "edit-meat-selection-dialog"
+              );
+              const form = document.getElementById("edit-meat-selection-form");
+
+              form.action = `/api/meat-selection/${rowData.serial_no}/location`;
+
+              dialog.showModal();
+            },
+            icon: lucide.icons.Pencil,
+          },
+          addNutritionBtn: {
+            action: (event, rowData, rowIndex) => {
+              console.log("Add nutrition", rowData);
+              const dialog = document.getElementById("add-nutrition-dialog");
+              const form = document.getElementById("add-nutrition-form");
+
+              form.action = `/api/meat-selection/add-nutrition/${rowData.serial_no}`;
+
+              dialog.showModal();
+            },
+            icon: lucide.icons.ListPlus,
+            label: "Add Nutrition",
+            condition: (rowData) =>
+              rowData.quality_control_clearance === "Pending",
+          },
+          viewNutritionBtn: {
+            action: async (event, rowData, rowIndex) => {
+              openNutritionDialog(rowData.serial_no);
+            },
+            icon: lucide.icons.Leaf,
+            label: "View Nutrition",
+            condition: (rowData) =>
+              rowData.quality_control_clearance === "Approved",
+          },
+        };
+
+        initTable(
+          tableColumns,
+          "inventory-table",
+          "table-skeleton",
+          "table-data-zero",
+          "meat-selection",
+          buttons
+        );
+
+        // Init Search Bar
+        initSearchBar(
+          "searchbarSelect",
+          "searchbarInput",
+          "inventory-table",
+          "meat-selection",
+          tableColumns,
+          buttons
+        );
+
+        document
+          .getElementById("edit-meat-selection-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const payload = Object.fromEntries(formData);
+            try {
+              const response = await fetch(form.action, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+
+              if (!response.ok)
+                throw new Error("Failed to update meat selection");
+              form.closest("dialog").close();
+              window.location.reload();
+            } catch (err) {
+              console.error(err);
+              alert("Error updating meat selection.");
+            }
+          });
+
+        document
+          .getElementById("add-nutrition-form")
+          .addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const payload = Object.fromEntries(formData);
+            try {
+              const response = await fetch(form.action, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
+
+              if (!response.ok) throw new Error("Failed to add nutrition");
+              form.closest("dialog").close();
+              window.location.reload();
+            } catch (err) {
+              console.error(err);
+              alert("Error adding nutrition.");
+            }
+          });
+
+        // Filter Client By Cut Type
+        const cutTypeForm = document.getElementById("cut-type-form");
+          cutTypeForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(cutTypeForm);
+            const cutType = formData.get("cut_type");
+            const response = await fetch(
+              `/api/meat-selection/client-by-cut-type/${encodeURIComponent(cutType)}`
+            );
+            const data = await response.json()
+
+            console.log("Cut Type:", cutType);
+            console.log("Response:", data);
+            const tbody = document.getElementById("restaurantTableBody");
+            tbody.innerHTML = ""; // clear old results
+
+            data.forEach((item) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${item.restaurant_name}</td>
+              `;
+              tbody.appendChild(row);
+            });
+          });
+      });
+      const openNutritionDialog = async (serialNo) => {
+        const dialog = document.getElementById("view-nutrition-dialog");
+        const content = document.getElementById("nutrition-content");
+
+        try {
+          // Fetch the nutritional info
+          const response = await fetch(`/api/meat-selection/${serialNo}`, {
+            method: "GET",
+          });
+          if (!response.ok) throw new Error("Failed to load nutrition info");
+
+          const [data] = await response.json();
+          console.log(data);
+
+          // Render fields dynamically
+          content.innerHTML = `
+            <p><strong>Serial Number:</strong> ${
+              data.item_serial_no ?? "N/A"
+            }</p>
+            <p><strong>Tenderness:</strong> ${data.tenderness ?? "N/A"}</p>
+            <p><strong>Color:</strong> ${data.color ?? "N/A"}</p>
+            <p><strong>Fat Content:</strong> ${data.fat_content ?? "N/A"} %</p>
+            <p><strong>Protein Content:</strong> ${
+              data.protein_content ?? "N/A"
+            } %</p>
+            <p><strong>Connective Tissue Content:</strong> ${
+              data.connective_tissue_content ?? "N/A"
+            } %</p>
+            <p><strong>Water Holding Capacity:</strong> ${
+              data.water_holding_capacity ?? "N/A"
+            } %</p>
+            <p><strong>pH:</strong> ${data.pH ?? "N/A"}</p>
+            <p><strong>Water Distribution:</strong> ${
+              data.water_distribution ?? "N/A"
+            } %</p>
+          `;
+
+          // Open dialog
+          dialog.showModal();
+        } catch (err) {
+          console.error(err);
+          alert("Failed to load nutritional information.");
+        }
+      };
+    </script>
+  </body>
+</html>

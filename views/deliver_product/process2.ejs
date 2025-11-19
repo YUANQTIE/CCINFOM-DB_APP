@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Meat Selection</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="flex flex-1">
+        <%- include("../partials/sidebar") %>
+
+            <main class="flex-1 p-10 overflow-y-auto bg-background">
+                <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+                    Assign Meat Selections
+                </h1>
+
+                <div class="space-y-6 max-w-3xl">
+
+                    <div class="space-y-4 p-4 border rounded-lg bg-white">
+                        <label class="font-semibold mb-1">Select Pending Delivery:</label>
+                        <select id="deliverySelect" class="border border-gray-300 rounded-lg px-3 py-2 w-full">
+                            <option value="">-- Loading deliveries --</option>
+                        </select>
+                        <p id="status" class="font-bold text-red-600 mt-2"></p>
+                    </div>
+
+                    <div id="orderLinesContainer" class="space-y-4 p-4 border rounded-lg bg-white">
+                        <h2 class="font-bold text-lg">Meat Selections</h2>
+                    </div>
+
+                </div>
+            </main>
+    </div>
+
+    <script>
+        const deliverySelect = document.getElementById("deliverySelect");
+        const statusEl = document.getElementById("status");
+        const orderLinesContainer = document.getElementById("orderLinesContainer");
+
+        async function loadPendingDeliveries() {
+            statusEl.textContent = "Loading deliveries...";
+            deliverySelect.innerHTML = "<option value=''>-- Loading deliveries --</option>";
+
+            try {
+                const res = await fetch("http://localhost:3000/api/company/pending-deliveries");
+                if (!res.ok) { statusEl.textContent = `Failed: ${res.status}`; return; }
+
+                const deliveries = await res.json();
+                deliverySelect.innerHTML = "<option value=''>-- Select delivery --</option>";
+
+                deliveries.forEach(d => {
+                    const opt = document.createElement("option");
+                    opt.value = d.delivery_no;
+                    opt.textContent = `#${d.delivery_no} - ${d.restaurant_name} (${d.restaurant_address})`;
+                    deliverySelect.appendChild(opt);
+                });
+
+                statusEl.textContent = "";
+            } catch (err) {
+                console.error(err);
+                statusEl.textContent = "Error loading deliveries. Check console.";
+            }
+        }
+
+        async function fetchOrderLines(deliveryNo) {
+            orderLinesContainer.innerHTML = "<h2 class='font-bold text-lg'>Meat Selections</h2>";
+
+            try {
+                const res = await fetch(`http://localhost:3000/api/company/pending-deliveries/${deliveryNo}/order-lines`);
+                const orderLines = await res.json();
+
+                if (orderLines.length === 0) {
+                    orderLinesContainer.innerHTML += "<p class='text-gray-500'>No order lines found for this delivery.</p>";
+                    return;
+                }
+
+                orderLines.forEach(async ol => {
+                    const div = document.createElement("div");
+                    div.className = "order-line border p-2 rounded mb-2 bg-gray-50";
+                    div.innerHTML = `
+            <strong>Cut Type:</strong> ${ol.cut_type_of_choice}<br>
+            <strong>Weight:</strong> ${ol.weight}kg<br><br>
+            <label>Pick Meat Selection:</label>
+            <select class="meatSelect border border-gray-300 rounded px-2 py-1 w-full">
+              <option value="">-- Select --</option>
+            </select><br><br>
+            <button class="reserveBtn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+              Reserve
+            </button>
+          `;
+                    orderLinesContainer.appendChild(div);
+
+                    const meatRes = await fetch(`http://localhost:3000/api/order-line/${ol.id}/meat-selection`);
+                    const meatData = await meatRes.json();
+                    const meatSelect = div.querySelector(".meatSelect");
+
+                    if (meatData.length === 0) {
+                        const opt = document.createElement("option");
+                        opt.value = "";
+                        opt.textContent = "No available match";
+                        meatSelect.appendChild(opt);
+                    } else {
+                        meatData.forEach(m => {
+                            const opt = document.createElement("option");
+                            opt.value = m.serial_no;
+                            opt.textContent = `${m.cut_type} (${m.weight}kg)`;
+                            meatSelect.appendChild(opt);
+                        });
+                    }
+
+                    div.querySelector(".reserveBtn").addEventListener("click", async () => {
+                        const serial_no = meatSelect.value;
+                        if (!serial_no) return alert("Select a meat first.");
+
+                        await fetch("http://localhost:3000/api/meat-selection/reserve", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ serial_no, order_line_id: ol.id })
+                        });
+
+                        alert("Meat reserved successfully!");
+                        fetchOrderLines(deliveryNo);
+                    });
+                });
+
+            } catch (err) {
+                console.error(err);
+                orderLinesContainer.innerHTML += "<p class='text-red-600'>Error loading order lines.</p>";
+            }
+        }
+
+        deliverySelect.addEventListener("change", e => {
+            const deliveryNo = e.target.value;
+            if (deliveryNo) fetchOrderLines(deliveryNo);
+        });
+
+        loadPendingDeliveries();
+    </script>
+</body>
+
+</html>

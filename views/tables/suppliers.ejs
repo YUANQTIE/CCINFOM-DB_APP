@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carnivault - Suppliers</title>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  </head>
+  <body>
+    <div class="flex flex-1">
+      <%- include("../partials/sidebar") %>
+      <main class="flex-1 p-10 overflow-y-auto bg-background">
+        <div class="flex gap-4">
+          <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+            Suppliers
+          </h1>
+        </div>
+        <section class="flex flex-col gap-4">
+          <section class="flex justify-between">
+            <!-- prettier-ignore -->
+            <%- include("../partials/searchbar", { label: "Suppliers", select_id: "searchbarSelect", input_id: "searchbarInput", placeholder: "Search suppliers...", route_api: "livestock/suppliers" }) %>
+            <div class="grid gap-2 grid-flow-col">
+              <a href="/livestock" class="btn-outline">
+                <i data-lucide="rabbit" class="h-4.5"></i>
+                View Livestock
+              </a>
+              <button class="btn" id="add-supplier-btn">
+                <i data-lucide="user-plus" class="h-4.5"></i>
+                Add Supplier
+              </button>
+
+              <!-- prettier-ignore -->
+              <%- include('../partials/dialog', {
+                dialogId: 'add-supplier-dialog',
+                title: 'Add Supplier',
+                description: 'Add suppliers for your company.',
+                formId: 'add-supplier-form',
+                formAction: '/api/livestock/suppliers/add',
+                formMethod: 'POST',
+                submitText: 'Add',
+                formFieldsPartial: '../partials/add-supplier-dialog' 
+              }) %>
+            </div>
+          </section>
+          <div class="overflow-x-auto">
+            <%- include("../partials/table-skeleton", { id: "table-skeleton"})
+            %> <%- include("../partials/table", { id: "suppliers-table"}) %>
+          </div>
+          <!-- prettier-ignore -->
+          <%- include("../partials/table-data-zero", { id: "table-data-zero", description: "Supplier data not available..."}) %>
+        </section>
+      </main>
+    </div>
+
+    <script src="/scripts/components/table.js" defer></script>
+    <script src="/scripts/components/searchbar.js" defer></script>
+    <script src="/scripts/components/dialog.js" defer></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const tableColumns = ["Supplier ID", "Company Name", "Contact No."];
+
+        const buttons = {
+          editBtn: {
+            action: (event, rowData, rowIndex) => {
+              console.log("Edit");
+            },
+            icon: lucide.icons.Pencil,
+          },
+        };
+
+        initTable(
+          tableColumns,
+          "suppliers-table",
+          "table-skeleton",
+          "table-data-zero",
+          "livestock/supplier"
+        );
+
+        // Init Search Bar
+        initSearchBar(
+          "searchbarSelect",
+          "searchbarInput",
+          "suppliers-table",
+          "livestock/suppliers",
+          tableColumns
+        );
+
+        // Dialog
+        initDialog(
+          "add-supplier-btn",
+          "add-supplier-dialog",
+          "add-supplier-form",
+          "/api/livestock/suppliers/add",
+          "POST"
+        );
+      });
+    </script>
+  </body>
+</html>

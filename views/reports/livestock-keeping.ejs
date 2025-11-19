@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Livestock Keeping</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js" defer></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
+      <main class="flex-1 p-10 overflow-y-auto bg-background">
+        <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+          Livestock Keeping
+        </h1>
+
+        <!-- Tabs -->
+        <div class="tabs w-full" id="demo-tabs-with-panels">
+          <nav role="tablist" aria-orientation="horizontal" class="w-full">
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-1"
+              aria-controls="demo-tabs-with-panels-panel-1" aria-selected="true" tabindex="0">
+              Average Condition Ratio
+            </button>
+
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-2"
+              aria-controls="demo-tabs-with-panels-panel-2" aria-selected="false" tabindex="0">
+              Total Breed Supplied
+            </button>
+          </nav>
+          <!-- Tab 1 -->
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
+            tabindex="-1" aria-selected="true">
+            <section class="flex gap-10 mt-4 w-full">
+              <form class="form grid gap-6" id="filter-form-1">
+
+                <div class="grid gap-2">
+                  <label for="start-date-input-1">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-1" />
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="end-date-input-1">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-1" />
+                </div>
+
+                <div class="grid gap-2.5">
+                  <button type="submit" class="btn w-full">
+                    <i data-lucide="bar-chart-2"></i>
+                    Load Condition Report
+                  </button>
+                </div>
+              </form>
+              <div class="flex-1 w-full relative">
+                <!-- prettier-ignore -->
+                <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
+                  <%- include("../partials/table", { id: "livestock-report-table" })%>
+              </div>
+              <!-- prettier-ignore -->
+              <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+                description: "Livestock data not available..." }) %>
+            </section>
+          </div>
+          <!-- Tab 2 -->
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
+            tabindex="-1" aria-selected="false" hidden>
+            <section class="flex flex-col gap-6 mt-4">
+
+              <form class="form grid gap-6" id="filter-form-2">
+                <div class="grid gap-2">
+                  <label for="breed-select">Breed</label>
+                  <select class="w-full" id="breed-select" required>
+                    <option value="" disabled selected>Loading breeds...</option>
+                  </select>
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="company-select">Company</label>
+                  <select class="w-full" id="company-select" required>
+                    <option value="" disabled selected>Loading breeds...</option>
+                  </select>
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="start-date-input-2">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-2" required />
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="end-date-input-2">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-2" required />
+                </div>
+
+                <div class="grid gap-2.5">
+                  <button type="submit" class="btn w-full">
+                    <i data-lucide="calculator"></i>
+                    Calculate Total Supplied
+                  </button>
+                </div>
+              </form>
+
+              <div id="result-container-2"
+                class="hidden flex flex-col items-center justify-center p-10 border rounded-lg bg-muted/20">
+                <h3 class="text-lg font-medium text-muted-foreground mb-2">Total Breed Supplied</h3>
+                <span id="result-count-display" class="text-6xl font-bold text-primary tracking-tighter">
+                  --
+                </span>
+              </div>
+
+              <div id="error-message-2" class="hidden text-red-500 text-center font-medium"></div>
+
+            </section>
+          </div>
+
+        </div>
+      </main>
+  </div>
+
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/dialog.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // ============================================================
+      // HELPER FUNCTIONS
+      // ============================================================
+
+      // Function to load breeds dynamically
+      async function loadBreeds() {
+        const selectEl = document.getElementById("breed-select");
+        if (!selectEl) return;
+
+        // API Endpoint
+        const uniqueApiUrl = "/api/livestock/unique";
+
+        try {
+          const response = await fetch(uniqueApiUrl);
+          if (!response.ok) throw new Error("Failed to fetch unique breeds.");
+
+          const rows = await response.json();
+
+          // Reset the dropdown
+          selectEl.innerHTML = '<option value="" disabled selected>Select breed...</option>';
+
+          if (rows && rows.length > 0) {
+            rows.forEach(row => {
+              const option = document.createElement("option");
+              // Ensure this matches your DB column name (e.g. row.breed)
+              option.value = row.breed;
+              option.textContent = row.breed;
+              selectEl.appendChild(option);
+            });
+          } else {
+            selectEl.innerHTML = '<option value="" disabled selected>No breeds found.</option>';
+          }
+        } catch (error) {
+          console.error("Error loading breeds:", error);
+          selectEl.innerHTML = '<option value="" disabled selected>Error loading breeds.</option>';
+        }
+      }
+
+      async function loadSuppliers() {
+        // Target the company select element
+        const selectEl = document.getElementById("company-select");
+        if (!selectEl) return;
+
+        // New API Endpoint for suppliers
+        const uniqueApiUrl = "/api/livestock/supplier/unique";
+
+        try {
+          const response = await fetch(uniqueApiUrl);
+          if (!response.ok) throw new Error("Failed to fetch unique suppliers.");
+
+          const rows = await response.json();
+
+          // Reset the dropdown
+          selectEl.innerHTML = '<option value="" disabled selected>Select company...</option>';
+
+          if (rows && rows.length > 0) {
+            rows.forEach(row => {
+              const option = document.createElement("option");
+
+              option.value = row.company_name;
+              option.textContent = row.company_name;
+
+              selectEl.appendChild(option);
+            });
+          } else {
+            selectEl.innerHTML = '<option value="" disabled selected>No companies found.</option>';
+          }
+        } catch (error) {
+          console.error("Error loading suppliers:", error);
+          selectEl.innerHTML = '<option value="" disabled selected>Error loading companies.</option>';
+        }
+      }
+
+      // ============================================================
+      // 2. INITIALIZATION
+      // ============================================================
+
+      // Load Breeds immediately
+      await loadBreeds();
+      await loadSuppliers();
+
+      const tableColumns = ["Supplier", "Healthy", "Unhealthy", "Healthy : Unhealthy (ratio)"];
+
+      await initTable(
+        tableColumns,
+        "livestock-report-table",
+        "table-skeleton",
+        "table-data-zero",
+        "average-condition-ratio",
+        {}
+      );
+
+      const tableEl = document.getElementById("livestock-report-table");
+      const skeletonEl = document.getElementById("table-skeleton");
+      const noDataEl = document.getElementById("table-data-zero");
+
+      const fetchAndRenderTab1 = async (params = {}) => {
+        if (tableEl && tableEl.__fetchData) {
+          tableEl.classList.add("hidden");
+          noDataEl.classList.add("hidden");
+          skeletonEl.classList.remove("hidden");
+
+          await tableEl.__fetchData(params);
+
+          const hasRows = tableEl.tBodies[0].rows.length > 0;
+          skeletonEl.classList.add("hidden");
+
+          if (hasRows) {
+            tableEl.classList.remove("hidden");
+            tableEl.classList.add("table");
+            tableEl.style.display = "";
+            noDataEl.classList.add("hidden");
+            noDataEl.classList.remove("flex");
+          } else {
+            tableEl.classList.add("hidden");
+            tableEl.classList.remove("table");
+            tableEl.style.display = "none";
+            noDataEl.classList.remove("hidden");
+            noDataEl.classList.add("flex");
+          }
+        }
+      };
+
+      // Initial Load Tab 1
+      await fetchAndRenderTab1({});
+
+      // Listener Tab 1
+      const form1 = document.getElementById("filter-form-1");
+      if (form1) {
+        form1.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const start = document.getElementById("start-date-input-1").value;
+          const end = document.getElementById("end-date-input-1").value;
+          await fetchAndRenderTab1({ start, end });
+        });
+      }
+
+
+      // ============================================================
+      // TAB 2 LOGIC (New)
+      // ============================================================
+      const form2 = document.getElementById("filter-form-2");
+      const resultContainer = document.getElementById("result-container-2");
+      const resultDisplay = document.getElementById("result-count-display");
+      const errorDisplay = document.getElementById("error-message-2");
+
+      if (form2) {
+        form2.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          // 1. Get Values
+          const breed = document.getElementById("breed-select").value;
+          const company = document.getElementById("company-select").value;
+          const start = document.getElementById("start-date-input-2").value;
+          const end = document.getElementById("end-date-input-2").value;
+
+          // 2. Basic Validation
+          if (!breed || !company || !start || !end) {
+            alert("Please fill in all fields.");
+            return;
+          }
+
+          try {
+            // UI Loading State
+            resultContainer.classList.remove("hidden");
+            resultDisplay.innerText = "...";
+            errorDisplay.classList.add("hidden");
+
+            // 3. Build URL
+            const url = new URL("/api/total-breed-supplied", window.location.origin);
+            url.searchParams.append("breed", breed);
+            url.searchParams.append("company", company);
+            url.searchParams.append("start", start);
+            url.searchParams.append("end", end);
+
+            // 4. Fetch
+            const response = await fetch(url);
+            const data = await response.json(); // Expecting array: [{ total_breed_supplied: 123 }]
+
+            if (response.ok && data.length > 0) {
+              // 5. Update Number
+              const count = data[0].total_breed_supplied;
+              resultDisplay.innerText = count;
+            } else {
+              // Handle Error or No Data
+              resultDisplay.innerText = "0";
+            }
+
+          } catch (error) {
+            console.error("Tab 2 Error:", error);
+            resultContainer.classList.add("hidden");
+            errorDisplay.innerText = "Failed to load data.";
+            errorDisplay.classList.remove("hidden");
+          }
+        });
+      }
+    });
+  </script>
+</body>
+
+</html>

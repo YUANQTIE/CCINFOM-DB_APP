@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assign Delivery</title>
+</head>
+
+<body>
+    <div class="flex flex-1">
+        <!-- Include sidebar -->
+        <%- include("../partials/sidebar") %>
+
+            <main class="flex-1 p-10 overflow-y-auto bg-background">
+                <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+                    Assign Driver & Truck to Delivery
+                </h1>
+
+                <div class="space-y-4 max-w-md">
+                    <!-- Form for assignment -->
+                    <form id="assignForm">
+                        <!-- Delivery Dropdown -->
+                        <div class="flex flex-col">
+                            <label class="font-semibold mb-1">Select Pending Delivery:</label>
+                            <select id="deliverySelect" class="border border-gray-300 rounded-lg px-3 py-2">
+                                <option value="">-- Loading deliveries --</option>
+                            </select>
+                        </div>
+
+                        <!-- Driver Name -->
+                        <div class="flex flex-col">
+                            <label class="font-semibold mb-1">Driver Name:</label>
+                            <input type="text" id="driverName" placeholder="Enter driver name"
+                                class="border border-gray-300 rounded-lg px-3 py-2" />
+                        </div>
+
+                        <!-- Truck Number -->
+                        <div class="flex flex-col">
+                            <label class="font-semibold mb-1">Truck Number:</label>
+                            <input type="number" id="truckNumber" placeholder="Enter truck number"
+                                class="border border-gray-300 rounded-lg px-3 py-2" />
+                        </div>
+
+                        <!-- Assign Button -->
+                        <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg mt-4">
+                            Assign Delivery
+                        </button>
+
+                        <p id="status" class="font-bold text-red-600 mt-2"></p>
+                    </form>
+                </div>
+            </main>
+    </div>
+
+    <script>
+        const deliverySelect = document.getElementById("deliverySelect");
+        const driverNameInput = document.getElementById("driverName");
+        const truckNumberInput = document.getElementById("truckNumber");
+        const statusEl = document.getElementById("status");
+        const form = document.getElementById("assignForm");
+
+        // Load pending deliveries
+        async function loadPendingDeliveries() {
+            statusEl.textContent = "Loading deliveries...";
+            deliverySelect.innerHTML = "<option value=''>-- Loading deliveries --</option>";
+
+            try {
+                const res = await fetch("http://localhost:3000/api/company/pending-deliveries");
+                if (!res.ok) {
+                    statusEl.textContent = `Failed to fetch deliveries: ${res.status}`;
+                    return;
+                }
+
+                const deliveries = await res.json();
+                deliverySelect.innerHTML = "<option value=''>-- Select delivery --</option>";
+
+                if (!Array.isArray(deliveries) || deliveries.length === 0) {
+                    statusEl.textContent = "No pending deliveries found.";
+                    return;
+                }
+
+                deliveries.forEach(d => {
+                    const opt = document.createElement("option");
+                    const deliveryNo = d.delivery_no ?? "N/A";
+                    const driver = d.driver_name ?? "N/A";
+                    const truck = d.truck_number ?? "N/A";
+                    const restaurant = d.restaurant_name ?? "N/A";
+                    const address = d.restaurant_address ?? "N/A";
+
+                    opt.value = deliveryNo;
+                    opt.textContent = `#${deliveryNo} - ${restaurant} (${address}) | Driver: ${driver}, Truck: ${truck}`;
+                    deliverySelect.appendChild(opt);
+                });
+
+                statusEl.textContent = "";
+            } catch (err) {
+                console.error("Fetch error:", err);
+                statusEl.textContent = "Error loading deliveries. Check console.";
+            }
+        }
+
+        // Handle form submission (click button or press Enter)
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault(); // prevent page reload
+
+            const delivery_no = deliverySelect.value;
+            const driver_name = driverNameInput.value.trim();
+            const truck_number = Number(truckNumberInput.value);
+
+            if (!delivery_no) return alert("Select a delivery");
+            if (!driver_name) return alert("Enter driver name");
+            if (!truck_number) return alert("Enter truck number");
+
+            statusEl.textContent = "Assigning delivery...";
+
+            try {
+                const res = await fetch("http://localhost:3000/api/company/assign-delivery", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ delivery_no, driver_name, truck_number }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    statusEl.textContent = data.message || "Delivery assigned successfully!";
+                    driverNameInput.value = "";
+                    truckNumberInput.value = "";
+                    loadPendingDeliveries();
+                } else {
+                    statusEl.textContent = data.error || "Failed to assign delivery.";
+                }
+            } catch (err) {
+                console.error("Assign error:", err);
+                statusEl.textContent = "Error assigning delivery. Check console.";
+            }
+        });
+
+        // Initial load
+        loadPendingDeliveries();
+    </script>
+</body>
+
+</html>

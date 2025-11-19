@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Inventory Keeping Report</title>
+</head>
+
+<body>
+  <h1>Inventory Keeping Report</h1>
+
+  <!-- SECTION 1: Total Produced Meat + List -->
+  <section>
+    <h2>Total Produced Meat Selection</h2>
+
+    <form id="total-meat-cut-form">
+      <label>Meat Cut: <input type="text" id="total-meat-cut-input" placeholder="e.g. Arm Chuck Roast" required></label>
+      <label>Start Date: <input type="date" id="total-meat-start" required></label>
+      <label>End Date: <input type="date" id="total-meat-end" required></label>
+      <button type="submit">Load Produced Meat Report</button>
+    </form>
+
+    <ul id="total-meat-cut"></ul> <!-- count here -->
+    <ul id="produced-meat-list"></ul> <!-- list of items -->
+  </section>
+
+  <hr>
+
+  <!-- SECTION 2: Average Nutritional Quantities -->
+  <section>
+    <h2>Average Nutritional Quantities</h2>
+
+    <form id="average-nutritional-quantities-form">
+      <label>Meat Cut: <input type="text" id="avg-nutrition-cut-input" placeholder="e.g. Arm Chuck Roast"
+          required></label>
+      <label>Start Date: <input type="date" id="avg-nutrition-start" required></label>
+      <label>End Date: <input type="date" id="avg-nutrition-end" required></label>
+      <button type="submit">Load Average Nutritional Quantities Report</button>
+    </form>
+
+    <ul id="average-nutritional-quantities-results"></ul>
+  </section>
+
+  <script>
+
+    /* ------------------------------------------------------------------
+       SECTION 1 — SHOW COUNT + LIST (2 API CALLS)
+    ------------------------------------------------------------------ */
+    document.getElementById("total-meat-cut-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const meatCut = document.getElementById("total-meat-cut-input").value.trim();
+      const start = document.getElementById("total-meat-start").value;
+      const end = document.getElementById("total-meat-end").value;
+
+      const countList = document.getElementById("total-meat-cut");
+      const detailsList = document.getElementById("produced-meat-list");
+
+      countList.innerHTML = "";
+      detailsList.innerHTML = "";
+
+      /* --- 1. Fetch total count --- */
+      const totalURL = `http://localhost:3000/api/total-produced-meat?cut=${encodeURIComponent(meatCut)}&start=${start}&end=${end}`;
+      const totalRes = await fetch(totalURL);
+      const totalData = await totalRes.json();
+
+      if (totalData.error) {
+        countList.innerHTML = `<li>Error: ${totalData.error}</li>`;
+        return;
+      }
+
+      const total = totalData[0]?.total_produced_meat ?? 0;
+
+      const li1 = document.createElement("li");
+      li1.textContent = `Total produced "${meatCut}" from ${start} to ${end}: ${total}`;
+      countList.appendChild(li1);
+
+      /* --- 2. Fetch list of produced items --- */
+      const listURL = `http://localhost:3000/api/meat-produced?date_start=${start}&date_end=${end}&meat_cut=${encodeURIComponent(meatCut)}`;
+      const listRes = await fetch(listURL);
+      const listData = await listRes.json();
+
+      if (listData.error) {
+        detailsList.innerHTML = `<li>Error: ${listData.error}</li>`;
+        return;
+      }
+
+      if (!listData || listData.length === 0) {
+        detailsList.innerHTML = "<li>No meat selections found.</li>";
+        return;
+      }
+
+      listData.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `Serial No: ${item.serial_no} — Processing Date: ${item.processing_date}`;
+        detailsList.appendChild(li);
+      });
+    });
+
+
+    /* ------------------------------------------------------------------
+       SECTION 2 — AVERAGE NUTRITION VALUES (no change)
+    ------------------------------------------------------------------ */
+    document.getElementById("average-nutritional-quantities-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const meatCut = document.getElementById("avg-nutrition-cut-input").value.trim();
+      const start = document.getElementById("avg-nutrition-start").value;
+      const end = document.getElementById("avg-nutrition-end").value;
+
+      const res = await fetch(`http://localhost:3000/api/average-nutrition?cut=${encodeURIComponent(meatCut)}&start=${start}&end=${end}`);
+      const data = await res.json();
+
+      const list = document.getElementById("average-nutritional-quantities-results");
+      list.innerHTML = "";
+
+      if (data.error) {
+        list.innerHTML = `<li>Error: ${data.error}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        list.innerHTML = "<li>No records found for the given inputs.</li>";
+        return;
+      }
+
+      data.forEach(item => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${meatCut}</strong><br>
+          Average Fat: ${item.average_fat_content || "N/A"}<br>
+          Average Protein: ${item.average_protein_content || "N/A"}<br>
+          Average Connective Tissue: ${item.average_connective_tissue_content || "N/A"}<br>
+          Average Water Holding Capacity: ${item.average_water_holding_capacity || "N/A"}<br>
+          Average Water Distribution: ${item.average_water_distribution || "N/A"}<br>
+          Average pH: ${item.average_pH || "N/A"}<br>
+          Most Frequent Tenderness: ${item.most_frequent_tenderness || "N/A"}<br>
+          Most Frequent Color: ${item.most_frequent_color || "N/A"}
+        `;
+        list.appendChild(li);
+      });
+    });
+
+  </script>
+
+</body>
+
+</html>

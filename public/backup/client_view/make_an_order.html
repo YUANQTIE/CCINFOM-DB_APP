@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    </head>
+<body>
+    <h1>Place Order</h1>
+
+    <div id="email-section" class="form-section">
+        <label>Email Address:</label>
+        <input type="email" id="email_address" required>
+        <button onclick="startDeliveryAndLoadAgreements()">Start Order & Show Agreements</button>
+        <p id="email-status"></p>
+    </div>
+
+    <div id="agreements-section" class="form-section" style="display:none;">
+        <h3>Click an Agreement to Add to Order</h3>
+        <p>Current Delivery ID: <span id="current-delivery-id"></span></p>
+        <div id="agreements-list"></div>
+        <p id="order-status"></p>
+    </div>
+
+    <script>
+        // ✅ NEW: Variable to hold the single delivery ID for the session
+        let latestDeliveryID = null; 
+        
+        // --- STEP 1: START DELIVERY AND LOAD AGREEMENTS ---
+        async function startDeliveryAndLoadAgreements() {
+            const email = document.getElementById("email_address").value.trim();
+            const status = document.getElementById("email-status");
+            if (!email) { 
+                status.textContent = "Please enter an email."; 
+                return; 
+            }
+
+            status.textContent = "Starting delivery session...";
+            
+            try {
+                // 1. Create Delivery using the NEW endpoint
+                const deliveryRes = await fetch("http://localhost:3000/api/client/create-delivery", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email_address: email })
+                });
+
+                const deliveryResult = await deliveryRes.json();
+                if (!deliveryRes.ok) {
+                    throw new Error(deliveryResult.error || "Failed to start delivery session");
+                }
+                
+                // Store the ID globally for subsequent line additions
+                latestDeliveryID = deliveryResult.delivery_id;
+                document.getElementById("current-delivery-id").textContent = latestDeliveryID;
+                status.textContent = `Delivery ${latestDeliveryID} started. Loading agreements...`;
+
+                // 2. Load agreements
+                const agreementsRes = await fetch(`http://localhost:3000/api/client/agreements/number?email_address=${email}`);
+                const agreements = await agreementsRes.json();
+
+                if (!agreements || agreements.length === 0) {
+                    status.textContent = "No agreements found for this email.";
+                    return;
+                }
+
+                // 3. Update UI
+                document.getElementById("agreements-section").style.display = "block";
+                document.getElementById("email-section").style.display = "none";
+
+                const list = document.getElementById("agreements-list");
+                list.innerHTML = "";
+
+                agreements.forEach(a => {
+                    const btn = document.createElement("button");
+                    btn.className = "agreement-button";
+                    // Using a more informative button text
+                    btn.textContent = `Add: ${a.cut_type_of_choice} (Agreement #${a.agreement_no})`;
+                    // The button now calls placeOrderLine to add to the existing delivery
+                    btn.onclick = () => placeOrderLine(a.agreement_no); 
+                    list.appendChild(btn);
+                });
+
+            } catch (err) {
+                status.textContent = "Error during order setup: " + (err.message || "Server Error");
+                console.error(err);
+            }
+        }
+
+        // --- STEP 2: ADD ORDER LINE TO EXISTING DELIVERY ---
+        async function placeOrderLine(agreement_no) {
+            // Check if we have an active delivery session
+            if (!latestDeliveryID) {
+                alert("Please start the delivery session first.");
+                return;
+            }
+
+            const status = document.getElementById("order-status");
+            status.textContent = `Adding agreement ${agreement_no} to delivery ${latestDeliveryID}...`;
+
+            try {
+                // Use the NEW or refactored endpoint
+                const res = await fetch("http://localhost:3000/api/client/add-order-lines", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ 
+                        delivery_id: latestDeliveryID, // Use the stored ID
+                        agreements: [agreement_no] // Send a single agreement as an array
+                    })
+                });
+
+                const result = await res.json();
+                if (!res.ok) {
+                    // Display error from the server
+                    status.textContent = `Error: ${result.error}`;
+                } else {
+                    status.textContent = `Success! Agreement #${agreement_no} added to Delivery ID ${latestDeliveryID}.`;
+                }
+
+            } catch (err) {
+                status.textContent = "Failed to add order line.";
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Clients</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
+      defer
+    ></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
+      <main class="flex-1 p-10 overflow-y-auto bg-background">
+        <div class="flex gap-4">
+          <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
+            Clients
+          </h1>
+        </div>
+        <section class="flex flex-col gap-4">
+          <section class="flex justify-between">
+            <!-- prettier-ignore -->
+            <%- include("../partials/searchbar", { label: "Clients" , select_id: "searchbarSelect" ,
+              input_id: "searchbarInput" , placeholder: "Search clients..." , route_api: "clients" }) %>
+              <div class="grid gap-2 grid-flow-col">
+                <button class="btn" id="add-client-btn">
+                  <i data-lucide="user-plus" class="h-4.5"></i>
+                  Add Client
+                </button>
+
+                <!-- prettier-ignore -->
+                <%- include('../partials/dialog', { 
+                  dialogId: 'add-client-dialog' , 
+                  title: 'Add Client' ,
+                  description: 'Add client.' , 
+                  formId: 'add-client-form' , 
+                  formAction: '/api/clients/add' ,
+                  formMethod: 'POST' , 
+                  submitText: 'Add' , 
+                  formFieldsPartial: '../partials/add-client-dialog' }) %>
+              </div>
+          </section>
+
+          <div class="tabs" id="demo-tabs-with-panels">
+            <nav role="tablist" aria-orientation="horizontal">
+              <button
+                type="button"
+                role="tab"
+                id="clients-btn"
+                aria-controls="clients-btn-control"
+                aria-selected="true"
+                tabindex="0"
+              >
+                Livestock
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                id="filter-cut-type-by-client-btn"
+                aria-controls="filter-cut-type-by-client-btn-control"
+                aria-selected="false"
+                tabindex="0"
+              >
+                Filter Cut Type by Client
+              </button>
+            </nav>
+
+            <div
+              role="tabpanel"
+              id="clients-btn-control"
+              aria-labelledby="clients-btn"
+              tabindex="-1"
+              aria-selected="true"
+            >
+              <section>
+                <div class="overflow-x-auto">
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
+                    <%- include("../partials/table", { id: "clients-table" }) %>
+                  <%- include('../partials/dialog-table', {
+                    dialogId: "agreements-dialog",
+                    title: "Client Agreements",
+                    description: "List of Agreements.",
+                    containerId: "agreements-container"
+                  }) %>
+                  
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+                  description: "Clients data not available..." }) %>
+
+                  <%- include('../partials/dialog', { 
+                    dialogId: 'add-agreement-dialog' , 
+                    title: 'Add Agreement' ,
+                    description: '*Required Fields' , 
+                    formId: 'add-agreement-form' , 
+                    formAction: '' ,
+                    formMethod: 'POST' , 
+                    submitText: 'Add' , 
+                    formFieldsPartial: '../partials/add-agreement-dialog' }) %>
+                </div>
+              </section>
+            </div>
+            <div
+              role="tabpanel"
+              id="filter-cut-type-by-client-btn-control"
+              aria-labelledby="filter-cut-type-by-client-btn"
+              tabindex="-1"
+              aria-selected="false"
+              hidden
+            >
+              <div class="card">
+                <header>
+                  <h1 class="font-bold">Filter Cut Type by Client</h1>
+                </header>
+                <section>
+                  <form id="client-form" class="form grid gap-6">
+                    <div class="grid gap-3">
+                      <label for="client-input">Enter Restaurant Name</label>
+                      <div class="flex gap-2">
+                        <input
+                          class="w-fit"
+                          type="text"
+                          id="client-input"
+                          name="restaurant_name"
+                        />
+                        <button
+                          type="submit"
+                          id="client-form-btn"
+                          class="btn-outline"
+                        >
+                          <i data-lucide="eye"></i>
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </section>
+                <section>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td class="font-bold">Cut Type</td>
+                      </tr>
+                    </thead>
+                    <tbody id="meatTableBody"></tbody>
+                  </table>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+  </div>
+
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/dialog.js" defer></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tableColumns = [
+        "Restaurant Code",
+        "Client Name",
+        "Restaurant Name",
+        "Restaurant Type",
+        "Restaurant Address",
+        "Contact No.",
+        "Email Address",
+        "Year of Establishment",
+      ];
+      const buttons = {
+        openAgreementsBtn: {
+          action: (event, rowData, rowIndex) => {
+            openAgreementsDialog(rowData.restaurant_code)
+          },
+          icon: lucide.icons.FileText,
+        },
+        addAgreement: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Add nutrition", rowData);
+            const dialog = document.getElementById("add-agreement-dialog");
+            const form = document.getElementById("add-agreement-form");
+
+            form.action = `/api/clients/add-agreement/${rowData.restaurant_code}`;
+
+            dialog.showModal();
+          },
+          icon: lucide.icons.FilePlus,
+        },
+      };
+
+      initTable(
+        tableColumns,
+        "clients-table",
+        "table-skeleton",
+        "table-data-zero",
+        "clients",
+        buttons
+      );
+      // Init Search Bar
+      initSearchBar(
+        "searchbarSelect",
+        "searchbarInput",
+        "clients-table",
+        "clients",
+        tableColumns,
+        buttons
+      );
+
+      initDialog(
+        "add-client-btn",
+        "add-client-dialog",
+        "add-client-form",
+        "/api/clients/add",
+        "POST"
+      );
+
+      const clientForm = document.getElementById("client-form");
+        clientForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(clientForm);
+          const restaurant = formData.get("restaurant_name");
+          const response = await fetch(
+            `/api/clients/cut-type-by-client/${encodeURIComponent(restaurant)}`
+          );
+          const data = await response.json()
+
+          const tbody = document.getElementById("meatTableBody");
+          tbody.innerHTML = ""; // clear old results
+
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.cuts}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        });
+
+      document
+        .getElementById("add-agreement-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const formData = new FormData(form);
+          const payload = Object.fromEntries(formData);
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) throw new Error("Failed to add agreement");
+            form.closest("dialog").close();
+            window.location.reload();
+          } catch (err) {
+            console.error(err);
+            alert("Error adding agreement.");
+          }
+        });
+    });
+
+    async function openAgreementsDialog(restaurantCode) {
+      const dialog = document.getElementById("agreements-dialog");
+      const container = document.getElementById("agreements-container");
+
+      container.innerHTML = "<p>Loading...</p>";
+
+      try {
+        const response = await fetch(`/api/clients/agreement/${restaurantCode}`);
+        if (!response.ok) throw new Error("Failed to fetch delivery items");
+
+        const items = await response.json();
+        console.log(items)
+
+        if (!Array.isArray(items) || items.length === 0) {
+          container.innerHTML = "<p>No items found.</p>";
+        } else {
+          const table = document.createElement("table");
+          table.className = "w-full text-sm border-collapse";
+
+          table.innerHTML = `
+            <thead>
+              <tr class="border-b font-semibold">
+                <th class="p-2 text-left">Agreement No.</th>
+                <th class="p-2 text-left">Restaurant Code</th>
+                <th class="p-2 text-left">Start Date</th>
+                <th class="p-2 text-left">End Date</th>
+                <th class="p-2 text-left">Pricing</th>
+                <th class="p-2 text-left">Week of Delivery</th>
+                <th class="p-2 text-left">Cut Type of Choice</th>
+                <th class="p-2 text-left">Weight (kg)</th>
+                <th class="p-2 text-left">Tenderness</th>
+                <th class="p-2 text-left">Color</th>
+                <th class="p-2 text-left">Fat Content (%)</th>
+                <th class="p-2 text-left">Protein Content (%)</th>
+                <th class="p-2 text-left">Connective Tissue Content (%)</th>
+                <th class="p-2 text-left">Water Holding Capacity (%)</th>
+                <th class="p-2 text-left">pH</th>
+                <th class="p-2 text-left">Water Distribution (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items
+                .map(
+                  (item) => `
+                <tr class="border-b">
+                  <td class="p-2">${item.agreement_no}</td>
+                  <td class="p-2">${item.restaurant_code}</td>
+                  <td class="p-2">${item.contract_start}</td>
+                  <td class="p-2">${item.contract_end}</td>
+                  <td class="p-2">${item.client_pricing}</td>
+                  <td class="p-2">${item.week_of_delivery}</td>
+                  <td class="p-2">${item.cut_type_of_choice}</td>
+                  <td class="p-2">${item.weight}</td>
+                  <td class="p-2">${item.tenderness}</td>
+                  <td class="p-2">${item.color}</td>
+                  <td class="p-2">${item.fat_content}</td>
+                  <td class="p-2">${item.protein_content}</td>
+                  <td class="p-2">${item.connective_tissue_content}</td>
+                  <td class="p-2">${item.water_holding_capacity}</td>
+                  <td class="p-2">${item.pH}</td>
+                  <td class="p-2">${item.water_distribution}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          `;
+
+          container.innerHTML = "";
+          container.appendChild(table);
+        }
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p class='text-red-500'>Error loading items.</p>";
+      }
+
+      dialog.showModal();
+    }
+  </script>
+</body>
+
+</html>

@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx @tailwindcss/cli -i ./public/css/input.css -o ./public/css/output.css",
+    "watch:css": "npx @tailwindcss/cli -i ./public/css/input.css -o ./public/css/output.css --watch",
+    "dev": "npx tsx watch src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +16,9 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/express-ejs-layouts": "^2.5.4",
     "@types/node": "^24.10.0",
-    "tailwindcss": "^4.1.16",
+    "browser-sync": "^3.0.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
@@ -23,8 +27,11 @@
     "basecoat-css": "^0.3.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "mysql2": "^3.15.3"
+    "express-ejs-layouts": "^2.5.1",
+    "mysql2": "^3.15.3",
+    "tailwindcss": "^4.1.17"
   },
   "repository": {
     "type": "git",
@@ -33,5 +40,12 @@
   "bugs": {
     "url": "https://github.com/YUANQTIE/CCINFOM-DB_APP/issues"
   },
-  "homepage": "https://github.com/YUANQTIE/CCINFOM-DB_APP#readme"
+  "homepage": "https://github.com/YUANQTIE/CCINFOM-DB_APP#readme",
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts,json",
+    "exec": "npx tsx src/server.ts"
+  }
 }

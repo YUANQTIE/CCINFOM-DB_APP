@@ -1,0 +1,118 @@
+<div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2 md:w-fit">
+  <div class="grid gap-2">
+    <label for="breed-select">Breed</label>
+    <select class="w-full" id="breed-select" name="breed" required>
+      <option value="" disabled selected>Select a breed...</option>
+      <option value="Angus">Angus</option>
+      <option value="Holstein">Holstein</option>
+      <option value="Brahman">Brahman</option>
+      <option value="Hereford">Hereford</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="weight-input">Weight (kg)</label>
+    <input
+      class="w-full"
+      type="number"
+      step="0.01"
+      id="weight-input"
+      placeholder="e.g., 500.00"
+      name="weight"
+      required
+    />
+  </div>
+
+  <div class="grid gap-2">
+    <label for="age-input">Age (months)</label>
+    <input
+      class="w-full"
+      type="number"
+      id="age-input"
+      placeholder="e.g., 24"
+      name="age"
+      required
+    />
+  </div>
+
+  <div class="grid gap-2">
+    <label for="country-select">Country of Origin</label>
+    <select
+      class="w-full"
+      id="country-select"
+      name="country_of_origin"
+      required
+    >
+      <option value="" disabled selected>Select a country...</option>
+      <option value="Local">Local</option>
+      <option value="Australia">Australia</option>
+      <option value="Brazil">Brazil</option>
+      <option value="USA">USA</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="medical-select">Medical Condition</label>
+    <select
+      class="w-full"
+      id="medical-select"
+      name="medical_condition"
+      required
+    >
+      <option value="" disabled selected>Select a condition...</option>
+      <option value="Healthy">Healthy</option>
+      <option value="Under Observation">Under Observation</option>
+      <option value="Medicated">Medicated</option>
+      <option value="Injured">Injured</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="vaccination-select">Vaccination Status</label>
+    <select
+      class="w-full"
+      id="vaccination-select"
+      name="vaccination_status"
+      required
+    >
+      <option value="" disabled selected>Select a status...</option>
+      <option value="Vaccinated">Fully Vaccinated</option>
+      <option value="Not Vaccinated">Not Vaccinated</option>
+      <option value="Pending">Pending</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="storage-select">Storage Location</label>
+    <select class="w-full" id="storage-select" name="storage_location" required>
+      <option value="" disabled selected>Select a location...</option>
+      <option value="Farm 1">Farm 1</option>
+      <option value="Farm 2">Farm 2</option>
+      <option value="Farm 3">Farm 3</option>
+      <option value="Farm 4">Farm 4</option>
+      <option value="Farm 5">Farm 5</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="supplier-id">Supplier ID</label>
+    <select class="w-full" id="supplier-id" name="supplier_id" required>
+      <option value="" disabled selected>Select a supplier...</option>
+      <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+      <option value="SUP-042">SUP-042 (Local Breeders Co-op)</option>
+      <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+      <option value="SUP-210">SUP-210 (Green Valley Supplies)</option>
+    </select>
+  </div>
+
+  <div class="grid gap-2">
+    <label for="date-arrived-input">Date Arrived</label>
+    <input
+      class="w-full"
+      type="date"
+      id="date-arrived-input"
+      name="date_arrived"
+      required
+    />
+  </div>
+</div>

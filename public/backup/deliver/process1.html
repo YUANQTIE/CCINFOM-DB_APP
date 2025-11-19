@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Assign Delivery</title>
+<style>
+  body { font-family: Arial; padding: 20px; }
+  select, input { margin: 5px 0; padding: 5px; width: 250px; }
+  button { padding: 5px 10px; margin-top: 10px; }
+  #status { margin-top: 15px; font-weight: bold; color: red; }
+</style>
+</head>
+<body>
+
+<h2>Assign Driver & Truck to Delivery</h2>
+
+<label>Select Pending Delivery:
+  <select id="deliverySelect">
+    <option value="">-- Loading deliveries --</option>
+  </select>
+</label>
+
+<label>Driver Name:
+  <input type="text" id="driverName" placeholder="Enter driver name">
+</label>
+
+<label>Truck Number:
+  <input type="number" id="truckNumber" placeholder="Enter truck number">
+</label>
+
+<button id="assignBtn">Assign Delivery</button>
+
+<p id="status"></p>
+
+<script>
+const deliverySelect = document.getElementById("deliverySelect");
+const driverNameInput = document.getElementById("driverName");
+const truckNumberInput = document.getElementById("truckNumber");
+const assignBtn = document.getElementById("assignBtn");
+const statusEl = document.getElementById("status");
+
+// Load pending deliveries
+async function loadPendingDeliveries() {
+  statusEl.textContent = "Loading deliveries...";
+  deliverySelect.innerHTML = "<option value=''>-- Loading deliveries --</option>";
+
+  try {
+    const res = await fetch("http://localhost:3000/api/company/pending-deliveries");
+
+    if (!res.ok) {
+      statusEl.textContent = `Failed to fetch deliveries: ${res.status}`;
+      return;
+    }
+
+    const deliveries = await res.json();
+
+    deliverySelect.innerHTML = "<option value=''>-- Select delivery --</option>";
+
+    if (!Array.isArray(deliveries) || deliveries.length === 0) {
+      statusEl.textContent = "No pending deliveries found.";
+      return;
+    }
+
+    deliveries.forEach(d => {
+      const opt = document.createElement("option");
+      const deliveryNo = d.delivery_no ?? "N/A";
+      const driver = d.driver_name ?? "N/A";
+      const truck = d.truck_number ?? "N/A";
+      const restaurant = d.restaurant_name ?? "N/A";
+      const address = d.restaurant_address ?? "N/A";
+
+      opt.value = deliveryNo;
+      opt.textContent = `#${deliveryNo} - ${restaurant} (${address}) | Driver: ${driver}, Truck: ${truck}`;
+      deliverySelect.appendChild(opt);
+    });
+
+    statusEl.textContent = "";
+  } catch (err) {
+    console.error("Fetch error:", err);
+    statusEl.textContent = "Error loading deliveries. Check console.";
+  }
+}
+
+// Assign delivery
+assignBtn.addEventListener("click", async () => {
+  const delivery_no = deliverySelect.value;
+  const driver_name = driverNameInput.value.trim();
+  const truck_number = Number(truckNumberInput.value);
+
+  if (!delivery_no) return alert("Select a delivery");
+  if (!driver_name) return alert("Enter driver name");
+  if (!truck_number) return alert("Enter truck number");
+
+  statusEl.textContent = "Assigning delivery...";
+
+  try {
+    const res = await fetch("http://localhost:3000/api/company/assign-delivery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ delivery_no, driver_name, truck_number })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      statusEl.textContent = data.message || "Delivery assigned successfully";
+      driverNameInput.value = "";
+      truckNumberInput.value = "";
+      loadPendingDeliveries();
+    } else {
+      statusEl.textContent = data.error || "Failed to assign delivery";
+    }
+  } catch (err) {
+    console.error("Assign error:", err);
+    statusEl.textContent = "Error assigning delivery. Check console.";
+  }
+});
+
+// Initial load
+loadPendingDeliveries();
+</script>
+
+</body>
+</html>

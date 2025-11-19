@@ -38,7 +38,9 @@ VALUES
 ('BFR316802', 'Brisket Flat', 6.75, '2026-05-30', 'Cooler 8', 'Approved', 'Available', '251017-0006'),
 ('FRS209864', 'Flank Steak', 1.35, '2026-04-18', 'Cooler 9', 'Approved', 'Available', '251016-0007'),
 ('TRS592740', 'Tri-Tip Roast', 2.80, '2026-06-12', 'Cooler 10', 'Approved', 'Sold', '251010-0010'),
-('CBS874612', 'Chuck Eye Steak', 0.85, '2026-01-28', 'Cooler 1', 'Approved', 'Available', '251018-0005');
+('CBS874612', 'Chuck Eye Steak', 0.85, '2026-01-28', 'Cooler 1', 'Approved', 'Available', '251018-0005'),
+('FGH438445', 'Bottom Round Roast', 4.90, '2026-05-28', 'Cooler 9', 'Approved', 'Available', '251010-0010'),
+('FDB592740', 'Tri-Tip Roast', 2.80, '2026-06-12', 'Cooler 10', 'Approved', 'Available', '251010-0010');
 
 SELECT * FROM meat_selection
 WHERE status = 'Sold';
@@ -62,7 +64,9 @@ VALUES
 ('RBS452918', 'Very Tender', 'Bright Red', 7.40, 23.50, 1.90, 77.60, 5.50, 76.70),
 ('PRS932817', 'Tender', 'Bright Red', 10.20, 21.70, 2.50, 74.50, 5.65, 73.80),
 ('BCR761502', 'Moderate', 'Dark Red', 11.00, 20.80, 3.90, 72.80, 5.75, 72.10),
-('ACR823451', 'Tender', 'Bright Red', 9.00, 22.40, 2.30, 75.90, 5.60, 75.20);
+('ACR823451', 'Tender', 'Bright Red', 9.00, 22.40, 2.30, 75.90, 5.60, 75.20),
+('FGH438445', 'Tender', 'Bright Red', 9.00, 22.40, 2.30, 75.90, 5.60, 75.20),
+('FDB592740', 'Tender', 'Bright Red', 9.00, 22.40, 2.30, 75.90, 5.60, 75.20);
 
 INSERT INTO nutrition (item_serial_no,tenderness,color,fat_content,protein_content,connective_tissue_content,water_holding_capacity,pH,water_distribution)
 VALUES
@@ -88,10 +92,10 @@ VALUES
 ('BFS-010', 'Rica Navarro', 'Beef & Fire Smokehouse', 'Barbecue Restaurant', '95 Macapagal Blvd, Pasay City, Metro Manila', '09381245679', 'rica.navarro@beeffire.ph', 2017);
 
 INSERT INTO deliveries (
-    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, weight, restaurant_code, status
+    driver_name, truck_number, deliver_date, order_date, distance_traveled, delivery_duration, restaurant_code, status
 ) VALUES
-('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 16.35, 'BBQ-101', 'Delivered'),
-('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 6.35, 'STK-202', 'Delivered');
+('Mario Dela Cruz', 1024, '2025-11-05', '2025-11-01', 12.50, 45.00, 'BBQ-101', 'Delivered'),
+('Ramon Villanueva', 2089, '2025-11-07', '2025-10-28', 8.75, 30.00, 'STK-202', 'Delivered');
 
 INSERT INTO agreements (
   restaurant_code,
