@@ -1,195 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Logistics Report</title>
-    <script
-      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
-      defer
-    ></script>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Logistics Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js" defer></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Logistics Report
         </h1>
 
-        <!-- Tabs -->
-        <!-- TODO: The report will display list of meat cuts -->
         <div class="tabs w-full" id="demo-tabs-with-panels">
           <nav role="tablist" aria-orientation="horizontal" class="w-full">
-            <button
-              type="button"
-              role="tab"
-              id="demo-tabs-with-panels-tab-1"
-              aria-controls="demo-tabs-with-panels-panel-1"
-              aria-selected="true"
-              tabindex="0"
-            >
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-1"
+              aria-controls="demo-tabs-with-panels-panel-1" aria-selected="true" tabindex="0">
               Total Deliveries By Truck
             </button>
 
-            <button
-              type="button"
-              role="tab"
-              id="demo-tabs-with-panels-tab-2"
-              aria-controls="demo-tabs-with-panels-panel-2"
-              aria-selected="false"
-              tabindex="0"
-            >
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-2"
+              aria-controls="demo-tabs-with-panels-panel-2" aria-selected="false" tabindex="0">
               Distance-to-Duration Ratio
             </button>
           </nav>
 
-          <div
-            role="tabpanel"
-            id="demo-tabs-with-panels-panel-1"
-            aria-labelledby="demo-tabs-with-panels-tab-1"
-            tabindex="-1"
-            aria-selected="true"
-          >
-            <section class="flex gap-10 mt-4 w-full">
-              <form class="form grid gap-6">
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
+            tabindex="-1" aria-selected="true">
+            <section class="flex flex-col gap-6 mt-4 w-full">
+
+              <form class="form grid gap-6" id="form-tab-1">
                 <div class="grid gap-2">
-                  <label for="meat-cut-input">Truck ID</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
+                  <label for="truck-select">Truck ID</label>
+                  <select class="w-full" id="truck-select" required>
+                    <option value="" disabled selected>Loading trucks...</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                  <label for="start-date-1">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-1" required />
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
+                  <label for="end-date-1">End Date</label>
+                  <input class="w-full" type="date" id="end-date-1" required />
                 </div>
 
                 <div class="grid gap-2.5">
                   <button type="submit" class="btn w-full">
-                    <i data-lucide="bar-chart-2"></i>
+                    <i data-lucide="truck"></i>
                     Load Total Deliveries
                   </button>
-                  <a
-                    href="/deliveries"
-                    type="submit"
-                    class="btn-outline w-full"
-                  >
-                    <i data-lucide="shopping-basket"></i>
-                    View Deliveries
-                  </a>
                 </div>
               </form>
-              <table class="table">
-                <thead>
-                  <tr class="font-bold">
-                    <td>Column #1</td>
-                    <td>Column #2</td>
-                    <td>Column #3</td>
-                    <td>Column #4</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                </tbody>
-              </table>
+
+              <div id="result-container-1"
+                class="hidden flex flex-col items-center justify-center p-10 border rounded-lg bg-muted/20">
+                <h3 class="text-lg font-medium text-muted-foreground mb-2">Total Deliveries Completed</h3>
+                <span id="result-display-1" class="text-6xl font-bold text-primary tracking-tighter">
+                  --
+                </span>
+              </div>
+
+              <div id="error-message-1" class="hidden text-red-500 text-center font-medium"></div>
+
             </section>
           </div>
 
-          <div
-            role="tabpanel"
-            id="demo-tabs-with-panels-panel-2"
-            aria-labelledby="demo-tabs-with-panels-tab-2"
-            tabindex="-1"
-            aria-selected="false"
-            hidden
-          >
-            <section class="flex gap-10 mt-4">
-              <form class="form grid gap-6">
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
+            tabindex="-1" aria-selected="false" hidden>
+            <section class="flex flex-col gap-6 mt-4 w-full">
+
+              <form class="form grid gap-6" id="form-tab-2">
                 <div class="grid gap-2">
-                  <label for="meat-cut-input">Truck ID</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
+                  <label for="truck-select-2">Truck ID</label>
+                  <select class="w-full" id="truck-select-2" required>
+                    <option value="" disabled selected>Loading trucks...</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                  <label for="start-date-2">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-2" required />
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
+                  <label for="end-date-2">End Date</label>
+                  <input class="w-full" type="date" id="end-date-2" required />
                 </div>
 
                 <div class="grid gap-2.5">
                   <button type="submit" class="btn w-full">
-                    <i data-lucide="bar-chart-2"></i>
-                    Load Distance-to-Duration Ratio
+                    <i data-lucide="gauge"></i>
+                    Load Ratio
                   </button>
-                  <a
-                    href="/deliveries"
-                    type="submit"
-                    class="btn-outline w-full"
-                  >
-                    <i data-lucide="shopping-basket"></i>
-                    View Deliveries
-                  </a>
                 </div>
               </form>
+
+              <div id="result-container-2"
+                class="hidden flex flex-col items-center justify-center p-10 border rounded-lg bg-muted/20">
+                <h3 class="text-lg font-medium text-muted-foreground mb-2">Distance : Duration Ratio</h3>
+                <span id="result-display-2" class="text-6xl font-bold text-primary tracking-tighter">
+                  --
+                </span>
+              </div>
+
+              <div id="error-message-2" class="hidden text-red-500 text-center font-medium"></div>
+
             </section>
           </div>
         </div>
       </main>
-    </div>
-  </body>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+
+      // ------------------------------------------------------
+      // 1. HELPER: Load Truck IDs
+      // ------------------------------------------------------
+      // Reusable function to load trucks into ANY select element ID
+      async function loadTrucks(selectId) {
+        const selectEl = document.getElementById(selectId);
+        if (!selectEl) return;
+
+        try {
+          // Use the endpoint we made earlier (ensure it matches your server.ts)
+          const response = await fetch("/api/deliveries/unique-trucks");
+          if (!response.ok) throw new Error("Failed to load trucks");
+
+          const trucks = await response.json();
+
+          selectEl.innerHTML = '<option value="" disabled selected>Select Truck ID...</option>';
+
+          trucks.forEach(t => {
+            const option = document.createElement("option");
+            option.value = t.truck_number;
+            option.textContent = `Truck #${t.truck_number}`;
+            selectEl.appendChild(option);
+          });
+        } catch (error) {
+          console.error(error);
+          selectEl.innerHTML = '<option value="" disabled selected>Error loading trucks</option>';
+        }
+      }
+
+      // Load for Tab 1
+      await loadTrucks("truck-select");
+      // Load for Tab 2
+      await loadTrucks("truck-select-2");
+
+
+      // ------------------------------------------------------
+      // 2. TAB 1 LOGIC: Total Deliveries
+      // ------------------------------------------------------
+      const form1 = document.getElementById("form-tab-1");
+
+      if (form1) {
+        form1.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const truck = document.getElementById("truck-select").value;
+          const start = document.getElementById("start-date-1").value;
+          const end = document.getElementById("end-date-1").value;
+
+          const resultContainer = document.getElementById("result-container-1");
+          const resultDisplay = document.getElementById("result-display-1");
+          const errorDisplay = document.getElementById("error-message-1");
+
+          if (!truck || !start || !end) return alert("Please fill in all fields");
+
+          try {
+            resultContainer.classList.remove("hidden");
+            resultDisplay.innerText = "...";
+            errorDisplay.classList.add("hidden");
+
+            const url = new URL("/api/deliveries/truck", window.location.origin);
+            url.searchParams.append("truck", truck);
+            url.searchParams.append("start", start);
+            url.searchParams.append("end", end);
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok && data.length > 0) {
+              resultDisplay.innerText = data[0].total_deliveries;
+            } else {
+              resultDisplay.innerText = "0";
+            }
+          } catch (error) {
+            console.error(error);
+            resultContainer.classList.add("hidden");
+            errorDisplay.innerText = "Failed to load data.";
+            errorDisplay.classList.remove("hidden");
+          }
+        });
+      }
+
+      // ------------------------------------------------------
+      // 3. TAB 2 LOGIC: Distance Ratio
+      // ------------------------------------------------------
+      const form2 = document.getElementById("form-tab-2");
+
+      if (form2) {
+        form2.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          // Target the "2" IDs
+          const truck = document.getElementById("truck-select-2").value;
+          const start = document.getElementById("start-date-2").value;
+          const end = document.getElementById("end-date-2").value;
+
+          const resultContainer = document.getElementById("result-container-2");
+          const resultDisplay = document.getElementById("result-display-2");
+          const errorDisplay = document.getElementById("error-message-2");
+
+          if (!truck || !start || !end) return alert("Please fill in all fields");
+
+          try {
+            resultContainer.classList.remove("hidden");
+            resultDisplay.innerText = "...";
+            errorDisplay.classList.add("hidden");
+
+            // NEW API Endpoint
+            const url = new URL("/api/deliveries/distance-duration", window.location.origin);
+            url.searchParams.append("truck", truck);
+            url.searchParams.append("start", start);
+            url.searchParams.append("end", end);
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (response.ok && data.length > 0 && data[0].distance_to_duration_ratio !== null) {
+              resultDisplay.innerText = data[0].distance_to_duration_ratio;
+            } else {
+
+              resultDisplay.innerText = "N/A";
+            }
+          } catch (error) {
+            console.error(error);
+            resultContainer.classList.add("hidden");
+            errorDisplay.innerText = "Failed to load data.";
+            errorDisplay.classList.remove("hidden");
+          }
+        });
+      }
+
+    });
+  </script>
+</body>
+
 </html>
