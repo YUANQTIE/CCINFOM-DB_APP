@@ -183,6 +183,7 @@
 
               dialog.showModal();
             },
+            icon: lucide.icons.ListPlus,
             label: "Add Nutrition",
             condition: (rowData) =>
               rowData.quality_control_clearance === "Pending",
@@ -191,6 +192,7 @@
             action: async (event, rowData, rowIndex) => {
               openNutritionDialog(rowData.serial_no);
             },
+            icon: lucide.icons.Leaf,
             label: "View Nutrition",
             condition: (rowData) =>
               rowData.quality_control_clearance === "Approved",
