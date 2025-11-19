@@ -299,6 +299,33 @@ export async function createClient(c: obj.Client) {
   return result;
 }
 
+export async function createClientCompany(c: obj.ClientInput) {
+    let letters = c.restaurant_name.substring(0, 3);
+    letters = letters.toUpperCase();
+    const numbers = (Math.floor(Math.random() * 900) + 100).toString();
+    const key = letters + '-' + numbers;
+
+    const [result] = await pool.query(
+    `
+    INSERT INTO clients (
+      restaurant_code, client_name, restaurant_name, restaurant_type, 
+      restaurant_address, contact_no, email_address, year_of_establishment
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      key,
+      c.client_name,
+      c.restaurant_name,
+      c.restaurant_type,
+      c.restaurant_address,
+      c.contact_no,
+      c.email_address,
+      c.year_of_establishment,
+    ]
+  );
+  return result;
+}
+
 export async function createAgreement(a: obj.Agreement) {
   const [result] = await pool.query(
     `

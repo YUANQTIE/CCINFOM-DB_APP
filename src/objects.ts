@@ -95,6 +95,16 @@ export interface Client {
     year_of_establishment: number;
 }
 
+export interface ClientInput {
+    client_name: string;
+    restaurant_name: string;
+    restaurant_type: string;
+    restaurant_address: string;
+    contact_no: string;
+    email_address: string;
+    year_of_establishment: number;
+}
+
 export interface Delivery {
     order_date: string;
     restaurant_code: string;

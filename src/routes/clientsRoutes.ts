@@ -49,6 +49,17 @@ router.get("/agreement/:restaurantCode", async (req, res) => {
   }
 });
 
+router.post("/add", async (req, res) => {
+  try {
+    const data = req.body;
+    const result = await create.createClientCompany(data);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to register" });
+  }
+});
+
 router.post("/add-agreement/:restaurantCode", async (req, res) => {
   const serial_no = req.params.restaurantCode;
   const data = req.body;
