@@ -112,20 +112,13 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
 
-      // ------------------------------------------------------
-      // 0. HELPER: Currency Formatter
-      // ------------------------------------------------------
       const formatCurrency = (amount) => {
-        if (amount === null || amount === undefined) return "$0.00";
+        if (amount === null || amount === undefined) return "PHP0.00";
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
-          currency: 'USD' // Change to your currency if needed
+          currency: 'USD'
         }).format(amount);
       };
-
-      // ------------------------------------------------------
-      // 1. HELPER: Load Clients
-      // ------------------------------------------------------
       async function loadClients() {
         const selectEl = document.getElementById("client-select");
         if (!selectEl) return;
@@ -152,7 +145,7 @@
       await loadClients();
 
       // ------------------------------------------------------
-      // 2. TAB 1: Profit By Client
+      // TAB 1: Profit By Client
       // ------------------------------------------------------
       const form1 = document.getElementById("form-tab-1");
       if (form1) {
@@ -197,7 +190,7 @@
       }
 
       // ------------------------------------------------------
-      // 3. TAB 2: Total Profit
+      // TAB 2: Total Profit
       // ------------------------------------------------------
       const form2 = document.getElementById("form-tab-2");
       if (form2) {
@@ -238,7 +231,6 @@
           }
         });
       }
-
     });
   </script>
 </body>

@@ -122,15 +122,14 @@
     document.addEventListener("DOMContentLoaded", async () => {
 
       // ------------------------------------------------------
-      // 1. HELPER: Load Truck IDs
+      //  HELPER: Load Truck IDs
       // ------------------------------------------------------
-      // Reusable function to load trucks into ANY select element ID
+
       async function loadTrucks(selectId) {
         const selectEl = document.getElementById(selectId);
         if (!selectEl) return;
 
         try {
-          // Use the endpoint we made earlier (ensure it matches your server.ts)
           const response = await fetch("/api/deliveries/unique-trucks");
           if (!response.ok) throw new Error("Failed to load trucks");
 
@@ -157,7 +156,7 @@
 
 
       // ------------------------------------------------------
-      // 2. TAB 1 LOGIC: Total Deliveries
+      // TAB 1 LOGIC: Total Deliveries
       // ------------------------------------------------------
       const form1 = document.getElementById("form-tab-1");
 
@@ -203,7 +202,7 @@
       }
 
       // ------------------------------------------------------
-      // 3. TAB 2 LOGIC: Distance Ratio
+      // TAB 2 LOGIC: Distance Ratio
       // ------------------------------------------------------
       const form2 = document.getElementById("form-tab-2");
 
