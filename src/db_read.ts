@@ -363,6 +363,7 @@ export async function getDeliveriesFiltered(filterBy: string, key: string) {
     "Order Date": "order_date",
     "Distance Traveled": "distance_traveled",
     "Delivery Duration": "delivery_duration",
+    Weight: "weight",
     "Restaurant Code": "restaurant_code",
     Status: "status",
   };
@@ -380,6 +381,7 @@ export async function getDeliveriesFiltered(filterBy: string, key: string) {
       OR order_date LIKE ?
       OR distance_traveled LIKE ?
       OR delivery_duration LIKE ?
+      OR weight LIKE ?
       OR restaurant_code LIKE ?
       OR status LIKE ?
       ORDER BY delivery_no DESC;
@@ -499,38 +501,29 @@ export async function getCompanyPendingDeliveriesThatCanBeDelivered() {
 
 // --- REPORT: LIVESTOCK KEEPING ---
 export async function getAverageConditionRatio(
-  date_start?: string, // Optional now
-  date_end?: string    // Optional now
+  date_start: string,
+  date_end: string,
+  supplier: string
 ) {
-  // 1. Base Query
-  let sql = `
+  const [records] = await pool.query(
+    `
     SELECT
-        s.company_name AS "Supplier", 
-        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS "Healthy",
-        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS "Unhealthy",
+        s.company_name AS supplier, 
+        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS healthy_count,
+        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS unhealthy_count,
         ROUND(
             SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) / 
             IFNULL(NULLIF(SUM(CASE WHEN medical_condition <> 'Healthy' THEN 1 ELSE 0 END), 0), 1),
-        2) AS "Healthy : Unhealthy (ratio)"
+        2) AS healthy_to_unhealthy_ratio
     FROM livestock l
     JOIN supplier s ON s.supplier_id = l.supplier_id
-  `;
-
-  const params: string[] = [];
-
-  // 2. Dynamic Filter: Only add WHERE clause if dates exist
-  if (date_start && date_end) {
-    sql += ` WHERE l.date_arrived BETWEEN ? AND ? `;
-    params.push(date_start, date_end);
-  }
-
-  // 3. Grouping (Must be at the end)
-  sql += ` GROUP BY s.company_name `;
-
-  const [records] = await pool.query(sql, params);
+    WHERE l.date_arrived BETWEEN ? AND ?
+    GROUP BY s.company_name 
+  `,
+    [date_start, date_end] // Removed the third parameter
+  );
   return records;
 }
-
 
 export async function getTotalBreedSuppliedBySupplier(
   breed: string,
@@ -593,7 +586,9 @@ export async function getAverageNutritionalQuantity(
   date_end: string,
   meat_cut: string
 ) {
-  const [records] = await pool.query(
+  // 1. Run the SQL Query
+  // We use <any[]> to tell TypeScript we expect rows back
+  const [records] = await pool.query<any[]>(
     `
     SELECT 
         AVG(n.fat_content) AS average_fat_content,
@@ -631,18 +626,34 @@ export async function getAverageNutritionalQuantity(
       AND l.processing_date BETWEEN ? AND ?;
     `,
     [
-      meat_cut,
-      date_start,
-      date_end,
-      meat_cut,
-      date_start,
-      date_end,
-      meat_cut,
-      date_start,
-      date_end,
+      meat_cut, date_start, date_end, // Subquery 1 params
+      meat_cut, date_start, date_end, // Subquery 2 params
+      meat_cut, date_start, date_end  // Main query params
     ]
   );
-  return records;
+
+  // 2. Extract the first row
+  // Aggregate queries (AVG) always return 1 row, even if values are null.
+  const row = records[0];
+
+  // 3. Check if data exists
+  // If the average fat is null, it means no matching records were found.
+  if (!row || row.average_fat_content === null) {
+    return {}; // Return empty object so frontend shows '--'
+  }
+
+  // 4. Map SQL columns to Frontend Keys
+  // We convert them to Number() to ensure .toFixed() works on the frontend
+  return {
+    fat: Number(row.average_fat_content),
+    protein: Number(row.average_protein_content),
+    tissue: Number(row.average_connective_tissue_content),
+    whc: Number(row.average_water_holding_capacity),
+    wd: Number(row.average_water_distribution),
+    ph: Number(row.average_pH),
+    tenderness: row.most_frequent_tenderness,
+    color: row.most_frequent_color
+  };
 }
 
 // --- REPORT: SALES ---
