@@ -259,14 +259,6 @@ export async function getTotalStorageInventory(location: string) {
   return records[0].count;
 }
 
-export async function getUniqueClients() {
-  const [records] = await pool.query(
-    `SELECT DISTINCT restaurant_name FROM clients`
-  )
-
-  return records
-}
-
 export async function getClientByCutType(cutType: string) {
   const [records] = await pool.query(
     `
