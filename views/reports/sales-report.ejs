@@ -114,9 +114,9 @@
 
       const formatCurrency = (amount) => {
         if (amount === null || amount === undefined) return "PHP0.00";
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-PH', {
           style: 'currency',
-          currency: 'USD'
+          currency: 'PHP'
         }).format(amount);
       };
       async function loadClients() {
@@ -124,7 +124,7 @@
         if (!selectEl) return;
 
         try {
-          const response = await fetch("/api/clients/unique");
+          const response = await fetch("/api/unique-clients");
           if (!response.ok) throw new Error("Failed to load clients");
           const clients = await response.json();
 
@@ -132,8 +132,8 @@
 
           clients.forEach(c => {
             const option = document.createElement("option");
-            option.value = c.client_name;
-            option.textContent = c.client_name;
+            option.value = c.restaurant_name;
+            option.textContent = c.restaurant_name;
             selectEl.appendChild(option);
           });
         } catch (error) {
