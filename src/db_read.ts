@@ -436,7 +436,7 @@ export async function getDeliveryItems(order_no: number) {
     FROM order_line ol 
     JOIN meat_selection m ON ol.item_serial_no = m.serial_no
     WHERE ol.order_no = ?
-    ORDER BY m.weight;
+    ORDER BY CONCAT(m.cut_type), m.weight;
   `,
     [order_no]
   );

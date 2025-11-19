@@ -35,13 +35,13 @@
             </a>
           </section>
 
-          <div class="tabs w-full" id="demo-tabs-with-panels">
-            <nav role="tablist" aria-orientation="horizontal" class="w-full">
+          <div class="tabs" id="demo-tabs-with-panels">
+            <nav role="tablist" aria-orientation="horizontal">
               <button
                 type="button"
                 role="tab"
-                id="demo-tabs-with-panels-tab-1"
-                aria-controls="demo-tabs-with-panels-panel-1"
+                id="inventory-btn"
+                aria-controls="inventory-btn-control"
                 aria-selected="true"
                 tabindex="0"
               >
@@ -51,8 +51,8 @@
               <button
                 type="button"
                 role="tab"
-                id="demo-tabs-with-panels-tab-2"
-                aria-controls="demo-tabs-with-panels-panel-2"
+                id="filter-client-by-cut-type-btn"
+                aria-controls="filter-client-by-cut-type-btn-control"
                 aria-selected="false"
                 tabindex="0"
               >
@@ -62,49 +62,52 @@
 
             <div
               role="tabpanel"
-              id="demo-tabs-with-panels-panel-1"
-              aria-labelledby="demo-tabs-with-panels-tab-1"
+              id="inventory-btn-control"
+              aria-labelledby="inventory-btn"
               tabindex="-1"
               aria-selected="true"
             >
-              <div class="card">
+              <div>
                 <section>
                   <div class="overflow-x-auto">
                     <!-- prettier-ignore -->
                     <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
-                id: "inventory-table" }) %>
+                    id: "inventory-table" }) %>
                     <!-- prettier-ignore -->
                     <%- include('../partials/dialog', { 
-              dialogId: 'edit-meat-selection-dialog' , 
-              title: 'Edit Meat Selection' ,
-              description: 'Edit Meat Selection' , 
-              formId: 'edit-meat-selection-form' , 
-              formAction: '' ,
-              formMethod: 'PUT' , 
-              submitText: 'Update' , 
-              formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
+                    dialogId: 'edit-meat-selection-dialog' , 
+                    title: 'Edit Meat Selection' ,
+                    description: 'Edit Meat Selection' , 
+                    formId: 'edit-meat-selection-form' , 
+                    formAction: '' ,
+                    formMethod: 'PUT' , 
+                    submitText: 'Update' , 
+                    formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
             
-            <%- include('../partials/dialog', { 
-              dialogId: 'add-nutrition-dialog' , 
-              title: 'Edit Meat Selection' ,
-              description: 'Edit Meat Selection' , 
-              formId: 'add-nutrition-form' , 
-              formAction: '' ,
-              formMethod: 'POST' , 
-              submitText: 'Add' , 
-              formFieldsPartial: '../partials/add-nutrition-dialog' }) %>
+            
+                    <%- include('../partials/dialog', { 
+                    dialogId: 'add-nutrition-dialog' , 
+                    title: 'Add Nutritional Information' ,
+                    description: 'Add Nutritional Information.' , 
+                    formId: 'add-nutrition-form' , 
+                    formAction: '' ,
+                    formMethod: 'POST' , 
+                    submitText: 'Add' , 
+                    formFieldsPartial: '../partials/add-nutrition-dialog' }) %>
+                  
+                    <%- include("../partials/view-nutrition-dialog") %>
                   </div>
                   <!-- prettier-ignore -->
                   <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
-            description: "Inventory data not available..." }) %>
+                  description: "Inventory data not available..." }) %>
                 </section>
               </div>
             </div>
 
             <div
               role="tabpanel"
-              id="demo-tabs-with-panels-panel-2"
-              aria-labelledby="demo-tabs-with-panels-tab-2"
+              id="filter-client-by-cut-type-btn-control"
+              aria-labelledby="filter-client-by-cut-type-btn"
               tabindex="-1"
               aria-selected="false"
               hidden
@@ -114,12 +117,21 @@
                   <h1 class="font-bold">Filter Client by Cut Type</h1>
                 </header>
                 <section>
-                  <form class="form grid gap-6">
+                  <form id="cut-type-form" class="form grid gap-6">
                     <div class="grid gap-3">
-                      <label for="cut-type">Enter Cut Type</label>
+                      <label for="cut-type-input">Enter Cut Type</label>
                       <div class="flex gap-2">
-                        <input type="text" id="cut-type" />
-                        <button class="btn-outline">
+                        <input
+                          class="w-fit"
+                          type="text"
+                          id="cut-type-input"
+                          name="cut_type"
+                        />
+                        <button
+                          type="submit"
+                          id="cut-type-form-btn"
+                          class="btn-outline"
+                        >
                           <i data-lucide="eye"></i>
                           View
                         </button>
@@ -128,9 +140,15 @@
                   </form>
                 </section>
                 <section>
-                  <table>
-                    <thead></thead>
-                    <tbody></tbody>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td class="font-bold">Restaurant Name</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr></tr>
+                    </tbody>
                   </table>
                 </section>
               </div>
@@ -179,15 +197,17 @@
 
               dialog.showModal();
             },
-            label: "Process",
+            icon: lucide.icons.ListPlus,
+            label: "Add Nutrition",
             condition: (rowData) =>
               rowData.quality_control_clearance === "Pending",
           },
           viewNutritionBtn: {
             action: async (event, rowData, rowIndex) => {
-              console.log("View nutrition", rowData);
+              openNutritionDialog(rowData.serial_no);
             },
-            label: "Process",
+            icon: lucide.icons.Leaf,
+            label: "View Nutrition",
             condition: (rowData) =>
               rowData.quality_control_clearance === "Approved",
           },
@@ -258,7 +278,69 @@
               alert("Error adding nutrition.");
             }
           });
+
+        // Filter Client By Cut Type
+        const cutTypeForm = document.getElementById("cut-type-form");
+        cutTypeForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(cutTypeForm);
+
+          // fetch
+
+          const response = await fetch(
+            `/api/meat-selection/client-by-cut-type/${encodeURIComponent(
+              cutType
+            )}`
+          );
+
+          console.log(Object.fromEntries(formData));
+        });
       });
+      const openNutritionDialog = async (serialNo) => {
+        const dialog = document.getElementById("view-nutrition-dialog");
+        const content = document.getElementById("nutrition-content");
+
+        try {
+          // Fetch the nutritional info
+          const response = await fetch(`/api/meat-selection/${serialNo}`, {
+            method: "GET",
+          });
+          if (!response.ok) throw new Error("Failed to load nutrition info");
+
+          const [data] = await response.json();
+          console.log(data);
+
+          // Render fields dynamically
+          content.innerHTML = `
+            <p><strong>Serial Number:</strong> ${
+              data.item_serial_no ?? "N/A"
+            }</p>
+            <p><strong>Tenderness:</strong> ${data.tenderness ?? "N/A"}</p>
+            <p><strong>Color:</strong> ${data.color ?? "N/A"}</p>
+            <p><strong>Fat Content:</strong> ${data.fat_content ?? "N/A"} %</p>
+            <p><strong>Protein Content:</strong> ${
+              data.protein_content ?? "N/A"
+            } %</p>
+            <p><strong>Connective Tissue Content:</strong> ${
+              data.connective_tissue_content ?? "N/A"
+            } %</p>
+            <p><strong>Water Holding Capacity:</strong> ${
+              data.water_holding_capacity ?? "N/A"
+            } %</p>
+            <p><strong>pH:</strong> ${data.pH ?? "N/A"}</p>
+            <p><strong>Water Distribution:</strong> ${
+              data.water_distribution ?? "N/A"
+            } %</p>
+          `;
+
+          // Open dialog
+          dialog.showModal();
+        } catch (err) {
+          console.error(err);
+          alert("Failed to load nutritional information.");
+        }
+      };
     </script>
   </body>
 </html>
