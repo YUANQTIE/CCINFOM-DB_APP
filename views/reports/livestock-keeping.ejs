@@ -72,21 +72,14 @@
                 <div class="grid gap-2">
                   <label for="breed-select">Breed</label>
                   <select class="w-full" id="breed-select" required>
-                    <option value="" disabled selected>Select breed...</option>
-                    <option value="Angus">Angus</option>
-                    <option value="Hereford">Hereford</option>
-                    <option value="Wagyu">Wagyu</option>
-                    <option value="Brahman">Brahman</option>
+                    <option value="" disabled selected>Loading breeds...</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
                   <label for="company-select">Company</label>
                   <select class="w-full" id="company-select" required>
-                    <option value="" disabled selected>Select company...</option>
-                    <option value="Global Farms Inc.">Global Farms Inc.</option>
-                    <option value="Local Breeders Co-op">Local Breeders Co-op</option>
-                    <option value="AgriVentures Ltd.">AgriVentures Ltd.</option>
+                    <option value="" disabled selected>Loading breeds...</option>
                   </select>
                 </div>
 
@@ -130,10 +123,88 @@
   <script src="/scripts/components/dialog.js" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
+      // ============================================================
+      // 1. HELPER FUNCTIONS
+      // ============================================================
+
+      // Function to load breeds dynamically
+      async function loadBreeds() {
+        const selectEl = document.getElementById("breed-select");
+        if (!selectEl) return;
+
+        // API Endpoint
+        const uniqueApiUrl = "/api/livestock/unique";
+
+        try {
+          const response = await fetch(uniqueApiUrl);
+          if (!response.ok) throw new Error("Failed to fetch unique breeds.");
+
+          const rows = await response.json(); // Expecting [{ breed: "Angus" }, { breed: "Wagyu" }]
+
+          // Reset the dropdown
+          selectEl.innerHTML = '<option value="" disabled selected>Select breed...</option>';
+
+          if (rows && rows.length > 0) {
+            rows.forEach(row => {
+              const option = document.createElement("option");
+              // Ensure this matches your DB column name (e.g. row.breed)
+              option.value = row.breed;
+              option.textContent = row.breed;
+              selectEl.appendChild(option);
+            });
+          } else {
+            selectEl.innerHTML = '<option value="" disabled selected>No breeds found.</option>';
+          }
+        } catch (error) {
+          console.error("Error loading breeds:", error);
+          selectEl.innerHTML = '<option value="" disabled selected>Error loading breeds.</option>';
+        }
+      }
+
+      async function loadSuppliers() {
+        // 1. Target the company select element
+        const selectEl = document.getElementById("company-select");
+        if (!selectEl) return;
+
+        // 2. New API Endpoint for suppliers
+        const uniqueApiUrl = "/api/livestock/supplier/unique";
+
+        try {
+          const response = await fetch(uniqueApiUrl);
+          if (!response.ok) throw new Error("Failed to fetch unique suppliers.");
+
+          const rows = await response.json(); // Expecting [{ company_name: "Global Farms" }, ...]
+
+          // 3. Reset the dropdown
+          selectEl.innerHTML = '<option value="" disabled selected>Select company...</option>';
+
+          if (rows && rows.length > 0) {
+            rows.forEach(row => {
+              const option = document.createElement("option");
+
+              // 4. Use the correct column name from your DB (company_name)
+              option.value = row.company_name;
+              option.textContent = row.company_name;
+
+              selectEl.appendChild(option);
+            });
+          } else {
+            selectEl.innerHTML = '<option value="" disabled selected>No companies found.</option>';
+          }
+        } catch (error) {
+          console.error("Error loading suppliers:", error);
+          selectEl.innerHTML = '<option value="" disabled selected>Error loading companies.</option>';
+        }
+      }
 
       // ============================================================
-      // TAB 1 LOGIC (Existing - Kept intact)
+      // 2. INITIALIZATION
       // ============================================================
+
+      // Load Breeds immediately
+      await loadBreeds();
+      await loadSuppliers();
+
       const tableColumns = ["Supplier", "Healthy", "Unhealthy", "Healthy : Unhealthy (ratio)"];
 
       await initTable(
