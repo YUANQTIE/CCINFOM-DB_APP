@@ -334,16 +334,9 @@ export async function getCutTypeByClient(restaurant_name: string) {
 export async function getClientsAgreements(restaurant_code: string) {
   const [records] = await pool.query(
     `
-    SELECT 
-        c.restaurant_code, c.restaurant_name,
-        a.contract_end, a.contract_start, a.client_pricing,
-        a.week_of_delivery, a.cut_type_of_choice, a.weight,
-        a.color, a.fat_content, a.protein_content,
-        a.connective_tissue_content, a.water_holding_capacity,
-        a.pH, a.water_distribution
-    FROM clients c
-    JOIN agreements a ON c.restaurant_code = a.restaurant_code
-    WHERE c.restaurant_code = ?;
+    SELECT * FROM agreements
+    WHERE restaurant_code = ?
+    ORDER BY contract_start DESC;
     `,
     [restaurant_code]
   );

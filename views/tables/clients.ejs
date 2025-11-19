@@ -27,6 +27,12 @@
             <!-- prettier-ignore -->
             <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
               <%- include("../partials/table", { id: "clients-table" }) %>
+            <%- include('../partials/dialog-table', {
+              dialogId: "agreements-dialog",
+              title: "Client agreements-dialog",
+              description: "List of Agreements.",
+              containerId: "agreements-container"
+            }) %>
           </div>
           <!-- prettier-ignore -->
           <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
@@ -52,9 +58,9 @@
       const buttons = {
         editBtn: {
           action: (event, rowData, rowIndex) => {
-            console.log("Edit");
+            openAgreementsDialog(rowData.restaurant_code)
           },
-          icon: lucide.icons.Pencil,
+          icon: lucide.icons.FileText,
         },
       };
 
@@ -63,7 +69,8 @@
         "clients-table",
         "table-skeleton",
         "table-data-zero",
-        "clients"
+        "clients",
+        buttons
       );
       // Init Search Bar
       initSearchBar(
@@ -75,6 +82,83 @@
         buttons
       );
     });
+
+    async function openAgreementsDialog(restaurantCode) {
+      const dialog = document.getElementById("agreements-dialog");
+      const container = document.getElementById("agreements-container");
+
+      container.innerHTML = "<p>Loading...</p>";
+
+      try {
+        const response = await fetch(`/api/clients/agreement/${restaurantCode}`);
+        if (!response.ok) throw new Error("Failed to fetch delivery items");
+
+        const items = await response.json();
+        console.log(items)
+
+        if (!Array.isArray(items) || items.length === 0) {
+          container.innerHTML = "<p>No items found.</p>";
+        } else {
+          const table = document.createElement("table");
+          table.className = "w-full text-sm border-collapse";
+
+          table.innerHTML = `
+            <thead>
+              <tr class="border-b font-semibold">
+                <th class="p-2 text-left">Agreement No.</th>
+                <th class="p-2 text-left">Start Date</th>
+                <th class="p-2 text-left">End Date</th>
+                <th class="p-2 text-left">Pricing</th>
+                <th class="p-2 text-left">Week of Delivery</th>
+                <th class="p-2 text-left">Cut Type of Choice</th>
+                <th class="p-2 text-left">Weight</th>
+                <th class="p-2 text-left">Tenderness</th>
+                <th class="p-2 text-left">Fat Content</th>
+                <th class="p-2 text-left">Protein Content</th>
+                <th class="p-2 text-left">Connective Tissue Content</th>
+                <th class="p-2 text-left">Water Holding Capacity</th>
+                <th class="p-2 text-left">pH</th>
+                <th class="p-2 text-left">Water Distribution</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items
+                .map(
+                  (item) => `
+                <tr class="border-b">
+                  <td class="p-2">${item.agreement_no}</td>
+                  <td class="p-2">${item.restaurant_code}</td>
+                  <td class="p-2">${item.contract_start}</td>
+                  <td class="p-2">${item.contract_end}</td>
+                  <td class="p-2">${item.client_pricing}</td>
+                  <td class="p-2">${item.week_of_delivery}</td>
+                  <td class="p-2">${item.cut_type_of_choice}</td>
+                  <td class="p-2">${item.weight}</td>
+                  <td class="p-2">${item.tenderness}</td>
+                  <td class="p-2">${item.color}</td>
+                  <td class="p-2">${item.fat_content}</td>
+                  <td class="p-2">${item.protein_content}</td>
+                  <td class="p-2">${item.connective_tissue_content}</td>
+                  <td class="p-2">${item.water_holding_capacity}</td>
+                  <td class="p-2">${item.pH}</td>
+                  <td class="p-2">${item.water_distribution}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          `;
+
+          container.innerHTML = "";
+          container.appendChild(table);
+        }
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p class='text-red-500'>Error loading items.</p>";
+      }
+
+      dialog.showModal();
+    }
   </script>
 </body>
 
