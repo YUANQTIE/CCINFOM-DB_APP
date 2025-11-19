@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Transactions</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <div class="flex min-h-screen">
+
+        <%- include("../clients_partials/sidebar", { clientName: clientName, clientEmail: clientEmail }) %>
+
+            <div class="flex-grow p-8">
+
+                <header class="w-full max-w-6xl mb-8 mx-auto">
+                    <h1 class="text-4xl font-extrabold text-gray-900">Transactions for <%= clientName %>
+                    </h1>
+                </header>
+
+                <div class="w-full max-w-6xl mb-6 mx-auto">
+                    <div id="transaction-list" class="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
+                    </div>
+                </div>
+
+
+            </div>
+    </div>
+
+    <script>
+        (async function loadTransactions() {
+            const email = "<%= clientEmail %>";
+            const container = document.getElementById("transaction-list");
+            container.innerHTML = "";
+
+            if (!email) {
+                container.innerHTML = "<p class='text-red-500'>Email not found.</p>";
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/client-transactions?email_address=${encodeURIComponent(email)}`);
+                const data = await res.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = "<p class='text-gray-600'>No transactions found for this client.</p>";
+                    return;
+                }
+
+                let html = `<table class="min-w-full border border-gray-300 bg-white rounded shadow-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border px-4 py-2">Order Date</th>
+                            <th class="border px-4 py-2">Delivery Date</th>
+                            <th class="border px-4 py-2">Cut Choice</th>
+                            <th class="border px-4 py-2">Tenderness</th>
+                            <th class="border px-4 py-2">Color</th>
+                            <th class="border px-4 py-2">Fat</th>
+                            <th class="border px-4 py-2">Protein</th>
+                            <th class="border px-4 py-2">Connective Tissue</th>
+                            <th class="border px-4 py-2">Water Holding Capacity</th>
+                            <th class="border px-4 py-2">pH</th>
+                            <th class="border px-4 py-2">Water Distribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                data.forEach(t => {
+                    html += `<tr class="hover:bg-gray-50">
+                        <td class="border px-4 py-2">${t.order_date}</td>
+                        <td class="border px-4 py-2">${t.deliver_date}</td>
+                        <td class="border px-4 py-2">${t.cut_type_of_choice}</td>
+                        <td class="border px-4 py-2">${t.tenderness}</td>
+                        <td class="border px-4 py-2">${t.color}</td>
+                        <td class="border px-4 py-2">${t.fat_content}</td>
+                        <td class="border px-4 py-2">${t.protein_content}</td>
+                        <td class="border px-4 py-2">${t.connective_tissue_content}</td>
+                        <td class="border px-4 py-2">${t.water_holding_capacity ?? 'N/A'}</td>
+                        <td class="border px-4 py-2">${t.pH}</td>
+                        <td class="border px-4 py-2">${t.water_distribution}</td>
+                    </tr>`;
+                });
+
+                html += "</tbody></table>";
+                container.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = "<p class='text-red-500'>Failed to fetch transactions.</p>";
+            }
+        })();
+    </script>
+
+</body>
+
+</html>

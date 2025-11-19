@@ -67,7 +67,6 @@ app.post("/client-login", async (req, res) => {
   }
 });
 
-
 // GET dashboard
 app.get("/dashboard", (req, res) => {
   const clientName = req.query.name as string;
@@ -89,7 +88,7 @@ app.get("/client-information", (req, res) => {
     return res.redirect("/email_login");
   }
 
-  res.render("client-view/client-information", { clientName, clientEmail });
+  res.render("client-view/client_information", { clientName, clientEmail });
 });
 
 app.get("/make_an_order", (req, res) => {
@@ -122,7 +121,7 @@ app.get("/table_of_transactions", (req, res) => {
     return res.redirect("/email_login");
   }
 
-  res.render("client-view/delete_order", { clientName, clientEmail });
+  res.render("client-view/table_of_transactions", { clientName, clientEmail });
 });
 
 
@@ -487,6 +486,8 @@ app.get("/api/average-nutrition", async (req, res) => {
 });
 
 // Sales Report
+
+
 app.get("/api/profit/client", async (req, res) => {
   try {
     const { client, start, end } = req.query as any;

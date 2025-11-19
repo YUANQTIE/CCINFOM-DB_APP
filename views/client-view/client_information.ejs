@@ -4,53 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Information</title>
+    <title>Client Info & Agreements</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-8">
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex flex-1">
+        <%- include("../clients_partials/sidebar") %>
+            <main class="flex-1 p-10 overflow-y-auto bg-background">
 
-    <header class="w-full max-w-6xl mb-8">
-        <h1 class="text-4xl font-extrabold text-gray-900">Welcome, <%= clientName %>!</h1>
-    </header>
+                <div class="flex-grow p-8">
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-
-        <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border-t-4 border-indigo-500 h-fit">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Client Info 🏢</h2>
-            <dl id="client-info" class="space-y-3 text-sm text-gray-700"></dl>
-        </div>
-
-        <div class="lg:col-span-2">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Client Agreements 📜</h2>
-            <div id="client-agreements" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            </div>
-        </div>
-
+                    <header class="w-full max-w-6xl mb-8 mx-auto">
+                        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Client Dashboard: <%= clientName %>
+                        </h1>
+                        <p class="text-gray-600">Here’s the detailed client information and agreements.</p>
+                    </header>
+                    <div class="w-full max-w-6xl mb-6 mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md border-t-4 border-indigo-500">
+                            <h2 class="text-2xl font-bold mb-4 text-indigo-800">Client Info 🏢</h2>
+                            <dl id="client-info" class="space-y-3 text-sm text-gray-700">
+                                <dd class="text-gray-500">Loading client info...</dd>
+                            </dl>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <h2 class="text-2xl font-bold mb-4 text-gray-800">Client Agreements 📜</h2>
+                            <div id="client-agreements" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <p class="text-gray-500 col-span-full">Loading agreements...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
     </div>
 
-    <footer class="w-full max-w-6xl mt-12 text-center text-xs text-gray-400">
+    <footer class="w-full max-w-6xl mt-12 text-center text-xs text-gray-400 mx-auto">
         &copy; 2025 Carnivault. All rights reserved.
     </footer>
 
     <script>
         (async function loadClientData() {
-            // The server-side variable clientEmail is used here
             const email = "<%= clientEmail %>";
 
             try {
-                // Fetch client info
                 const clientRes = await fetch(`/api/client?email_address=${encodeURIComponent(email)}`);
                 const clientData = await clientRes.json();
 
-                // Fetch client agreements
                 const agreementsRes = await fetch(`/api/client/agreements?email_address=${encodeURIComponent(email)}`);
                 const agreementsData = await agreementsRes.json();
 
                 displayClientInfo(clientData);
                 displayClientAgreements(agreementsData);
+
             } catch (err) {
                 console.error("Error fetching data:", err);
+                document.getElementById("client-info").innerHTML = "<dd class='text-red-500'>Failed to load client info.</dd>";
+                document.getElementById("client-agreements").innerHTML = "<p class='text-red-500 col-span-full'>Failed to load agreements.</p>";
             }
         })();
 
@@ -63,14 +72,12 @@
             }
             const client = data[0];
             for (const key in client) {
-                const displayKey = key.replace(/_/g, ' ')
-                    .replace(/\b\w/g, l => l.toUpperCase()); // Convert snake_case to Title Case
                 const dt = document.createElement("dt");
                 dt.className = "font-medium text-indigo-600";
-                dt.textContent = displayKey + ":";
+                dt.textContent = key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()) + ":";
 
                 const dd = document.createElement("dd");
-                dd.className = "ml-4";
+                dd.className = "ml-4 text-gray-700";
                 dd.textContent = client[key];
 
                 list.appendChild(dt);
@@ -82,37 +89,30 @@
             const container = document.getElementById("client-agreements");
             container.innerHTML = "";
             if (!data || data.length === 0) {
-                container.innerHTML = "<p class='text-gray-500'>No agreements found.</p>";
+                container.innerHTML = "<p class='text-gray-500 col-span-full'>No agreements found.</p>";
                 return;
             }
 
             data.forEach((agreement, index) => {
-                // Create a Card for each agreement
                 const card = document.createElement("div");
-                card.className = "bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border-l-4 border-green-500";
+                card.className = "bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 border-l-4 border-green-500";
 
-                // Card Header
                 const cardHeader = document.createElement("h3");
                 cardHeader.className = "text-lg font-semibold mb-4 text-green-700 border-b pb-2";
                 cardHeader.textContent = `Agreement #${index + 1}`;
                 card.appendChild(cardHeader);
 
-                // Agreement Details - using a definition list for a clean layout
                 const dl = document.createElement("dl");
-                dl.className = "space-y-3 text-sm";
+                dl.className = "space-y-1 text-sm";
 
                 Object.entries(agreement).forEach(([key, value]) => {
-                    const displayKey = key.replace(/_/g, ' ')
-                        .replace(/\b\w/g, l => l.toUpperCase()); // Convert snake_case to Title Case
-
                     const dt = document.createElement("dt");
                     dt.className = "font-medium text-gray-900";
-                    dt.textContent = displayKey + ":";
+                    dt.textContent = key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()) + ":";
 
                     const dd = document.createElement("dd");
                     dd.className = "ml-4 text-gray-600";
-                    // Handle the null value for 'water_holding_capacity'
-                    dd.textContent = value === null ? 'N/A' : value;
+                    dd.textContent = value === null ? "N/A" : value;
 
                     dl.appendChild(dt);
                     dl.appendChild(dd);
