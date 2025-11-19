@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Livestock</title>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
-  </head>
 
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Livestock</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Livestock
@@ -50,95 +51,96 @@
             description: "Livestock data not available..." }) %>
         </section>
       </main>
-    </div>
+  </div>
 
-    <script src="/scripts/components/table.js" defer></script>
-    <script src="/scripts/components/searchbar.js" defer></script>
-    <script src="/scripts/components/dialog.js" defer></script>
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/dialog.js" defer></script>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", async () => {
-        const tableColumns = [
-          "Livestock ID",
-          "Breed",
-          "Weight",
-          "Age",
-          "Country of Origin",
-          "Medical Condition",
-          "Vaccination Status",
-          "Date Arrived",
-          "Storage Location",
-          "Supplier ID",
-          "Status",
-          "Processing Date",
-        ];
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const tableColumns = [
+        "Livestock ID",
+        "Breed",
+        "Weight",
+        "Age",
+        "Country of Origin",
+        "Medical Condition",
+        "Vaccination Status",
+        "Date Arrived",
+        "Storage Location",
+        "Supplier ID",
+        "Status",
+        "Processing Date",
+      ];
 
-        const buttons = {
-          editBtn: {
-            action: (event, rowData, rowIndex) => {
-              console.log("Edit");
-            },
-            icon: lucide.icons.Pencil,
+      const buttons = {
+        editBtn: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Edit");
           },
-          processLivestockBtn: {
-            action: async (event, rowData, rowIndex) => {
-              const livestock_id = rowData.livestock_id;
+          icon: lucide.icons.Pencil,
+        },
+        processLivestockBtn: {
+          action: async (event, rowData, rowIndex) => {
+            const livestock_id = rowData.livestock_id;
 
-              alert(
-                `Are you sure you want to process livestock id ${rowData.livestock_id}?`
-              );
+            alert(
+              `Are you sure you want to process livestock id ${rowData.livestock_id}?`
+            );
 
-              // try {
-              //   const response = await fetch(
-              //     `/api/livestock/process/${livestock_id}`,
-              //     {
-              //       method: "POST",
-              //     }
-              //   );
+            // try {
+            //   const response = await fetch(
+            //     `/api/livestock/process/${livestock_id}`,
+            //     {
+            //       method: "POST",
+            //     }
+            //   );
 
-              //   if (!response.ok) {
-              //     throw new Error("Failed to process livestock");
-              //   }
+            //   if (!response.ok) {
+            //     throw new Error("Failed to process livestock");
+            //   }
 
-              //   window.location.reload();
-              // } catch (err) {
-              //   console.error(err);
-              //   alert("Error processing livestock.");
-              // }
-            },
-            icon: lucide.icons.Cog,
-            content: "Process",
-            condition: (rowData) => rowData.status === "For Processing",
+            //   window.location.reload();
+            // } catch (err) {
+            //   console.error(err);
+            //   alert("Error processing livestock.");
+            // }
           },
-        };
+          icon: lucide.icons.Cog,
+          content: "Process",
+          condition: (rowData) => rowData.status === "For Processing",
+        },
+      };
 
-        initTable(
-          tableColumns,
-          "livestock-table",
-          "table-skeleton",
-          "table-data-zero",
-          "livestock",
-          buttons
-        );
+      initTable(
+        tableColumns,
+        "livestock-table",
+        "table-skeleton",
+        "table-data-zero",
+        "livestock",
+        buttons
+      );
 
-        initSearchBar(
-          "searchbarSelect",
-          "searchbarInput",
-          "livestock-table",
-          "livestock",
-          tableColumns,
-          buttons
-        );
+      initSearchBar(
+        "searchbarSelect",
+        "searchbarInput",
+        "livestock-table",
+        "livestock",
+        tableColumns,
+        buttons
+      );
 
-        // Dialog
-        initDialog(
-          "add-livestock-btn",
-          "add-livestock-dialog",
-          "add-livestock-form",
-          "/api/livestock/add",
-          "POST"
-        );
-      });
-    </script>
-  </body>
+      // Dialog
+      initDialog(
+        "add-livestock-btn",
+        "add-livestock-dialog",
+        "add-livestock-form",
+        "/api/livestock/add",
+        "POST"
+      );
+    });
+  </script>
+</body>
+
 </html>

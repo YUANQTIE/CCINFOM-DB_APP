@@ -35,15 +35,16 @@
           <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
             tabindex="-1" aria-selected="true">
             <section class="flex gap-10 mt-4 w-full">
-              <form class="form grid gap-6">
+              <form class="form grid gap-6" id="filter-form-1">
+
                 <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                  <label for="start-date-input-1">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-1" />
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
+                  <label for="end-date-input-1">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-1" />
                 </div>
 
                 <div class="grid gap-2.5">
@@ -51,10 +52,6 @@
                     <i data-lucide="bar-chart-2"></i>
                     Load Condition Report
                   </button>
-                  <a href="/livestock" type="submit" class="btn-outline w-full">
-                    <i data-lucide="beef"></i>
-                    View Livestock
-                  </a>
                 </div>
               </form>
               <div class="flex-1 w-full relative">
@@ -67,104 +64,63 @@
                 description: "Livestock data not available..." }) %>
             </section>
           </div>
-
           <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
             tabindex="-1" aria-selected="false" hidden>
-            <section class="flex gap-10 mt-4">
-              <form class="form grid gap-6">
+            <section class="flex flex-col gap-6 mt-4">
+
+              <form class="form grid gap-6" id="filter-form-2">
                 <div class="grid gap-2">
-                  <label for="meat-cut-input">Breed</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
+                  <label for="breed-select">Breed</label>
+                  <select class="w-full" id="breed-select" required>
+                    <option value="" disabled selected>Select breed...</option>
+                    <option value="Angus">Angus</option>
+                    <option value="Hereford">Hereford</option>
+                    <option value="Wagyu">Wagyu</option>
+                    <option value="Brahman">Brahman</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="meat-cut-input">Company</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
+                  <label for="company-select">Company</label>
+                  <select class="w-full" id="company-select" required>
+                    <option value="" disabled selected>Select company...</option>
+                    <option value="Global Farms Inc.">Global Farms Inc.</option>
+                    <option value="Local Breeders Co-op">Local Breeders Co-op</option>
+                    <option value="AgriVentures Ltd.">AgriVentures Ltd.</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                  <label for="start-date-input-2">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-2" required />
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
+                  <label for="end-date-input-2">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-2" required />
                 </div>
 
                 <div class="grid gap-2.5">
                   <button type="submit" class="btn w-full">
-                    <i data-lucide="bar-chart-2"></i>
-                    Load Breed Report
+                    <i data-lucide="calculator"></i>
+                    Calculate Total Supplied
                   </button>
-                  <a href="/livestock" type="submit" class="btn-outline w-full">
-                    <i data-lucide="beef"></i>
-                    View Livestock
-                  </a>
                 </div>
               </form>
-              <table class="table">
-                <thead>
-                  <tr class="font-bold">
-                    <td>Column #1</td>
-                    <td>Column #2</td>
-                    <td>Column #3</td>
-                    <td>Column #4</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                </tbody>
-              </table>
+
+              <div id="result-container-2"
+                class="hidden flex flex-col items-center justify-center p-10 border rounded-lg bg-muted/20">
+                <h3 class="text-lg font-medium text-muted-foreground mb-2">Total Breed Supplied</h3>
+                <span id="result-count-display" class="text-6xl font-bold text-primary tracking-tighter">
+                  --
+                </span>
+              </div>
+
+              <div id="error-message-2" class="hidden text-red-500 text-center font-medium"></div>
+
             </section>
           </div>
+
         </div>
       </main>
   </div>
@@ -175,65 +131,124 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
 
-      document.getElementById("table-skeleton").classList.add("hidden");
-      document.getElementById("table-data-zero").classList.remove("hidden");
+      // ============================================================
+      // TAB 1 LOGIC (Existing - Kept intact)
+      // ============================================================
+      const tableColumns = ["Supplier", "Healthy", "Unhealthy", "Healthy : Unhealthy (ratio)"];
 
-      const tableColumns = [
-        "Supplier",
-        "Healthy",
-        "Unhealthy",
-        "Healthy : Unhealthy (ratio)",
-      ];
-
-      const buttons = {};
-
-      initTable(
+      await initTable(
         tableColumns,
         "livestock-report-table",
         "table-skeleton",
         "table-data-zero",
         "average-condition-ratio",
-        buttons
+        {}
       );
 
       const tableEl = document.getElementById("livestock-report-table");
+      const skeletonEl = document.getElementById("table-skeleton");
+      const noDataEl = document.getElementById("table-data-zero");
 
-      // 1. Hide "No Data", Show "Skeleton" immediately
-      document.getElementById("table-data-zero").classList.add("hidden");
-      document.getElementById("table-skeleton").classList.remove("hidden");
+      const fetchAndRenderTab1 = async (params = {}) => {
+        if (tableEl && tableEl.__fetchData) {
+          tableEl.classList.add("hidden");
+          noDataEl.classList.add("hidden");
+          skeletonEl.classList.remove("hidden");
 
-      // 2. Fetch ALL data immediately (Send empty object)
-      if (tableEl && tableEl.__fetchData) {
-        tableEl.__fetchData({});
+          await tableEl.__fetchData(params);
+
+          const hasRows = tableEl.tBodies[0].rows.length > 0;
+          skeletonEl.classList.add("hidden");
+
+          if (hasRows) {
+            tableEl.classList.remove("hidden");
+            tableEl.classList.add("table");
+            tableEl.style.display = "";
+            noDataEl.classList.add("hidden");
+            noDataEl.classList.remove("flex");
+          } else {
+            tableEl.classList.add("hidden");
+            tableEl.classList.remove("table");
+            tableEl.style.display = "none";
+            noDataEl.classList.remove("hidden");
+            noDataEl.classList.add("flex");
+          }
+        }
+      };
+
+      // Initial Load Tab 1
+      await fetchAndRenderTab1({});
+
+      // Listener Tab 1
+      const form1 = document.getElementById("filter-form-1");
+      if (form1) {
+        form1.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const start = document.getElementById("start-date-input-1").value;
+          const end = document.getElementById("end-date-input-1").value;
+          await fetchAndRenderTab1({ start, end });
+        });
       }
 
-      // ---------------------------------------------
 
-      // Form Submit Listener (For filtering later)
-      const form = document.querySelector("form");
+      // ============================================================
+      // TAB 2 LOGIC (New)
+      // ============================================================
+      const form2 = document.getElementById("filter-form-2");
+      const resultContainer = document.getElementById("result-container-2");
+      const resultDisplay = document.getElementById("result-count-display");
+      const errorDisplay = document.getElementById("error-message-2");
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        console.log("Button Clicked! Processing..."); // <--- Check your console for this
+      if (form2) {
+        form2.addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-        const start = document.getElementById("start-date-input").value;
-        const end = document.getElementById("end-date-input").value;
-        const tableEl = document.getElementById("livestock-report-table");
+          // 1. Get Values
+          const breed = document.getElementById("breed-select").value;
+          const company = document.getElementById("company-select").value;
+          const start = document.getElementById("start-date-input-2").value;
+          const end = document.getElementById("end-date-input-2").value;
 
-        if (tableEl && tableEl.__fetchData) {
+          // 2. Basic Validation
+          if (!breed || !company || !start || !end) {
+            alert("Please fill in all fields.");
+            return;
+          }
 
-          tableEl.classList.add("hidden");
-          document.getElementById("table-data-zero").classList.add("hidden");
-          document.getElementById("table-skeleton").classList.remove("hidden");
+          try {
+            // UI Loading State
+            resultContainer.classList.remove("hidden");
+            resultDisplay.innerText = "...";
+            errorDisplay.classList.add("hidden");
 
-          console.log(`Fetching data for range: ${start} to ${end}`);
+            // 3. Build URL
+            const url = new URL("/api/total-breed-supplied", window.location.origin);
+            url.searchParams.append("breed", breed);
+            url.searchParams.append("company", company);
+            url.searchParams.append("start", start);
+            url.searchParams.append("end", end);
 
-          await tableEl.__fetchData({ start, end });
+            // 4. Fetch
+            const response = await fetch(url);
+            const data = await response.json(); // Expecting array: [{ total_breed_supplied: 123 }]
 
-          document.getElementById("table-skeleton").classList.add("hidden");
-          tableEl.classList.remove("hidden");
-        }
-      });
+            if (response.ok && data.length > 0) {
+              // 5. Update Number
+              const count = data[0].total_breed_supplied;
+              resultDisplay.innerText = count;
+            } else {
+              // Handle Error or No Data
+              resultDisplay.innerText = "0";
+            }
+
+          } catch (error) {
+            console.error("Tab 2 Error:", error);
+            resultContainer.classList.add("hidden");
+            errorDisplay.innerText = "Failed to load data.";
+            errorDisplay.classList.remove("hidden");
+          }
+        });
+      }
     });
   </script>
 </body>
