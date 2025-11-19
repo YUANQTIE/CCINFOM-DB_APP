@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Login</title>
+    <link href="/output.css" rel="stylesheet" />
+</head>
+
+<body class="flex justify-center items-center h-dvh bg-gray-50">
+    <div class="card p-8 w-96 text-center shadow-md">
+        <h2 class="text-2xl font-bold mb-4">Client Login</h2>
+
+        <form id="client-login-form" class="flex flex-col gap-4" method="POST" action="/client-login">
+            <input type="email" id="email" name="email" required placeholder="Enter your email"
+                class="input input-bordered w-72 mx-auto p-2" />
+
+            <p id="email-feedback" class="text-sm mt-1"></p>
+
+            <button type="submit" class="btn btn-primary w-72 mx-auto">
+                Continue
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const emailInput = document.getElementById("email");
+        const feedback = document.getElementById("email-feedback");
+        const form = document.getElementById("client-login-form");
+
+        let clientEmails = [];
+
+        // Fetch all client emails once from server
+        fetch("/api/client-emails")
+            .then(res => res.json())
+            .then(data => {
+                for (let i = 0; i < data.length; i++) {
+                    clientEmails.push(data[i].email_address);
+                }
+            })
+            .catch(err => console.error(err));
+
+        // Live check as user types
+        emailInput.addEventListener("input", () => {
+            const value = emailInput.value.trim();
+            if (value === "") {
+                feedback.textContent = "";
+                return;
+            }
+
+            let found = false;
+            for (let i = 0; i < clientEmails.length; i++) {
+                if (clientEmails[i] === value) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found) {
+                feedback.textContent = "Email found";
+                feedback.className = "text-green-500 text-sm mt-1";
+            } else {
+                feedback.textContent = "Email not found";
+                feedback.className = "text-red-500 text-sm mt-1";
+            }
+        });
+
+        // Prevent form submission if email not found
+        form.addEventListener("submit", (e) => {
+            const value = emailInput.value.trim();
+            let exists = false;
+            for (let i = 0; i < clientEmails.length; i++) {
+                if (clientEmails[i] === value) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                e.preventDefault();
+                feedback.textContent = "Cannot continue: email not in system.";
+                feedback.className = "text-red-500 text-sm mt-1";
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -10,14 +10,6 @@ export async function getSupplier() {
   return records;
 }
 
-export async function getUniqueSupplier() {
-  const [records] = await pool.query(`
-    SELECT DISTINCT company_name FROM supplier
-    ORDER BY company_name;
-  `);
-  return records;
-}
-
 export async function getLivestockBySupplier(supplierName: string) {
   const [records] = await pool.query(
     `
@@ -76,14 +68,6 @@ export async function getLivestock() {
   const [records] = await pool.query(`
     SELECT * FROM livestock
     ORDER BY storage_location, date_arrived DESC;
-  `);
-  return records;
-}
-
-export async function getUniqueLivestockBreed() {
-  const [records] = await pool.query(`
-    SELECT DISTINCT breed FROM livestock
-    ORDER BY breed;
   `);
   return records;
 }
@@ -169,7 +153,7 @@ export async function getMeatSelection() {
 
 export async function getUniqueMeatCuts() {
   const [records] = await pool.query(`
-    SELECT DISTINCT cut_type FROM meat_selection
+    SELECT distinct cut_type FROM meat_selection
     ORDER BY CONCAT(cut_type);
   `);
   return records;
@@ -282,6 +266,20 @@ export async function getClients() {
   return records;
 }
 
+export async function getClientEmails() {
+  const [records] = await pool.query(`
+    SELECT email_address FROM clients
+    ORDER BY restaurant_name;
+  `);
+  return records;
+}
+
+export async function getUniqueTrucks() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT truck_number FROM deliveries
+    ORDER BY truck_number
+    `)
+}
 export async function getClientsFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 
@@ -364,14 +362,6 @@ export async function getDeliveries() {
   const [records] = await pool.query(`
     SELECT * FROM deliveries
     ORDER BY delivery_no DESC;
-  `);
-  return records;
-}
-
-export async function getUniqueTrucks() {
-  const [records] = await pool.query(`
-    SELECT DISTINCT truck_number FROM deliveries
-    ORDER BY truck_number;
   `);
   return records;
 }
@@ -525,36 +515,27 @@ export async function getCompanyPendingDeliveriesThatCanBeDelivered() {
 
 // --- REPORT: LIVESTOCK KEEPING ---
 export async function getAverageConditionRatio(
-  date_start?: string, // Optional now
-  date_end?: string    // Optional now
+  date_start: string,
+  date_end: string,
+  supplier: string
 ) {
-
-  // 1. Base Query
-  let sql = `
+  const [records] = await pool.query(
+    `
     SELECT
-        s.company_name AS "Supplier", 
-        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS "Healthy",
-        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS "Unhealthy",
+        s.company_name AS supplier, 
+        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS healthy_count,
+        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS unhealthy_count,
         ROUND(
             SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) / 
             IFNULL(NULLIF(SUM(CASE WHEN medical_condition <> 'Healthy' THEN 1 ELSE 0 END), 0), 1),
-        2) AS "Healthy : Unhealthy (ratio)"
+        2) AS healthy_to_unhealthy_ratio
     FROM livestock l
     JOIN supplier s ON s.supplier_id = l.supplier_id
-  `;
-
-  const params: string[] = [];
-
-  // 2. Dynamic Filter: Only add WHERE clause if dates exist
-  if (date_start && date_end) {
-    sql += ` WHERE l.date_arrived BETWEEN ? AND ? `;
-    params.push(date_start, date_end);
-  }
-
-  // 3. Grouping (Must be at the end)
-  sql += ` GROUP BY s.company_name `;
-
-  const [records] = await pool.query(sql, params);
+    WHERE l.date_arrived BETWEEN ? AND ?
+    GROUP BY s.company_name 
+  `,
+    [date_start, date_end] // Removed the third parameter
+  );
   return records;
 }
 
