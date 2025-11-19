@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Inventory Keeping</title>
-    <script
-      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
-      defer
-    ></script>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Inventory Keeping</title>
+  <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js" defer></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Inventory Keeping
@@ -21,51 +21,26 @@
         <!-- TODO: The report will display list of meat cuts -->
         <div class="tabs w-full" id="demo-tabs-with-panels">
           <nav role="tablist" aria-orientation="horizontal" class="w-full">
-            <button
-              type="button"
-              role="tab"
-              id="demo-tabs-with-panels-tab-1"
-              aria-controls="demo-tabs-with-panels-panel-1"
-              aria-selected="true"
-              tabindex="0"
-            >
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-1"
+              aria-controls="demo-tabs-with-panels-panel-1" aria-selected="true" tabindex="0">
               Total Produced Meat Selection
             </button>
 
-            <button
-              type="button"
-              role="tab"
-              id="demo-tabs-with-panels-tab-2"
-              aria-controls="demo-tabs-with-panels-panel-2"
-              aria-selected="false"
-              tabindex="0"
-            >
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-2"
+              aria-controls="demo-tabs-with-panels-panel-2" aria-selected="false" tabindex="0">
               Average Nutritional Quantities
             </button>
           </nav>
 
-          <div
-            role="tabpanel"
-            id="demo-tabs-with-panels-panel-1"
-            aria-labelledby="demo-tabs-with-panels-tab-1"
-            tabindex="-1"
-            aria-selected="true"
-          >
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
+            tabindex="-1" aria-selected="true">
             <section class="flex gap-10 mt-4 w-full">
               <form class="form grid gap-6">
                 <div class="grid gap-2">
                   <label for="meat-cut-input">Meat Cut</label>
-                  <select class="w-full" id="meat-cut-select">
+                  <select class="w-full" id="meat-cut-select" name="meat_cut" required>
                     <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
+                      Loading meat cuts...
                     </option>
                   </select>
                 </div>
@@ -81,7 +56,7 @@
                 </div>
 
                 <div class="grid gap-2.5">
-                  <button type="submit" class="btn w-full">
+                  <button type="submit" id="submit-btn" class="btn w-full">
                     <i data-lucide="bar-chart-2"></i>
                     Load Total Meat Cuts Report
                   </button>
@@ -90,128 +65,213 @@
                     View Inventory
                   </a>
                 </div>
+                <p id="error-msg" class="text-red-500 text-sm hidden text-center"></p>
               </form>
-              <table class="table">
-                <thead>
-                  <tr class="font-bold">
-                    <td>Column #1</td>
-                    <td>Column #2</td>
-                    <td>Column #3</td>
-                    <td>Column #4</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                </tbody>
-              </table>
-            </section>
-          </div>
+              <div
+                class="flex-1 w-full relative flex items-center justify-center bg-gray-50 rounded-lg border border-gray-200 p-10">
 
-          <div
-            role="tabpanel"
-            id="demo-tabs-with-panels-panel-2"
-            aria-labelledby="demo-tabs-with-panels-tab-2"
-            tabindex="-1"
-            aria-selected="false"
-            hidden
-          >
-            <section class="flex gap-10 mt-4">
-              <form class="form grid gap-6">
-                <div class="grid gap-2">
-                  <label for="meat-cut-input">Meat Cut</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
-                  </select>
+                <div id="state-empty" class="text-center text-gray-500">
+                  <i data-lucide="calculator" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                  <p>Select filters and click "Calculate" to see results.</p>
                 </div>
 
-                <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                <div id="state-result" class="hidden text-center">
+                  <h3 class="text-lg font-medium text-gray-600 mb-2">Total Produced</h3>
+                  <div class="text-6xl font-bold text-indigo-600" id="total-count-display">0</div>
+                  <p class="text-sm text-gray-400 mt-2">
+                    <span id="display-cut"></span> |
+                    <span id="display-range"></span>
+                  </p>
                 </div>
+                <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
+                  tabindex="-1" aria-selected="false" hidden>
+                  <section class="flex gap-10 mt-4">
+                    <form class="form grid gap-6">
+                      <div class="grid gap-2">
+                        <label for="meat-cut-input">Meat Cut</label>
+                        <select class="w-full" id="meat-cut-select">
+                          <option value="" disabled selected>
+                            Select meat cut...
+                          </option>
+                          <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
+                          <option value="SUP-042">
+                            SUP-042 (Local Breeders Co-op)
+                          </option>
+                          <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
+                          <option value="SUP-210">
+                            SUP-210 (Green Valley Supplies)
+                          </option>
+                        </select>
+                      </div>
 
-                <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
-                </div>
+                      <div class="grid gap-2">
+                        <label for="start-date-input">Start Date</label>
+                        <input class="w-full" type="date" id="start-date-input" />
+                      </div>
 
-                <div class="grid gap-2.5">
-                  <button type="submit" class="btn w-full">
-                    <i data-lucide="bar-chart-2"></i>
-                    Load Average Nutritional Quantities Report
-                  </button>
-                  <a href="/inventory" type="submit" class="btn-outline w-full">
-                    <i data-lucide="shopping-basket"></i>
-                    View Inventory
-                  </a>
+                      <div class="grid gap-2">
+                        <label for="end-date-input">End Date</label>
+                        <input class="w-full" type="date" id="end-date-input" />
+                      </div>
+
+                      <div class="grid gap-2.5">
+                        <button type="submit" class="btn w-full">
+                          <i data-lucide="bar-chart-2"></i>
+                          Load Average Nutritional Quantities Report
+                        </button>
+                        <a href="/inventory" type="submit" class="btn-outline w-full">
+                          <i data-lucide="shopping-basket"></i>
+                          View Inventory
+                        </a>
+                      </div>
+                    </form>
+                    <section class="w-full space-y-2">
+                      <h1 class="text-3xl font-bold">Arm Chuck Roast</h1>
+                      <hr />
+                      <table class="table">
+                        <tr>
+                          <td class="font-bold">Average Fat</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Average Protein</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Average Connective Tissue</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Average Water Holding Capacity</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Average Water Distribution</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Average pH</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Most Frequent Tenderness</td>
+                        </tr>
+                        <tr>
+                          <td class="font-bold">Most Frequent Color</td>
+                        </tr>
+                      </table>
+                    </section>
+                  </section>
                 </div>
-              </form>
-              <section class="w-full space-y-2">
-                <h1 class="text-3xl font-bold">Arm Chuck Roast</h1>
-                <hr />
-                <table class="table">
-                  <tr>
-                    <td class="font-bold">Average Fat</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Average Protein</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Average Connective Tissue</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Average Water Holding Capacity</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Average Water Distribution</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Average pH</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Most Frequent Tenderness</td>
-                  </tr>
-                  <tr>
-                    <td class="font-bold">Most Frequent Color</td>
-                  </tr>
-                </table>
-              </section>
-            </section>
-          </div>
-        </div>
+              </div>
       </main>
-    </div>
-  </body>
+  </div>
+  <script src="/scripts/components/table.js" defer></script>
+  <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/dialog.js" defer></script>
+  <script>
+
+    async function loadMeatCuts() {
+      const selectEl = document.getElementById("meat-cut-select");
+      const uniqueApiUrl = "/api/meat-selection/unique"; // Use relative path
+
+      try {
+        // 1. Fetch data from the dedicated API route
+        const response = await fetch(uniqueApiUrl);
+        if (!response.ok) {
+          throw new Error("Failed to fetch unique meat cuts.");
+        }
+
+        const cuts = await response.json(); // Data expected to be an array of { cut_type: '...' } objects
+
+        // 2. Clear the "Loading..." message
+        selectEl.innerHTML = '<option value="" disabled selected>Select meat cut...</option>';
+
+        if (cuts && cuts.length > 0) {
+          // 3. Populate the dropdown with fetched data
+          cuts.forEach(cut => {
+            const option = document.createElement("option");
+
+            // Use cut.cut_type for both the value (to send to the server) and the text (to display)
+            option.value = cut.cut_type;
+            option.textContent = cut.cut_type;
+
+            selectEl.appendChild(option);
+          });
+        } else {
+          selectEl.innerHTML = '<option value="" disabled selected>No meat cuts available.</option>';
+        }
+
+      } catch (error) {
+        console.error("Error loading meat cuts:", error);
+        selectEl.innerHTML = '<option value="" disabled selected>Error loading cuts.</option>';
+      }
+    }
+    // --- Original Form Submission Logic ---
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Load the dynamic options immediately when the page loads
+      loadMeatCuts();
+
+      // Ensure you add an ID to your form if you haven't already
+      const form = document.querySelector("form");
+      // You might want to assign an ID in your EJS: <form id="meat-report-form" class="form grid gap-6">
+
+      // ... (rest of your existing script code remains here) ...
+      const resultContainer = document.getElementById("state-result");
+      const emptyContainer = document.getElementById("state-empty");
+      const countDisplay = document.getElementById("total-count-display");
+      const displayCut = document.getElementById("display-cut");
+      const displayRange = document.getElementById("display-range");
+      const errorMsg = document.getElementById("error-msg");
+      const submitBtn = document.getElementById("submit-btn");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        // 1. Reset UI
+        errorMsg.classList.add("hidden");
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="animate-pulse">Calculating...</span>`;
+
+        // 2. Get Values
+        const meatCut = document.getElementById("meat-cut-select").value;
+        const startDate = document.getElementById("start-date-input").value;
+        const endDate = document.getElementById("end-date-input").value;
+
+        try {
+          // 3. Fetch Data (Your existing logic for calculating the total)
+          const params = new URLSearchParams({
+            meat_cut: meatCut,
+            date_start: startDate,
+            date_end: endDate
+          });
+
+          const res = await fetch(`/api/meat-produced?${params.toString()}`);
+
+          if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.error || "Failed to fetch data");
+          }
+
+          const data = await res.json();
+
+          // 4. Determine the Count
+          const totalCount = Array.isArray(data) ? data.length : (data.count || 0);
+
+          // 5. Update UI
+          countDisplay.innerText = totalCount;
+          displayCut.innerText = meatCut;
+          displayRange.innerText = `${startDate} to ${endDate}`;
+
+          emptyContainer.classList.add("hidden");
+          resultContainer.classList.remove("hidden");
+
+        } catch (err) {
+          console.error(err);
+          errorMsg.innerText = err.message;
+          errorMsg.classList.remove("hidden");
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>
