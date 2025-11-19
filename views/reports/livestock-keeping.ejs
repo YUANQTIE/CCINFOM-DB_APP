@@ -35,15 +35,16 @@
           <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
             tabindex="-1" aria-selected="true">
             <section class="flex gap-10 mt-4 w-full">
-              <form class="form grid gap-6">
+              <form class="form grid gap-6" id="filter-form-1">
+
                 <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                  <label for="start-date-input-1">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-1" />
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
+                  <label for="end-date-input-1">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-1" />
                 </div>
 
                 <div class="grid gap-2.5">
@@ -51,10 +52,6 @@
                     <i data-lucide="bar-chart-2"></i>
                     Load Condition Report
                   </button>
-                  <a href="/livestock" type="submit" class="btn-outline w-full">
-                    <i data-lucide="beef"></i>
-                    View Livestock
-                  </a>
                 </div>
               </form>
               <div class="flex-1 w-full relative">
@@ -175,9 +172,6 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
 
-      document.getElementById("table-skeleton").classList.add("hidden");
-      document.getElementById("table-data-zero").classList.remove("hidden");
-
       const tableColumns = [
         "Supplier",
         "Healthy",
@@ -185,55 +179,76 @@
         "Healthy : Unhealthy (ratio)",
       ];
 
-      const buttons = {};
-
-      initTable(
+      // Initialize the table component
+      await initTable(
         tableColumns,
         "livestock-report-table",
         "table-skeleton",
         "table-data-zero",
         "average-condition-ratio",
-        buttons
+        {} // No buttons needed for this report
       );
 
       const tableEl = document.getElementById("livestock-report-table");
+      const skeletonEl = document.getElementById("table-skeleton");
+      const noDataEl = document.getElementById("table-data-zero");
 
-      // 1. Hide "No Data", Show "Skeleton" immediately
-      document.getElementById("table-data-zero").classList.add("hidden");
-      document.getElementById("table-skeleton").classList.remove("hidden");
-
-      // 2. Fetch ALL data immediately (Send empty object)
-      if (tableEl && tableEl.__fetchData) {
-        tableEl.__fetchData({});
-      }
-
-      // ---------------------------------------------
-
-      // Form Submit Listener (For filtering later)
-      const form = document.querySelector("form");
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        console.log("Button Clicked! Processing..."); // <--- Check your console for this
-
-        const start = document.getElementById("start-date-input").value;
-        const end = document.getElementById("end-date-input").value;
-        const tableEl = document.getElementById("livestock-report-table");
-
+      // --- HELPER: Fetch and Force UI Fix ---
+      // We wrap the fetch call to ensure the UI updates correctly
+      // regardless of what table.js does.
+      const fetchAndRender = async (params = {}) => {
         if (tableEl && tableEl.__fetchData) {
 
+          // 1. Show Skeleton
           tableEl.classList.add("hidden");
-          document.getElementById("table-data-zero").classList.add("hidden");
-          document.getElementById("table-skeleton").classList.remove("hidden");
+          noDataEl.classList.add("hidden");
+          skeletonEl.classList.remove("hidden");
 
-          console.log(`Fetching data for range: ${start} to ${end}`);
+          // 2. Run the shared fetch logic
+          await tableEl.__fetchData(params);
 
-          await tableEl.__fetchData({ start, end });
+          // 3. FORCE UI STATE (The Fix)
+          // We manually check if rows exist and force the visibility
+          const hasRows = tableEl.tBodies[0].rows.length > 0;
 
-          document.getElementById("table-skeleton").classList.add("hidden");
-          tableEl.classList.remove("hidden");
+          skeletonEl.classList.add("hidden"); // Ensure skeleton is gone
+
+          if (hasRows) {
+            // Has Data: Show Table, Hide "No Data"
+            tableEl.classList.remove("hidden");
+            tableEl.classList.add("table"); // Ensure Layout
+            tableEl.style.display = "";     // Reset inline styles if any
+
+            noDataEl.classList.add("hidden");
+            noDataEl.classList.remove("flex");
+          } else {
+            // Empty: Hide Table, Show "No Data"
+            tableEl.classList.add("hidden");
+            tableEl.classList.remove("table");
+            tableEl.style.display = "none"; // Force hide
+
+            noDataEl.classList.remove("hidden");
+            noDataEl.classList.add("flex");
+          }
         }
-      });
+      };
+
+      // --- 1. Initial Load ---
+      await fetchAndRender({});
+
+      // --- 2. Filter Form Listener ---
+      const form = document.getElementById("filter-form-1");
+      if (form) {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const start = document.getElementById("start-date-input-1").value;
+          const end = document.getElementById("end-date-input-1").value;
+
+          console.log(`Refetching: ${start} to ${end}`);
+          await fetchAndRender({ start, end });
+        });
+      }
     });
   </script>
 </body>

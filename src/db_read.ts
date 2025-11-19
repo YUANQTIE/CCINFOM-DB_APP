@@ -508,27 +508,36 @@ export async function getCompanyPendingDeliveriesThatCanBeDelivered() {
 
 // --- REPORT: LIVESTOCK KEEPING ---
 export async function getAverageConditionRatio(
-  date_start: string,
-  date_end: string,
-  supplier: string
+  date_start?: string, // Optional now
+  date_end?: string    // Optional now
 ) {
-  const [records] = await pool.query(
-    `
+
+  // 1. Base Query
+  let sql = `
     SELECT
-        s.company_name AS supplier, 
-        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS healthy_count,
-        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS unhealthy_count,
+        s.company_name AS "Supplier", 
+        SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) AS "Healthy",
+        SUM(CASE WHEN l.medical_condition <> 'Healthy' THEN 1 ELSE 0 END) AS "Unhealthy",
         ROUND(
             SUM(CASE WHEN l.medical_condition = 'Healthy' THEN 1 ELSE 0 END) / 
             IFNULL(NULLIF(SUM(CASE WHEN medical_condition <> 'Healthy' THEN 1 ELSE 0 END), 0), 1),
-        2) AS healthy_to_unhealthy_ratio
+        2) AS "Healthy : Unhealthy (ratio)"
     FROM livestock l
     JOIN supplier s ON s.supplier_id = l.supplier_id
-    WHERE l.date_arrived BETWEEN ? AND ?
-    GROUP BY s.company_name 
-  `,
-    [date_start, date_end] // Removed the third parameter
-  );
+  `;
+
+  const params: string[] = [];
+
+  // 2. Dynamic Filter: Only add WHERE clause if dates exist
+  if (date_start && date_end) {
+    sql += ` WHERE l.date_arrived BETWEEN ? AND ? `;
+    params.push(date_start, date_end);
+  }
+
+  // 3. Grouping (Must be at the end)
+  sql += ` GROUP BY s.company_name `;
+
+  const [records] = await pool.query(sql, params);
   return records;
 }
 

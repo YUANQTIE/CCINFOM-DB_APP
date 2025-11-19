@@ -1,6 +1,5 @@
 /*
 Table accepts
-
 - tableColumns
 - skeletonId
 - tableId
@@ -23,44 +22,66 @@ const initTable = async (
   const skeleton = document.getElementById(skeletonId);
   const table = document.getElementById(tableId);
   const dataEmpty = document.getElementById(dataEmptyId);
-  const body = table.tBodies[0];
-  const header = table.tHead;
 
   // Check elements
-  if (!skeleton || !table || !dataEmpty || !body) {
+  if (!skeleton || !table || !dataEmpty) {
     console.error("A required table element is missing!");
     return;
   }
 
-  // Add columns to table header
-  // Initialize column data fragments
+  const body = table.tBodies[0];
+  const header = table.tHead;
+
+  // 1. Initialize Headers
+  // We call the function here, so it must be defined OUTSIDE initTable or BEFORE this line.
   initHeaderDataFragments(columns, header, actionButtons);
 
-  // Fetch data from API
-  try {
-    const response = await fetch(`/api/${apiName}`);
-    const rowData = await response.json();
+  // 2. Define the Fetch Logic
+  table.__fetchData = async (queryParams = {}) => {
+    try {
+      // Construct URL with parameters (e.g., ?start=...&end=...)
+      const url = new URL(`/api/${apiName}`, window.location.origin);
+      Object.keys(queryParams).forEach((key) => {
+        if (queryParams[key]) {
+          url.searchParams.append(key, queryParams[key]);
+        }
+      });
 
-    if (response.ok) {
-      // Hide skeleton and show table after data load
-      skeleton.classList.add("hidden");
-      table.classList.replace("hidden", "table");
+      const response = await fetch(url);
+      const rowData = await response.json();
 
-      // Show message and hide table when data is empty
-      if (rowData.length === 0) {
-        table.classList.replace("table", "hidden");
-        dataEmpty.classList.replace("hidden", "flex");
-        return;
+      // CRITICAL: Clear existing rows before adding new ones
+      body.innerHTML = "";
+
+      if (response.ok) {
+        skeleton.classList.add("hidden");
+        table.classList.replace("hidden", "table");
+
+        // Handle empty data
+        if (rowData.length === 0) {
+          table.classList.replace("table", "hidden");
+          dataEmpty.classList.replace("hidden", "flex");
+          return;
+        }
+
+        // Ensure empty message is hidden if we have data
+        dataEmpty.classList.replace("flex", "hidden");
+
+        initRowDataFragments(rowData, body, actionButtons);
       }
-
-      initRowDataFragments(rowData, body, actionButtons);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      table.classList.replace("table", "hidden");
+      dataEmpty.classList.replace("hidden", "flex");
     }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    table.classList.replace("table", "hidden");
-    dataEmpty.classList.replace("hidden", "flex");
-  }
+  };
+
+  // 3. Trigger initial load immediately
+  table.__fetchData({});
 };
+// --- CLOSING BRACE FOR initTable IS HERE ---
+
+// --- HELPER FUNCTIONS MOVED OUTSIDE ---
 
 const initHeaderDataFragments = (columns, header, actionButtons) => {
   const columnFragment = document.createDocumentFragment();
@@ -89,9 +110,12 @@ const initRowDataFragments = (rowData, tableBody, actionButtons) => {
       const cell = row.insertCell();
       let content = value;
       if (typeof value === "string") {
-        const dateObj = parseISO(value);
-        if (isValid(dateObj)) {
-          content = format(dateObj, "MMM dd, yyyy");
+        // Check for ISO date format roughly before parsing
+        if (value.match(/^\d{4}-\d{2}-\d{2}/)) {
+          const dateObj = parseISO(value);
+          if (isValid(dateObj)) {
+            content = format(dateObj, "MMM dd, yyyy");
+          }
         }
       }
       cell.textContent = content ? content : "--";
@@ -112,8 +136,15 @@ const initRowDataFragments = (rowData, tableBody, actionButtons) => {
         const btn = actionsGroup.appendChild(document.createElement("button"));
         btn.id = key;
         btn.className = `btn-outline ${props.className}`;
-        const iconElement = lucide.createElement(props.icon);
-        btn.append(iconElement, props.content || "");
+
+        // Check if lucide exists before using it
+        if (typeof lucide !== 'undefined' && props.icon) {
+          const iconElement = lucide.createElement(props.icon);
+          btn.append(iconElement);
+        }
+
+        if (props.content) btn.append(props.content);
+
         btn.addEventListener("click", (event) => {
           props.action(event, data, index);
         });
