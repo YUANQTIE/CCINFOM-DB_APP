@@ -26,12 +26,8 @@
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
                 id: "deliveries-table" }) %>
-            <%- include('../partials/dialog-table', {
-              dialogId: "delivery-items-dialog",
-              title: "Delivery Items",
-              description: "Items in this delivery.",
-              containerId: "delivery-items-container"
-            }) %>
+                <%- include('../partials/dialog-table', { dialogId: "delivery-items-dialog" , title: "Delivery Items" ,
+                  description: "Items in this delivery." , containerId: "delivery-items-container" }) %>
 
           </div>
           <!-- prettier-ignore -->
@@ -117,16 +113,16 @@
             </thead>
             <tbody>
               ${items
-                .map(
-                  (item) => `
+              .map(
+                (item) => `
                 <tr class="border-b">
                   <td class="p-2">${item.serial_no}</td>
                   <td class="p-2">${item.cut_type}</td>
                   <td class="p-2">${item.weight}</td>
                 </tr>
               `
-                )
-                .join("")}
+              )
+              .join("")}
             </tbody>
           `;
 
