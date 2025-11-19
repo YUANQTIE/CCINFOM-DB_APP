@@ -10,6 +10,14 @@ export async function getSupplier() {
   return records;
 }
 
+export async function getUniqueSupplier() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT company_name FROM supplier
+    ORDER BY company_name;
+  `);
+  return records;
+}
+
 export async function getLivestockBySupplier(supplierName: string) {
   const [records] = await pool.query(
     `

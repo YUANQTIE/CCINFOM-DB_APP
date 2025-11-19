@@ -85,6 +85,16 @@ router.get("/supplier", async (req, res) => {
   }
 });
 
+router.get("/supplier/unique", async (req, res) => {
+  try {
+    const data = await read.getUniqueSupplier();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch data" });
+  }
+});
+
 router.get("/suppliers/filter", async (req, res) => {
   const column = req.query.column as string;
   const search = req.query.search as string;
