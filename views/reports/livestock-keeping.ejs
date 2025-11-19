@@ -64,104 +64,63 @@
                 description: "Livestock data not available..." }) %>
             </section>
           </div>
-
           <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
             tabindex="-1" aria-selected="false" hidden>
-            <section class="flex gap-10 mt-4">
-              <form class="form grid gap-6">
+            <section class="flex flex-col gap-6 mt-4">
+
+              <form class="form grid gap-6" id="filter-form-2">
                 <div class="grid gap-2">
-                  <label for="meat-cut-input">Breed</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
+                  <label for="breed-select">Breed</label>
+                  <select class="w-full" id="breed-select" required>
+                    <option value="" disabled selected>Select breed...</option>
+                    <option value="Angus">Angus</option>
+                    <option value="Hereford">Hereford</option>
+                    <option value="Wagyu">Wagyu</option>
+                    <option value="Brahman">Brahman</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="meat-cut-input">Company</label>
-                  <select class="w-full" id="meat-cut-select">
-                    <option value="" disabled selected>
-                      Select meat cut...
-                    </option>
-                    <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                    <option value="SUP-042">
-                      SUP-042 (Local Breeders Co-op)
-                    </option>
-                    <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                    <option value="SUP-210">
-                      SUP-210 (Green Valley Supplies)
-                    </option>
+                  <label for="company-select">Company</label>
+                  <select class="w-full" id="company-select" required>
+                    <option value="" disabled selected>Select company...</option>
+                    <option value="Global Farms Inc.">Global Farms Inc.</option>
+                    <option value="Local Breeders Co-op">Local Breeders Co-op</option>
+                    <option value="AgriVentures Ltd.">AgriVentures Ltd.</option>
                   </select>
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="start-date-input">Start Date</label>
-                  <input class="w-full" type="date" id="start-date-input" />
+                  <label for="start-date-input-2">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-2" required />
                 </div>
 
                 <div class="grid gap-2">
-                  <label for="end-date-input">End Date</label>
-                  <input class="w-full" type="date" id="end-date-input" />
+                  <label for="end-date-input-2">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-2" required />
                 </div>
 
                 <div class="grid gap-2.5">
                   <button type="submit" class="btn w-full">
-                    <i data-lucide="bar-chart-2"></i>
-                    Load Breed Report
+                    <i data-lucide="calculator"></i>
+                    Calculate Total Supplied
                   </button>
-                  <a href="/livestock" type="submit" class="btn-outline w-full">
-                    <i data-lucide="beef"></i>
-                    View Livestock
-                  </a>
                 </div>
               </form>
-              <table class="table">
-                <thead>
-                  <tr class="font-bold">
-                    <td>Column #1</td>
-                    <td>Column #2</td>
-                    <td>Column #3</td>
-                    <td>Column #4</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                  <tr>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                    <td>Test</td>
-                  </tr>
-                </tbody>
-              </table>
+
+              <div id="result-container-2"
+                class="hidden flex flex-col items-center justify-center p-10 border rounded-lg bg-muted/20">
+                <h3 class="text-lg font-medium text-muted-foreground mb-2">Total Breed Supplied</h3>
+                <span id="result-count-display" class="text-6xl font-bold text-primary tracking-tighter">
+                  --
+                </span>
+              </div>
+
+              <div id="error-message-2" class="hidden text-red-500 text-center font-medium"></div>
+
             </section>
           </div>
+
         </div>
       </main>
   </div>
@@ -172,81 +131,122 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
 
-      const tableColumns = [
-        "Supplier",
-        "Healthy",
-        "Unhealthy",
-        "Healthy : Unhealthy (ratio)",
-      ];
+      // ============================================================
+      // TAB 1 LOGIC (Existing - Kept intact)
+      // ============================================================
+      const tableColumns = ["Supplier", "Healthy", "Unhealthy", "Healthy : Unhealthy (ratio)"];
 
-      // Initialize the table component
       await initTable(
         tableColumns,
         "livestock-report-table",
         "table-skeleton",
         "table-data-zero",
         "average-condition-ratio",
-        {} // No buttons needed for this report
+        {}
       );
 
       const tableEl = document.getElementById("livestock-report-table");
       const skeletonEl = document.getElementById("table-skeleton");
       const noDataEl = document.getElementById("table-data-zero");
 
-      // --- HELPER: Fetch and Force UI Fix ---
-      // We wrap the fetch call to ensure the UI updates correctly
-      // regardless of what table.js does.
-      const fetchAndRender = async (params = {}) => {
+      const fetchAndRenderTab1 = async (params = {}) => {
         if (tableEl && tableEl.__fetchData) {
-
-          // 1. Show Skeleton
           tableEl.classList.add("hidden");
           noDataEl.classList.add("hidden");
           skeletonEl.classList.remove("hidden");
 
-          // 2. Run the shared fetch logic
           await tableEl.__fetchData(params);
 
-          // 3. FORCE UI STATE (The Fix)
-          // We manually check if rows exist and force the visibility
           const hasRows = tableEl.tBodies[0].rows.length > 0;
-
-          skeletonEl.classList.add("hidden"); // Ensure skeleton is gone
+          skeletonEl.classList.add("hidden");
 
           if (hasRows) {
-            // Has Data: Show Table, Hide "No Data"
             tableEl.classList.remove("hidden");
-            tableEl.classList.add("table"); // Ensure Layout
-            tableEl.style.display = "";     // Reset inline styles if any
-
+            tableEl.classList.add("table");
+            tableEl.style.display = "";
             noDataEl.classList.add("hidden");
             noDataEl.classList.remove("flex");
           } else {
-            // Empty: Hide Table, Show "No Data"
             tableEl.classList.add("hidden");
             tableEl.classList.remove("table");
-            tableEl.style.display = "none"; // Force hide
-
+            tableEl.style.display = "none";
             noDataEl.classList.remove("hidden");
             noDataEl.classList.add("flex");
           }
         }
       };
 
-      // --- 1. Initial Load ---
-      await fetchAndRender({});
+      // Initial Load Tab 1
+      await fetchAndRenderTab1({});
 
-      // --- 2. Filter Form Listener ---
-      const form = document.getElementById("filter-form-1");
-      if (form) {
-        form.addEventListener("submit", async (event) => {
+      // Listener Tab 1
+      const form1 = document.getElementById("filter-form-1");
+      if (form1) {
+        form1.addEventListener("submit", async (event) => {
           event.preventDefault();
-
           const start = document.getElementById("start-date-input-1").value;
           const end = document.getElementById("end-date-input-1").value;
+          await fetchAndRenderTab1({ start, end });
+        });
+      }
 
-          console.log(`Refetching: ${start} to ${end}`);
-          await fetchAndRender({ start, end });
+
+      // ============================================================
+      // TAB 2 LOGIC (New)
+      // ============================================================
+      const form2 = document.getElementById("filter-form-2");
+      const resultContainer = document.getElementById("result-container-2");
+      const resultDisplay = document.getElementById("result-count-display");
+      const errorDisplay = document.getElementById("error-message-2");
+
+      if (form2) {
+        form2.addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          // 1. Get Values
+          const breed = document.getElementById("breed-select").value;
+          const company = document.getElementById("company-select").value;
+          const start = document.getElementById("start-date-input-2").value;
+          const end = document.getElementById("end-date-input-2").value;
+
+          // 2. Basic Validation
+          if (!breed || !company || !start || !end) {
+            alert("Please fill in all fields.");
+            return;
+          }
+
+          try {
+            // UI Loading State
+            resultContainer.classList.remove("hidden");
+            resultDisplay.innerText = "...";
+            errorDisplay.classList.add("hidden");
+
+            // 3. Build URL
+            const url = new URL("/api/total-breed-supplied", window.location.origin);
+            url.searchParams.append("breed", breed);
+            url.searchParams.append("company", company);
+            url.searchParams.append("start", start);
+            url.searchParams.append("end", end);
+
+            // 4. Fetch
+            const response = await fetch(url);
+            const data = await response.json(); // Expecting array: [{ total_breed_supplied: 123 }]
+
+            if (response.ok && data.length > 0) {
+              // 5. Update Number
+              const count = data[0].total_breed_supplied;
+              resultDisplay.innerText = count;
+            } else {
+              // Handle Error or No Data
+              resultDisplay.innerText = "0";
+            }
+
+          } catch (error) {
+            console.error("Tab 2 Error:", error);
+            resultContainer.classList.add("hidden");
+            errorDisplay.innerText = "Failed to load data.";
+            errorDisplay.classList.remove("hidden");
+          }
         });
       }
     });
