@@ -18,7 +18,6 @@
         </h1>
 
         <!-- Tabs -->
-        <!-- TODO: The report will display list of meat cuts -->
         <div class="tabs w-full" id="demo-tabs-with-panels">
           <nav role="tablist" aria-orientation="horizontal" class="w-full">
             <button type="button" role="tab" id="demo-tabs-with-panels-tab-1"
@@ -31,7 +30,7 @@
               Total Breed Supplied
             </button>
           </nav>
-
+          <!-- Tab 1 -->
           <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
             tabindex="-1" aria-selected="true">
             <section class="flex gap-10 mt-4 w-full">
@@ -64,6 +63,7 @@
                 description: "Livestock data not available..." }) %>
             </section>
           </div>
+          <!-- Tab 2 -->
           <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
             tabindex="-1" aria-selected="false" hidden>
             <section class="flex flex-col gap-6 mt-4">
@@ -124,7 +124,7 @@
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       // ============================================================
-      // 1. HELPER FUNCTIONS
+      // HELPER FUNCTIONS
       // ============================================================
 
       // Function to load breeds dynamically
@@ -139,7 +139,7 @@
           const response = await fetch(uniqueApiUrl);
           if (!response.ok) throw new Error("Failed to fetch unique breeds.");
 
-          const rows = await response.json(); // Expecting [{ breed: "Angus" }, { breed: "Wagyu" }]
+          const rows = await response.json();
 
           // Reset the dropdown
           selectEl.innerHTML = '<option value="" disabled selected>Select breed...</option>';
@@ -162,27 +162,26 @@
       }
 
       async function loadSuppliers() {
-        // 1. Target the company select element
+        // Target the company select element
         const selectEl = document.getElementById("company-select");
         if (!selectEl) return;
 
-        // 2. New API Endpoint for suppliers
+        // New API Endpoint for suppliers
         const uniqueApiUrl = "/api/livestock/supplier/unique";
 
         try {
           const response = await fetch(uniqueApiUrl);
           if (!response.ok) throw new Error("Failed to fetch unique suppliers.");
 
-          const rows = await response.json(); // Expecting [{ company_name: "Global Farms" }, ...]
+          const rows = await response.json();
 
-          // 3. Reset the dropdown
+          // Reset the dropdown
           selectEl.innerHTML = '<option value="" disabled selected>Select company...</option>';
 
           if (rows && rows.length > 0) {
             rows.forEach(row => {
               const option = document.createElement("option");
 
-              // 4. Use the correct column name from your DB (company_name)
               option.value = row.company_name;
               option.textContent = row.company_name;
 
