@@ -98,7 +98,7 @@
                   >
                     <div class="card">
                       <header>
-                        <h1 class="font-bold">Filter Client by Cut Type</h1>
+                        <h1 class="font-bold">Filter Meat by Livestock Breed</h1>
                       </header>
                       <section>
                         <form id="livestock-form" class="form grid gap-6">
@@ -223,29 +223,29 @@
         "POST"
       );
 
-      const cutTypeForm = document.getElementById("livestock-form");
-          cutTypeForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const formData = new FormData(cutTypeForm);
-            const breed = formData.get("breed");
-            const response = await fetch(
-              `/api/livestock/meat-by-livestock-breed/${encodeURIComponent(breed)}`
-            );
-            const data = await response.json()
+      const livestockForm = document.getElementById("livestock-form");
+        livestockForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(livestockForm);
+          const breed = formData.get("breed");
+          const response = await fetch(
+            `/api/livestock/meat-by-livestock-breed/${encodeURIComponent(breed)}`
+          );
+          const data = await response.json()
 
-            const tbody = document.getElementById("meatTableBody");
-            tbody.innerHTML = ""; // clear old results
+          const tbody = document.getElementById("meatTableBody");
+          tbody.innerHTML = ""; // clear old results
 
-            data.forEach((item) => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${item.serial_no}</td>
-                <td>${item.cut_type}</td>
-              `;
-              tbody.appendChild(row);
-            });
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.serial_no}</td>
+              <td>${item.cut_type}</td>
+            `;
+            tbody.appendChild(row);
           });
-    });
+        });
+  });
   </script>
 </body>
 

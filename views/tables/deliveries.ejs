@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Carnivault - Deliveries</title>
   <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
+      defer
+    ></script>
 </head>
 
 <body>
@@ -23,16 +27,98 @@
             <%- include("../partials/searchbar", { label: "Deliveries" , select_id: "searchbarSelect" ,
               input_id: "searchbarInput" , placeholder: "Search deliveries..." , route_api: "deliveries" }) %>
           </section>
-          <div class="overflow-x-auto">
-            <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
-                id: "deliveries-table" }) %>
-                <%- include('../partials/dialog-table', { dialogId: "delivery-items-dialog" , title: "Delivery Items" ,
-                  description: "Items in this delivery." , containerId: "delivery-items-container" }) %>
 
+          <div class="tabs" id="demo-tabs-with-panels">
+            <nav role="tablist" aria-orientation="horizontal">
+              <button
+                type="button"
+                role="tab"
+                id="deliveries-btn"
+                aria-controls="deliveries-btn-control"
+                aria-selected="true"
+                tabindex="0"
+              >
+                Livestock
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                id="filter-restaurant-by-driver-btn"
+                aria-controls="filter-restaurant-by-driver-btn-control"
+                aria-selected="false"
+                tabindex="0"
+              >
+                Filter Restaurant by Driver
+              </button>
+            </nav>
+            <div
+              role="tabpanel"
+              id="deliveries-btn-control"
+              aria-labelledby="deliveries-btn"
+              tabindex="-1"
+              aria-selected="true"
+            > 
+              <section>
+                <div class="overflow-x-auto">
+                  <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
+                      id: "deliveries-table" }) %>
+                      <%- include('../partials/dialog-table', { dialogId: "delivery-items-dialog" , title: "Delivery Items" ,
+                        description: "Items in this delivery." , containerId: "delivery-items-container" }) %>
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+                    description: "Deliveries data not available..." }) %>
+                </div>
+              </section>
+            </div>
+            <div
+              role="tabpanel"
+              id="filter-restaurant-by-driver-btn-control"
+              aria-labelledby="filter-restaurant-by-driver-btn"
+              tabindex="-1"
+              aria-selected="false"
+              hidden
+            >
+              <div class="card">
+                <header>
+                  <h1 class="font-bold">Filter Restaurant by Driver</h1>
+                </header>
+                <section>
+                  <form id="driver-form" class="form grid gap-6">
+                    <div class="grid gap-3">
+                      <label for="driver-input">Enter Driver Name</label>
+                      <div class="flex gap-2">
+                        <input
+                          class="w-fit"
+                          type="text"
+                          id="driver-input"
+                          name="driver_name"
+                        />
+                        <button
+                          type="submit"
+                          id="driver-form-btn"
+                          class="btn-outline"
+                        >
+                          <i data-lucide="eye"></i>
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </section>
+                <section>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td class="font-bold">Restaurant Name</td>
+                      </tr>
+                    </thead>
+                    <tbody id="meatTableBody"></tbody>
+                  </table>
+                </section>
+              </div>
+            </div>
           </div>
-          <!-- prettier-ignore -->
-          <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
-            description: "Deliveries data not available..." }) %>
         </section>
       </main>
   </div>
@@ -82,6 +168,28 @@
         tableColumns,
         buttons
       );
+
+      const driverForm = document.getElementById("driver-form");
+        driverForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(driverForm);
+          const driver = formData.get("driver_name");
+          const response = await fetch(
+            `/api/deliveries/restaurant-by-driver/${encodeURIComponent(driver)}`
+          );
+          const data = await response.json()
+
+          const tbody = document.getElementById("meatTableBody");
+          tbody.innerHTML = ""; // clear old results
+
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.restaurant_name}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        });
     });
 
     async function openDeliveryItemsDialog(deliveryNo) {
