@@ -29,7 +29,7 @@
               <%- include("../partials/table", { id: "clients-table" }) %>
             <%- include('../partials/dialog-table', {
               dialogId: "agreements-dialog",
-              title: "Client agreements-dialog",
+              title: "Client Agreements",
               description: "List of Agreements.",
               containerId: "agreements-container"
             }) %>
@@ -106,19 +106,21 @@
             <thead>
               <tr class="border-b font-semibold">
                 <th class="p-2 text-left">Agreement No.</th>
+                <th class="p-2 text-left">Restaurant Code</th>
                 <th class="p-2 text-left">Start Date</th>
                 <th class="p-2 text-left">End Date</th>
                 <th class="p-2 text-left">Pricing</th>
                 <th class="p-2 text-left">Week of Delivery</th>
                 <th class="p-2 text-left">Cut Type of Choice</th>
-                <th class="p-2 text-left">Weight</th>
+                <th class="p-2 text-left">Weight (kg)</th>
                 <th class="p-2 text-left">Tenderness</th>
-                <th class="p-2 text-left">Fat Content</th>
-                <th class="p-2 text-left">Protein Content</th>
-                <th class="p-2 text-left">Connective Tissue Content</th>
-                <th class="p-2 text-left">Water Holding Capacity</th>
+                <th class="p-2 text-left">Color</th>
+                <th class="p-2 text-left">Fat Content (%)</th>
+                <th class="p-2 text-left">Protein Content (%)</th>
+                <th class="p-2 text-left">Connective Tissue Content (%)</th>
+                <th class="p-2 text-left">Water Holding Capacity (%)</th>
                 <th class="p-2 text-left">pH</th>
-                <th class="p-2 text-left">Water Distribution</th>
+                <th class="p-2 text-left">Water Distribution (%)</th>
               </tr>
             </thead>
             <tbody>
