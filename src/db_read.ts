@@ -295,7 +295,10 @@ export async function getUniqueTrucks() {
     SELECT DISTINCT truck_number FROM deliveries
     ORDER BY truck_number
     `)
+
+  return records;
 }
+
 export async function getClientsFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 
