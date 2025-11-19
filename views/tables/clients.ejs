@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Carnivault - Clients</title>
   <script src="https://cdn.jsdelivr.net/npm/date-fns@3/cdn.min.js"></script>
+  <script
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
+      defer
+    ></script>
 </head>
 
 <body>
@@ -40,30 +44,115 @@
                   formFieldsPartial: '../partials/add-client-dialog' }) %>
               </div>
           </section>
-          <div class="overflow-x-auto">
-            <!-- prettier-ignore -->
-            <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
-              <%- include("../partials/table", { id: "clients-table" }) %>
-            <%- include('../partials/dialog-table', {
-              dialogId: "agreements-dialog",
-              title: "Client Agreements",
-              description: "List of Agreements.",
-              containerId: "agreements-container"
-            }) %>
 
-            <%- include('../partials/dialog', { 
-              dialogId: 'add-agreement-dialog' , 
-              title: 'Add Agreement' ,
-              description: '*Required Fields' , 
-              formId: 'add-agreement-form' , 
-              formAction: '' ,
-              formMethod: 'POST' , 
-              submitText: 'Add' , 
-              formFieldsPartial: '../partials/add-agreement-dialog' }) %>
+          <div class="tabs" id="demo-tabs-with-panels">
+            <nav role="tablist" aria-orientation="horizontal">
+              <button
+                type="button"
+                role="tab"
+                id="clients-btn"
+                aria-controls="clients-btn-control"
+                aria-selected="true"
+                tabindex="0"
+              >
+                Livestock
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                id="filter-cut-type-by-client-btn"
+                aria-controls="filter-cut-type-by-client-btn-control"
+                aria-selected="false"
+                tabindex="0"
+              >
+                Filter Cut Type by Client
+              </button>
+            </nav>
+
+            <div
+              role="tabpanel"
+              id="clients-btn-control"
+              aria-labelledby="clients-btn"
+              tabindex="-1"
+              aria-selected="true"
+            >
+              <section>
+                <div class="overflow-x-auto">
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-skeleton", { id: "table-skeleton" })%>
+                    <%- include("../partials/table", { id: "clients-table" }) %>
+                  <%- include('../partials/dialog-table', {
+                    dialogId: "agreements-dialog",
+                    title: "Client Agreements",
+                    description: "List of Agreements.",
+                    containerId: "agreements-container"
+                  }) %>
+                  
+                  <!-- prettier-ignore -->
+                  <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
+                  description: "Clients data not available..." }) %>
+
+                  <%- include('../partials/dialog', { 
+                    dialogId: 'add-agreement-dialog' , 
+                    title: 'Add Agreement' ,
+                    description: '*Required Fields' , 
+                    formId: 'add-agreement-form' , 
+                    formAction: '' ,
+                    formMethod: 'POST' , 
+                    submitText: 'Add' , 
+                    formFieldsPartial: '../partials/add-agreement-dialog' }) %>
+                </div>
+              </section>
+            </div>
+            <div
+              role="tabpanel"
+              id="filter-cut-type-by-client-btn-control"
+              aria-labelledby="filter-cut-type-by-client-btn"
+              tabindex="-1"
+              aria-selected="false"
+              hidden
+            >
+              <div class="card">
+                <header>
+                  <h1 class="font-bold">Filter Cut Type by Client</h1>
+                </header>
+                <section>
+                  <form id="client-form" class="form grid gap-6">
+                    <div class="grid gap-3">
+                      <label for="client-input">Enter Restaurant Name</label>
+                      <div class="flex gap-2">
+                        <input
+                          class="w-fit"
+                          type="text"
+                          id="client-input"
+                          name="restaurant_name"
+                        />
+                        <button
+                          type="submit"
+                          id="client-form-btn"
+                          class="btn-outline"
+                        >
+                          <i data-lucide="eye"></i>
+                          View
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </section>
+                <section>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <td class="font-bold">Cut Type</td>
+                      </tr>
+                    </thead>
+                    <tbody id="meatTableBody"></tbody>
+                  </table>
+                </section>
+              </div>
+            </div>
           </div>
-          <!-- prettier-ignore -->
-          <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
-            description: "Clients data not available..." }) %>
         </section>
       </main>
   </div>
@@ -130,6 +219,29 @@
         "/api/clients/add",
         "POST"
       );
+
+      const clientForm = document.getElementById("client-form");
+        clientForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(clientForm);
+          const restaurant = formData.get("restaurant_name");
+          const response = await fetch(
+            `/api/clients/cut-type-by-client/${encodeURIComponent(restaurant)}`
+          );
+          const data = await response.json()
+
+          const tbody = document.getElementById("meatTableBody");
+          tbody.innerHTML = ""; // clear old results
+
+          data.forEach((item) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${item.cuts}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        });
+
       document
         .getElementById("add-agreement-form")
         .addEventListener("submit", async (e) => {

@@ -526,6 +526,16 @@ app.get("/api/unique-trucks", async (req, res) => {
   }
 });
 
+app.get("/api/unique-clients", async (req, res) => {
+  try {
+    const clients = await read.getUniqueClients();
+    res.json(clients);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch unique clients" });
+  }
+});
+
 // Logistics Report
 app.get("/api/deliveries/truck", async (req, res) => {
   try {

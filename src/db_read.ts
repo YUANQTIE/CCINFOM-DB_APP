@@ -10,6 +10,14 @@ export async function getSupplier() {
   return records;
 }
 
+export async function getUniqueSupplier() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT company_name FROM supplier
+    ORDER BY company_name;
+  `);
+  return records;
+}
+
 export async function getLivestockBySupplier(supplierName: string) {
   const [records] = await pool.query(
     `
@@ -68,6 +76,14 @@ export async function getLivestock() {
   const [records] = await pool.query(`
     SELECT * FROM livestock
     ORDER BY storage_location, date_arrived DESC;
+  `);
+  return records;
+}
+
+export async function getUniqueLivestockBreed() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT breed FROM livestock
+    ORDER BY breed;
   `);
   return records;
 }
@@ -274,6 +290,14 @@ export async function getClients() {
   return records;
 }
 
+export async function getUniqueClients() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT restaurant_name FROM clients;`
+  );
+
+  return records
+}
+
 export async function getClientEmails() {
   const [records] = await pool.query(`
     SELECT email_address FROM clients
@@ -287,7 +311,10 @@ export async function getUniqueTrucks() {
     SELECT DISTINCT truck_number FROM deliveries
     ORDER BY truck_number
     `)
+
+  return records;
 }
+
 export async function getClientsFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 

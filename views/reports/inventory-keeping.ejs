@@ -182,7 +182,6 @@
       const selectEl = document.getElementById(selectId);
       if (!selectEl) return; // Safety check
 
-      // Note: Use the path that successfully worked for your API!
       const uniqueApiUrl = "/api/meat-selection/unique";
 
       try {
@@ -209,7 +208,7 @@
       }
     }
 
-    // Handler for Tab 1: Total Produced Meat Selection
+    // Tab 1: Total Produced Meat Selection
     async function handleTotalReport(event) {
       event.preventDefault();
 
@@ -280,11 +279,11 @@
     }
 
 
-    // Handler for Tab 2: Average Nutritional Quantities
+    // Tab 2: Average Nutritional Quantities
     async function handleNutritionalReport(event) {
       event.preventDefault();
 
-      // Get Elements for Tab 2 (Using unique IDs)
+      // Tab 2 (Using unique IDs)
       const form = document.getElementById("nutritional-report-form");
       const meatCut = document.getElementById("meat-cut-select-2").value;
       const startDate = document.getElementById("start-date-input-2").value;
@@ -319,7 +318,6 @@
           end: endDate
         });
 
-        // NOTE: Update this API path if it's different!
         const apiRes = await fetch(`/api/average-nutrition?${params.toString()}`);
 
         if (!apiRes.ok) {
