@@ -26,6 +26,13 @@
           <div class="overflow-x-auto">
             <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
                 id: "deliveries-table" }) %>
+            <%- include('../partials/dialog-table', {
+              dialogId: "delivery-items-dialog",
+              title: "Delivery Items",
+              description: "Items in this delivery.",
+              containerId: "delivery-items-container"
+            }) %>
+
           </div>
           <!-- prettier-ignore -->
           <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
@@ -52,11 +59,12 @@
       ];
 
       const buttons = {
-        editBtn: {
+        viewItemsBtn: {
           action: (event, rowData, rowIndex) => {
-            console.log("Edit");
+            console.log("View Items", rowData);
+            openDeliveryItemsDialog(rowData.delivery_no);
           },
-          icon: lucide.icons.Pencil,
+          icon: lucide.icons.List,
         },
       };
 
@@ -79,6 +87,59 @@
         buttons
       );
     });
+
+    async function openDeliveryItemsDialog(deliveryNo) {
+      const dialog = document.getElementById("delivery-items-dialog");
+      const container = document.getElementById("delivery-items-container");
+
+      container.innerHTML = "<p>Loading...</p>";
+
+      try {
+        const response = await fetch(`/api/deliveries/delivery-items/${deliveryNo}`);
+        if (!response.ok) throw new Error("Failed to fetch delivery items");
+
+        const items = await response.json();
+        console.log(items)
+
+        if (!Array.isArray(items) || items.length === 0) {
+          container.innerHTML = "<p>No items found for this delivery.</p>";
+        } else {
+          const table = document.createElement("table");
+          table.className = "w-full text-sm border-collapse";
+
+          table.innerHTML = `
+            <thead>
+              <tr class="border-b font-semibold">
+                <th class="p-2 text-left">Serial No</th>
+                <th class="p-2 text-left">Cut Type</th>
+                <th class="p-2 text-left">Weight (kg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items
+                .map(
+                  (item) => `
+                <tr class="border-b">
+                  <td class="p-2">${item.serial_no}</td>
+                  <td class="p-2">${item.cut_type}</td>
+                  <td class="p-2">${item.weight}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+          `;
+
+          container.innerHTML = "";
+          container.appendChild(table);
+        }
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p class='text-red-500'>Error loading items.</p>";
+      }
+
+      dialog.showModal();
+    }
   </script>
 </body>
 
