@@ -43,6 +43,90 @@ app.use("/api/clients", clientsRoutes);
 app.use("/api/deliveries", deliveriesRoutes);
 
 // --- VIEW ROUTES (EJS) ---
+
+app.post("/client-login", async (req, res) => {
+  const emailInput = req.body.email?.trim();
+  const records: any = await read.getClientEmails();
+
+  let client = null;
+  for (let i = 0; i < records.length; i++) {
+    if (records[i].email_address === emailInput) {
+      client = records[i];
+      break;
+    }
+  }
+
+  if (client) {
+    const clientName = client.restaurant_name || client.email_address;
+    const clientEmail = client.email_address;
+
+    // Redirect with query params
+    res.redirect(`/dashboard?name=${encodeURIComponent(clientName)}&email=${encodeURIComponent(clientEmail)}`);
+  } else {
+    res.send("Email not found. Please check your email or register first.");
+  }
+});
+
+
+// GET dashboard
+app.get("/dashboard", (req, res) => {
+  const clientName = req.query.name as string;
+  const clientEmail = req.query.email as string;
+
+  if (!clientName || !clientEmail) {
+    return res.redirect("/email_login");
+  }
+
+  res.render("client-view/index", { clientName, clientEmail });
+});
+
+
+app.get("/client-information", (req, res) => {
+  const clientName = req.query.name as string;
+  const clientEmail = req.query.email as string;
+
+  if (!clientName || !clientEmail) {
+    return res.redirect("/email_login");
+  }
+
+  res.render("client-view/client-information", { clientName, clientEmail });
+});
+
+app.get("/make_an_order", (req, res) => {
+  const clientName = req.query.name as string;
+  const clientEmail = req.query.email as string;
+
+  if (!clientName || !clientEmail) {
+    return res.redirect("/email_login");
+  }
+
+  res.render("client-view/make_an_order", { clientName, clientEmail });
+});
+
+app.get("/delete_order", (req, res) => {
+  const clientName = req.query.name as string;
+  const clientEmail = req.query.email as string;
+
+  if (!clientName || !clientEmail) {
+    return res.redirect("/email_login");
+  }
+
+  res.render("client-view/delete_order", { clientName, clientEmail });
+});
+
+app.get("/table_of_transactions", (req, res) => {
+  const clientName = req.query.name as string;
+  const clientEmail = req.query.email as string;
+
+  if (!clientName || !clientEmail) {
+    return res.redirect("/email_login");
+  }
+
+  res.render("client-view/delete_order", { clientName, clientEmail });
+});
+
+
+
 app.get("", (req, res) => {
   res.render("index");
 });
@@ -83,6 +167,15 @@ app.get("/settings", (req, res) => {
   res.render("settings");
 });
 
+app.get("/login", (req, res) => {
+  res.render("auth/login");
+});
+
+app.get("/email_login", (req, res) => {
+  res.render("auth/email_login");
+});
+
+
 // --- REPORT VIEW ROUTES ---
 app.get("/reports/inventory-keeping", (req, res) => {
   res.render("reports/inventory-keeping");
@@ -101,6 +194,44 @@ app.get("/reports/sales-report", (req, res) => {
 });
 
 // --- API ROUTES (Deliver a product) ---
+
+app.get("/api/client-emails", async (req, res) => {
+  try {
+    const emails = await read.getClientEmails();
+    res.json(emails); // sends [{ email_address: "..." }, ...]
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch emails" });
+  }
+});
+
+app.post("/client-login", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // get emails and cast to any[] to avoid TS errors
+    const emails = (await read.getClientEmails()) as any[];
+
+    let exists = false;
+    for (let i = 0; i < emails.length; i++) {
+      if (emails[i].email_address === email) {
+        exists = true;
+        break;
+      }
+    }
+
+    if (exists) {
+      res.send(`Welcome back, ${email}!`);
+    } else {
+      res.send("Email not found. Please check your email or register first.");
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
+
 
 // PROCESS 1
 
@@ -269,10 +400,10 @@ app.get("/company/deliver-product", (req, res) => {
 app.get("/api/average-condition-ratio", async (req, res) => {
   try {
     // allow undefined
-    const { start, end } = req.query as { start?: string; end?: string };
+    const { start, end, supplier_name } = req.query as { start: string; end: string; supplier_name: string };
 
     // No more "if (!start)" check. Just pass whatever we have.
-    const data = await read.getAverageConditionRatio(start, end);
+    const data = await read.getAverageConditionRatio(start, end, supplier_name);
 
     res.json(data);
   } catch (err) {
@@ -381,6 +512,16 @@ app.get("/api/profit/total", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch total profit" });
+  }
+});
+
+app.get("/api/unique-trucks", async (req, res) => {
+  try {
+    const trucks = await read.getUniqueTrucks();
+    res.json(trucks); // return as JSON
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch unique trucks" });
   }
 });
 

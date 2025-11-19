@@ -1,0 +1,29 @@
+<aside class="bg-gray-100 p-4 w-72 min-w-fit h-full">
+  <h1 class="font-bold text-xl mb-4">Carnivault</h1>
+
+  <nav class="flex flex-col gap-2 text-black text-sm">
+    <a href="/make_an_order?name=<%= encodeURIComponent(clientName) %>&email=<%= encodeURIComponent(clientEmail) %>"
+      class="flex items-center gap-2 py-1.5 px-2.5 rounded hover:bg-gray-200">
+      <i data-lucide="beef" class="h-4.5"></i>
+      <span>Make an Order</span>
+    </a>
+
+    <a href="/delete_order?name=<%= encodeURIComponent(clientName) %>&email=<%= encodeURIComponent(clientEmail) %>"
+      class="flex items-center gap-2 py-1.5 px-2.5 rounded hover:bg-gray-200">
+      <i data-lucide="tractor" class="h-4.5"></i>
+      <span>Delete an Order</span>
+    </a>
+
+    <a href="/client-information?name=<%= encodeURIComponent(clientName) %>&email=<%= encodeURIComponent(clientEmail) %>"
+      class="flex items-center gap-2 py-1.5 px-2.5 rounded hover:bg-gray-200">
+      <i data-lucide="users" class="h-4.5"></i>
+      <span>Client Information</span>
+    </a>
+
+    <a href="/table_of_transactions?name=<%= encodeURIComponent(clientName) %>&email=<%= encodeURIComponent(clientEmail) %>"
+      class="flex items-center gap-2 py-1.5 px-2.5 rounded hover:bg-gray-200">
+      <i data-lucide="notepad-text" class="h-4.5"></i>
+      <span>Table of Transactions</span>
+    </a>
+  </nav>
+</aside>
