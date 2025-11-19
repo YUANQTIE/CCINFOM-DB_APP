@@ -153,8 +153,8 @@ export async function getMeatSelection() {
 
 export async function getUniqueMeatCuts() {
   const [records] = await pool.query(`
-    SELECT UNIQUE cut_type FROM meat_selection
-    ORDER BY cut_type;
+    SELECT distinct cut_type FROM meat_selection
+    ORDER BY CONCAT(cut_type);
   `);
   return records;
 }
