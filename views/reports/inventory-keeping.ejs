@@ -83,193 +83,297 @@
                     <span id="display-range"></span>
                   </p>
                 </div>
-                <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
-                  tabindex="-1" aria-selected="false" hidden>
-                  <section class="flex gap-10 mt-4">
-                    <form class="form grid gap-6">
-                      <div class="grid gap-2">
-                        <label for="meat-cut-input">Meat Cut</label>
-                        <select class="w-full" id="meat-cut-select">
-                          <option value="" disabled selected>
-                            Select meat cut...
-                          </option>
-                          <option value="SUP-001">SUP-001 (Global Farms Inc.)</option>
-                          <option value="SUP-042">
-                            SUP-042 (Local Breeders Co-op)
-                          </option>
-                          <option value="SUP-105">SUP-105 (AgriVentures Ltd.)</option>
-                          <option value="SUP-210">
-                            SUP-210 (Green Valley Supplies)
-                          </option>
-                        </select>
-                      </div>
-
-                      <div class="grid gap-2">
-                        <label for="start-date-input">Start Date</label>
-                        <input class="w-full" type="date" id="start-date-input" />
-                      </div>
-
-                      <div class="grid gap-2">
-                        <label for="end-date-input">End Date</label>
-                        <input class="w-full" type="date" id="end-date-input" />
-                      </div>
-
-                      <div class="grid gap-2.5">
-                        <button type="submit" class="btn w-full">
-                          <i data-lucide="bar-chart-2"></i>
-                          Load Average Nutritional Quantities Report
-                        </button>
-                        <a href="/inventory" type="submit" class="btn-outline w-full">
-                          <i data-lucide="shopping-basket"></i>
-                          View Inventory
-                        </a>
-                      </div>
-                    </form>
-                    <section class="w-full space-y-2">
-                      <h1 class="text-3xl font-bold">Arm Chuck Roast</h1>
-                      <hr />
-                      <table class="table">
-                        <tr>
-                          <td class="font-bold">Average Fat</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Average Protein</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Average Connective Tissue</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Average Water Holding Capacity</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Average Water Distribution</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Average pH</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Most Frequent Tenderness</td>
-                        </tr>
-                        <tr>
-                          <td class="font-bold">Most Frequent Color</td>
-                        </tr>
-                      </table>
-                    </section>
-                  </section>
-                </div>
               </div>
+            </section>
+          </div>
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
+            tabindex="-1" aria-selected="false" hidden>
+            <section class="flex gap-10 mt-4">
+              <form id="nutritional-report-form" class="form grid gap-6">
+                <div class="grid gap-2">
+                  <label for="meat-cut-select-2">Meat Cut</label>
+                  <select class="w-full" id="meat-cut-select-2" name="meat_cut" required>
+                    <option value="" disabled selected>
+                      Loading meat cuts...
+                    </option>
+                  </select>
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="start-date-input-2">Start Date</label>
+                  <input class="w-full" type="date" id="start-date-input-2" name="date_start" required />
+                </div>
+
+                <div class="grid gap-2">
+                  <label for="end-date-input-2">End Date</label>
+                  <input class="w-full" type="date" id="end-date-input-2" name="date_end" required />
+                </div>
+
+                <div class="grid gap-2.5">
+                  <button type="submit" id="submit-btn-2" class="btn w-full">
+                    <i data-lucide="bar-chart-2"></i>
+                    Load Average Nutritional Quantities Report
+                  </button>
+                  <a href="/inventory" class="btn-outline w-full">
+                    <i data-lucide="shopping-basket"></i>
+                    View Inventory
+                  </a>
+                </div>
+                <p id="error-msg-2" class="text-red-500 text-sm hidden text-center"></p>
+              </form>
+
+              <section class="flex-1 w-full space-y-2 relative">
+                <div id="state-empty-2"
+                  class="text-center text-gray-500 p-10 bg-gray-50 rounded-lg border border-gray-200">
+                  <i data-lucide="flask-conical" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                  <p>Select filters and click "Load" to analyze nutritional averages.</p>
+                </div>
+
+                <div id="result-display-2" class="hidden">
+                  <h1 class="text-3xl font-bold" id="cut-name-display">Select a Cut</h1>
+                  <hr class="mt-2 mb-4" />
+                  <table class="table w-full text-left">
+                    <tbody>
+                      <tr>
+                        <td class="font-bold">Average Fat</td>
+                        <td id="avg-fat">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Average Protein</td>
+                        <td id="avg-protein">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Average Connective Tissue</td>
+                        <td id="avg-tissue">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Average Water Holding Capacity</td>
+                        <td id="avg-whc">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Average Water Distribution</td>
+                        <td id="avg-wd">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Average pH</td>
+                        <td id="avg-ph">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Most Frequent Tenderness</td>
+                        <td id="freq-tenderness">--</td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold">Most Frequent Color</td>
+                        <td id="freq-color">--</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+          </div>
       </main>
   </div>
   <script src="/scripts/components/table.js" defer></script>
   <script src="/scripts/components/searchbar.js" defer></script>
   <script src="/scripts/components/dialog.js" defer></script>
   <script>
+    // Function (modified to accept select ID)
+    async function loadMeatCuts(selectId) {
+      const selectEl = document.getElementById(selectId);
+      if (!selectEl) return; // Safety check
 
-    async function loadMeatCuts() {
-      const selectEl = document.getElementById("meat-cut-select");
-      const uniqueApiUrl = "/api/meat-selection/unique"; // Use relative path
+      // Note: Use the path that successfully worked for your API!
+      const uniqueApiUrl = "/api/meat-selection/unique";
 
       try {
-        // 1. Fetch data from the dedicated API route
+        selectEl.innerHTML = '<option value="" disabled selected>Loading meat cuts...</option>';
         const response = await fetch(uniqueApiUrl);
-        if (!response.ok) {
-          throw new Error("Failed to fetch unique meat cuts.");
-        }
+        if (!response.ok) throw new Error("Failed to fetch unique meat cuts.");
 
-        const cuts = await response.json(); // Data expected to be an array of { cut_type: '...' } objects
-
-        // 2. Clear the "Loading..." message
+        const cuts = await response.json();
         selectEl.innerHTML = '<option value="" disabled selected>Select meat cut...</option>';
 
         if (cuts && cuts.length > 0) {
-          // 3. Populate the dropdown with fetched data
           cuts.forEach(cut => {
             const option = document.createElement("option");
-
-            // Use cut.cut_type for both the value (to send to the server) and the text (to display)
             option.value = cut.cut_type;
             option.textContent = cut.cut_type;
-
             selectEl.appendChild(option);
           });
         } else {
           selectEl.innerHTML = '<option value="" disabled selected>No meat cuts available.</option>';
         }
-
       } catch (error) {
         console.error("Error loading meat cuts:", error);
         selectEl.innerHTML = '<option value="" disabled selected>Error loading cuts.</option>';
       }
     }
-    // --- Original Form Submission Logic ---
-    document.addEventListener("DOMContentLoaded", () => {
-      // 1. Load the dynamic options immediately when the page loads
-      loadMeatCuts();
 
-      // Ensure you add an ID to your form if you haven't already
-      const form = document.querySelector("form");
-      // You might want to assign an ID in your EJS: <form id="meat-report-form" class="form grid gap-6">
+    // Handler for Tab 1: Total Produced Meat Selection
+    async function handleTotalReport(event) {
+      event.preventDefault();
 
-      // ... (rest of your existing script code remains here) ...
-      const resultContainer = document.getElementById("state-result");
+      // Get Elements for Tab 1
+      const form = document.querySelector("#demo-tabs-with-panels-panel-1 form");
+      const meatCut = document.getElementById("meat-cut-select").value;
+      const startDate = document.getElementById("start-date-input").value;
+      const endDate = document.getElementById("end-date-input").value;
+      const submitBtn = document.getElementById("submit-btn");
+      const errorMsg = document.getElementById("error-msg");
       const emptyContainer = document.getElementById("state-empty");
+      const resultDisplay = document.getElementById("state-result");
       const countDisplay = document.getElementById("total-count-display");
       const displayCut = document.getElementById("display-cut");
       const displayRange = document.getElementById("display-range");
-      const errorMsg = document.getElementById("error-msg");
-      const submitBtn = document.getElementById("submit-btn");
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
+      // Initial Reset
+      errorMsg.classList.add("hidden");
+      emptyContainer.classList.remove("hidden");
+      resultDisplay.classList.add("hidden");
 
-        // 1. Reset UI
-        errorMsg.classList.add("hidden");
-        const originalBtnText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<span class="animate-pulse">Calculating...</span>`;
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="animate-pulse">Calculating...</span>`;
 
-        // 2. Get Values
-        const meatCut = document.getElementById("meat-cut-select").value;
-        const startDate = document.getElementById("start-date-input").value;
-        const endDate = document.getElementById("end-date-input").value;
+      // Validation Check (Simplified)
+      if (!meatCut || !startDate || !endDate) {
+        errorMsg.innerText = "Please select all fields for the report.";
+        errorMsg.classList.remove("hidden");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+        return;
+      }
 
-        try {
-          // 3. Fetch Data (Your existing logic for calculating the total)
-          const params = new URLSearchParams({
-            meat_cut: meatCut,
-            date_start: startDate,
-            date_end: endDate
-          });
+      try {
+        const params = new URLSearchParams({
+          meat_cut: meatCut,
+          date_start: startDate,
+          date_end: endDate
+        });
 
-          const res = await fetch(`/api/meat-produced?${params.toString()}`);
+        const res = await fetch(`/api/meat-produced?${params.toString()}`);
 
-          if (!res.ok) {
-            const errData = await res.json();
-            throw new Error(errData.error || "Failed to fetch data");
-          }
-
-          const data = await res.json();
-
-          // 4. Determine the Count
-          const totalCount = Array.isArray(data) ? data.length : (data.count || 0);
-
-          // 5. Update UI
-          countDisplay.innerText = totalCount;
-          displayCut.innerText = meatCut;
-          displayRange.innerText = `${startDate} to ${endDate}`;
-
-          emptyContainer.classList.add("hidden");
-          resultContainer.classList.remove("hidden");
-
-        } catch (err) {
-          console.error(err);
-          errorMsg.innerText = err.message;
-          errorMsg.classList.remove("hidden");
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalBtnText;
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || "Failed to fetch data");
         }
-      });
+
+        const data = await res.json();
+        const totalCount = Array.isArray(data) ? data.length : (data.count || 0);
+
+        // Update UI
+        countDisplay.innerText = totalCount;
+        displayCut.innerText = meatCut;
+        displayRange.innerText = `${startDate} to ${endDate}`;
+
+        emptyContainer.classList.add("hidden");
+        resultDisplay.classList.remove("hidden");
+
+      } catch (err) {
+        console.error(err);
+        errorMsg.innerText = err.message;
+        errorMsg.classList.remove("hidden");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    }
+
+
+    // Handler for Tab 2: Average Nutritional Quantities
+    async function handleNutritionalReport(event) {
+      event.preventDefault();
+
+      // Get Elements for Tab 2 (Using unique IDs)
+      const form = document.getElementById("nutritional-report-form");
+      const meatCut = document.getElementById("meat-cut-select-2").value;
+      const startDate = document.getElementById("start-date-input-2").value;
+      const endDate = document.getElementById("end-date-input-2").value;
+      const submitBtn = document.getElementById("submit-btn-2");
+      const errorMsg = document.getElementById("error-msg-2");
+      const emptyContainer = document.getElementById("state-empty-2");
+      const resultDisplay = document.getElementById("result-display-2");
+
+      // Initial Reset
+      errorMsg.classList.add("hidden");
+      emptyContainer.classList.remove("hidden");
+      resultDisplay.classList.add("hidden");
+
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="animate-pulse">Loading...</span>`;
+
+      // Validation Check
+      if (!meatCut || !startDate || !endDate) {
+        errorMsg.innerText = "Please select a meat cut, start date, and end date.";
+        errorMsg.classList.remove("hidden");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams({
+          cut: meatCut,
+          start: startDate,
+          end: endDate
+        });
+
+        // NOTE: Update this API path if it's different!
+        const apiRes = await fetch(`/api/average-nutrition?${params.toString()}`);
+
+        if (!apiRes.ok) {
+          const errData = await apiRes.json();
+          throw new Error(errData.error || "Failed to fetch nutritional data.");
+        }
+
+        const data = await apiRes.json();
+
+        // Update Display Titles
+        document.getElementById("cut-name-display").textContent = `${meatCut} Report`;
+
+        // Update Table Rows
+        document.getElementById("avg-fat").textContent = data.fat !== undefined ? data.fat.toFixed(2) + ' %' : '--';
+        document.getElementById("avg-protein").textContent = data.protein !== undefined ? data.protein.toFixed(2) + ' %' : '--';
+        document.getElementById("avg-tissue").textContent = data.tissue !== undefined ? data.tissue.toFixed(2) + ' %' : '--';
+        document.getElementById("avg-whc").textContent = data.whc !== undefined ? data.whc.toFixed(2) : '--';
+        document.getElementById("avg-wd").textContent = data.wd !== undefined ? data.wd.toFixed(2) : '--';
+        document.getElementById("avg-ph").textContent = data.ph !== undefined ? data.ph.toFixed(2) : '--';
+        document.getElementById("freq-tenderness").textContent = data.tenderness || '--';
+        document.getElementById("freq-color").textContent = data.color || '--';
+
+        // Show Results
+        emptyContainer.classList.add("hidden");
+        resultDisplay.classList.remove("hidden");
+
+      } catch (err) {
+        console.error(err);
+        errorMsg.innerText = err.message;
+        errorMsg.classList.remove("hidden");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+      }
+    }
+
+
+    // --- DOMContentLoaded Initialization ---
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Initialize Dropdowns (Tab 1 and Tab 2)
+      loadMeatCuts("meat-cut-select");
+      loadMeatCuts("meat-cut-select-2");
+
+      // 2. Attach Listener for Tab 1 Form (Total Produced)
+      const form1 = document.querySelector("#demo-tabs-with-panels-panel-1 form");
+      if (form1) {
+        form1.addEventListener("submit", handleTotalReport);
+      }
+
+      // 3. Attach Listener for Tab 2 Form (Nutritional Averages)
+      const form2 = document.getElementById("nutritional-report-form");
+      if (form2) {
+        form2.addEventListener("submit", handleNutritionalReport);
+      }
     });
   </script>
 </body>
