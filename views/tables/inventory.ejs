@@ -72,31 +72,35 @@
                   <div class="overflow-x-auto">
                     <!-- prettier-ignore -->
                     <%- include("../partials/table-skeleton", { id: "table-skeleton" }) %> <%- include("../partials/table", {
-                id: "inventory-table" }) %>
+                    id: "inventory-table" }) %>
                     <!-- prettier-ignore -->
                     <%- include('../partials/dialog', { 
-              dialogId: 'edit-meat-selection-dialog' , 
-              title: 'Edit Meat Selection' ,
-              description: 'Edit Meat Selection' , 
-              formId: 'edit-meat-selection-form' , 
-              formAction: '' ,
-              formMethod: 'PUT' , 
-              submitText: 'Update' , 
-              formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
+                    dialogId: 'edit-meat-selection-dialog' , 
+                    title: 'Edit Meat Selection' ,
+                    description: 'Edit Meat Selection' , 
+                    formId: 'edit-meat-selection-form' , 
+                    formAction: '' ,
+                    formMethod: 'PUT' , 
+                    submitText: 'Update' , 
+                    formFieldsPartial: '../partials/edit-meat-selection-dialog' }) %>
             
-            <%- include('../partials/dialog', { 
-              dialogId: 'add-nutrition-dialog' , 
-              title: 'Edit Meat Selection' ,
-              description: 'Edit Meat Selection' , 
-              formId: 'add-nutrition-form' , 
-              formAction: '' ,
-              formMethod: 'POST' , 
-              submitText: 'Add' , 
-              formFieldsPartial: '../partials/add-nutrition-dialog' }) %>
+            
+                    <%- include('../partials/dialog', { 
+                    dialogId: 'add-nutrition-dialog' , 
+                    title: 'Add Nutritional Information' ,
+                    description: 'Add Nutritional Information.' , 
+                    formId: 'add-nutrition-form' , 
+                    formAction: '' ,
+                    formMethod: 'POST' , 
+                    submitText: 'Add' , 
+                    formFieldsPartial: '../partials/add-nutrition-dialog' }) %>
+                  
+                    <%- include("../partials/view-nutrition-dialog") %>
+
                   </div>
                   <!-- prettier-ignore -->
                   <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
-            description: "Inventory data not available..." }) %>
+                  description: "Inventory data not available..." }) %>
                 </section>
               </div>
             </div>
@@ -179,15 +183,15 @@
 
               dialog.showModal();
             },
-            label: "Process",
+            label: "Add Nutrition",
             condition: (rowData) =>
               rowData.quality_control_clearance === "Pending",
           },
           viewNutritionBtn: {
             action: async (event, rowData, rowIndex) => {
-              console.log("View nutrition", rowData);
+              openNutritionDialog(rowData.serial_no);
             },
-            label: "Process",
+            label: "View Nutrition",
             condition: (rowData) =>
               rowData.quality_control_clearance === "Approved",
           },
@@ -259,6 +263,40 @@
             }
           });
       });
+      const openNutritionDialog = async (serialNo) => {
+        const dialog = document.getElementById("view-nutrition-dialog");
+        const content = document.getElementById("nutrition-content");
+
+        try {
+          // Fetch the nutritional info
+          const response = await fetch(`/api/meat-selection/${serialNo}`, {method: 'GET'});
+          if (!response.ok) throw new Error("Failed to load nutrition info");
+
+          const [data] = await response.json();
+          console.log(data)
+
+          // Render fields dynamically
+          content.innerHTML = `
+            <p><strong>Serial Number:</strong> ${data.item_serial_no ?? "N/A"}</p>
+            <p><strong>Tenderness:</strong> ${data.tenderness ?? "N/A"}</p>
+            <p><strong>Color:</strong> ${data.color ?? "N/A"}</p>
+            <p><strong>Fat Content:</strong> ${data.fat_content ?? "N/A"} %</p>
+            <p><strong>Protein Content:</strong> ${data.protein_content ?? "N/A"} %</p>
+            <p><strong>Connective Tissue Content:</strong> ${data.connective_tissue_content ?? "N/A"} %</p>
+            <p><strong>Water Holding Capacity:</strong> ${data.water_holding_capacity ?? "N/A"} %</p>
+            <p><strong>pH:</strong> ${data.pH ?? "N/A"}</p>
+            <p><strong>Water Distribution:</strong> ${data.water_distribution ?? "N/A"} %</p>
+          `;
+
+          // Open dialog
+          dialog.showModal();
+
+        } catch (err) {
+          console.error(err);
+          alert("Failed to load nutritional information.");
+        }
+      };
+
     </script>
   </body>
 </html>
