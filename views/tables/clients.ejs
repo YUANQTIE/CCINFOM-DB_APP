@@ -22,6 +22,23 @@
             <!-- prettier-ignore -->
             <%- include("../partials/searchbar", { label: "Clients" , select_id: "searchbarSelect" ,
               input_id: "searchbarInput" , placeholder: "Search clients..." , route_api: "clients" }) %>
+              <div class="grid gap-2 grid-flow-col">
+                <button class="btn" id="add-client-btn">
+                  <i data-lucide="user-plus" class="h-4.5"></i>
+                  Add Client
+                </button>
+
+                <!-- prettier-ignore -->
+                <%- include('../partials/dialog', { 
+                  dialogId: 'add-client-dialog' , 
+                  title: 'Add Client' ,
+                  description: 'Add client.' , 
+                  formId: 'add-client-form' , 
+                  formAction: '/api/clients/add' ,
+                  formMethod: 'POST' , 
+                  submitText: 'Add' , 
+                  formFieldsPartial: '../partials/add-client-dialog' }) %>
+              </div>
           </section>
           <div class="overflow-x-auto">
             <!-- prettier-ignore -->
@@ -53,6 +70,8 @@
 
   <script src="/scripts/components/table.js" defer></script>
   <script src="/scripts/components/searchbar.js" defer></script>
+  <script src="/scripts/components/dialog.js" defer></script>
+  
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const tableColumns = [
@@ -102,6 +121,14 @@
         "clients",
         tableColumns,
         buttons
+      );
+
+      initDialog(
+        "add-client-btn",
+        "add-client-dialog",
+        "add-client-form",
+        "/api/clients/add",
+        "POST"
       );
       document
         .getElementById("add-agreement-form")
