@@ -72,6 +72,14 @@ export async function getLivestock() {
   return records;
 }
 
+export async function getUniqueLivestockBreed() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT breed FROM livestock
+    ORDER BY breed;
+  `);
+  return records;
+}
+
 export async function getLivestockFiltered(filterBy: string, key: string) {
   const wildcard = `%${key}%`;
 
@@ -153,7 +161,7 @@ export async function getMeatSelection() {
 
 export async function getUniqueMeatCuts() {
   const [records] = await pool.query(`
-    SELECT distinct cut_type FROM meat_selection
+    SELECT DISTINCT cut_type FROM meat_selection
     ORDER BY CONCAT(cut_type);
   `);
   return records;
