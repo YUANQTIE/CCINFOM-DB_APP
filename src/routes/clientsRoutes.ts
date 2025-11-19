@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as read from "../db_read.ts";
+import * as create from "../db_create.ts";
 
 const router = Router();
 
@@ -45,6 +46,19 @@ router.get("/agreement/:restaurantCode", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch data" });
+  }
+});
+
+router.post("/add-agreement/:restaurantCode", async (req, res) => {
+  const serial_no = req.params.restaurantCode;
+  const data = req.body;
+
+  try {
+    await create.createClientAgreement(serial_no, data);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
   }
 });
 

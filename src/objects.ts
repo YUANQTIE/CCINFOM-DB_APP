@@ -123,3 +123,20 @@ export interface Agreement {
     pH?: number | null;
     water_distribution?: number | null;
 }
+
+export interface AgreementInput {
+    contract_start: string;
+    contract_end: string;
+    client_pricing: number;
+    week_of_delivery: number;
+    cut_type_of_choice: MeatSelection['cut_type'];
+    weight: number
+    tenderness?: Nutrition['tenderness'] | null;
+    color?: Nutrition['color'] | null;
+    fat_content?: number | null;
+    protein_content?: number | null;
+    connective_tissue_content?: number | null;
+    water_holding_capacity?: number | null;
+    pH?: number | null;
+    water_distribution?: number | null;
+}

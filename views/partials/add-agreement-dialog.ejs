@@ -1,0 +1,242 @@
+<div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2 md:w-fit">
+    <div class="grid gap-2">
+        <label for="start-input">*Start Date</label>
+        <input
+            class="w-full"
+            type="date"
+            id="start-input"
+            name="contract_start"
+            required
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="end-input">*End Date</label>
+        <input
+            class="w-full"
+            type="date"
+            id="end-input"
+            name="contract_end"
+            **required**
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="pricing-input">*Pricing</label>
+        <input
+        class="w-full"
+        type="text"
+        id="pricing-input"
+        placeholder="e.g., 999.99"
+        name="client_pricing"
+        **required**
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="week-input">*Week of Delivery</label>
+        <input
+        class="w-full"
+        type="text"
+        id="week-input"
+        placeholder="e.g., 3"
+        name="week_of_delivery"
+        **required**
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="cut-select">*Cut Type of Choice</label>
+        <select
+        class="w-full"
+        id="cut-select"
+        name="cut_type_of_choice"
+        **required**
+        >
+        <option value="" disabled selected>Select...</option>
+        <option value="Arm Chuck Roast">Arm Chuck Roast</option>
+        <option value="Cross Rib Chuck Roast">Cross Rib Chuck Roast</option>
+        <option value="Prime Rib Roast">Prime Rib Roast</option>
+        <option value="Porterhouse Steak">Porterhouse Steak</option>
+        <option value="Top Sirloin Steak">Top Sirloin Steak</option>
+
+        <option value="Top Round">Top Round</option>
+        <option value="Kabobs">Kabobs</option>
+        <option value="Arm Chuck Steak">Arm Chuck Steak</option>
+        <option value="Shoulder Roast">Shoulder Roast</option>
+        <option value="Ribeye Steak, Bone-In">Ribeye Steak, Bone-In</option>
+
+        <option value="T-Bone Steak">T-Bone Steak</option>
+        <option value="Top Sirloin Petite Roast">Top Sirloin Petite Roast</option>
+        <option value="Top Round Steak">Top Round Steak</option>
+        <option value="Stew Meat">Stew Meat</option>
+        <option value="Blade Chuck Roast">Blade Chuck Roast</option>
+
+        <option value="Shoulder Steak">Shoulder Steak</option>
+        <option value="Back Ribs">Back Ribs</option>
+        <option value="Strip Steak, Bone-In">Strip Steak, Bone-In</option>
+        <option value="Top Sirloin Filet">Top Sirloin Filet</option>
+        <option value="Bottom Round Roast">Bottom Round Roast</option>
+
+        <option value="Strips">Strips</option>
+        <option value="Blade Chuck Steak">Blade Chuck Steak</option>
+        <option value="Ranch Steak">Ranch Steak</option>
+        <option value="Ribeye Roast, Boneless">Ribeye Roast, Boneless</option>
+        <option value="Strip Steak, Boneless">Strip Steak, Boneless</option>
+
+        <option value="Coulotte Roast">Coulotte Roast</option>
+        <option value="Bottom Round Rump Roast">Bottom Round Rump Roast</option>
+        <option value="Cubed Steak">Cubed Steak</option>
+        <option value="7-Bone Chuck Roast">7-Bone Chuck Roast</option>
+        <option value="Flat Iron Steak">Flat Iron Steak</option>
+
+        <option value="Ribeye Steak, Boneless">Ribeye Steak, Boneless</option>
+        <option value="Strip Petite Roast">Strip Petite Roast</option>
+        <option value="Coulotte Steak">Coulotte Steak</option>
+        <option value="Ground Beef and Ground Beef Patties">Ground Beef and Ground Beef Patties</option>
+        <option value="Chuck Center Roast">Chuck Center Roast</option>
+
+        <option value="Top Blade Steak">Top Blade Steak</option>
+        <option value="Ribeye Cap Steak">Ribeye Cap Steak</option>
+        <option value="Strip Filet">Strip Filet</option>
+        <option value="Tri-Tip Roast">Tri-Tip Roast</option>
+        <option value="Eye of Round Roast">Eye of Round Roast</option>
+
+        <option value="Shank Cross-Cut">Shank Cross-Cut</option>
+        <option value="Denver Steak">Denver Steak</option>
+        <option value="Shoulder Petite Tender">Shoulder Petite Tender</option>
+        <option value="Ribeye Petite Roast">Ribeye Petite Roast</option>
+        <option value="Tenderloin Roast">Tenderloin Roast</option>
+
+        <option value="Tri-Tip Steak">Tri-Tip Steak</option>
+        <option value="Eye of Round Steak">Eye of Round Steak</option>
+        <option value="Tenderloin Tips">Tenderloin Tips</option>
+        <option value="Chuck Eye Roast">Chuck Eye Roast</option>
+        <option value="Shoulder Petite Tender Medallions">Shoulder Petite Tender Medallions</option>
+
+        <option value="Ribeye Filet">Ribeye Filet</option>
+        <option value="Tenderloin Steak (Filet Mignon)">Tenderloin Steak (Filet Mignon)</option>
+        <option value="Petite Sirloin Steak">Petite Sirloin Steak</option>
+        <option value="Brisket Flat">Brisket Flat</option>
+        <option value="Inside Skirt">Inside Skirt</option>
+
+        <option value="Flank Steak">Flank Steak</option>
+        <option value="Short Ribs, Bone-In">Short Ribs, Bone-In</option>
+        <option value="Chuck Eye Steak">Chuck Eye Steak</option>
+        <option value="Sirloin Bavette Steak">Sirloin Bavette Steak</option>
+        <option value="Brisket Point">Brisket Point</option>
+
+        <option value="Country-Style Ribs">Country-Style Ribs</option>
+
+        </select>
+    </div>
+
+    <div class="grid gap-2">
+        <label for="weight-input">*Weight</label>
+        <input
+        class="w-full"
+        type="text"
+        id="weight-input"
+        placeholder="e.g., 999.99"
+        name="weight"
+        **required**
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="tenderness-select">Tenderness</label>
+        <select
+        class="w-full"
+        id="tenderness-select"
+        name="tenderness"
+        >
+        <option value="" disabled selected>Select...</option>
+        <option value="Very Tender">Very Tender</option>
+        <option value="Tender">Tender</option>
+        <option value="Moderate">Moderate</option>
+        <option value="Tough">Tough</option>
+        </select>
+    </div>
+
+    <div class="grid gap-2">
+        <label for="color-select">Color</label>
+        <select
+        class="w-full"
+        id="color-select"
+        name="color"
+        >
+        <option value="" disabled selected>Select...</option>
+        <option value="Bright Red">Bright Red</option>
+        <option value="Dark Red">Dark Red</option>
+        <option value="Pale">Pale</option>
+        <option value="Brownish">Brownish</option>
+        </select>
+    </div>
+
+    <div class="grid gap-2">
+        <label for="fat-input">Fat Content (%)</label>
+        <input
+        class="w-full"
+        type="text"
+        id="fat-input"
+        placeholder="e.g., 99.99"
+        name="fat_content"
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="protein-input">Protein Content (%)</label>
+        <input
+        class="w-full"
+        type="text"
+        id="protein-input"
+        placeholder="e.g., 99.99"
+        name="protein_content"
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="connective-tissue-input">Connective Tissue Content (%)</label>
+        <input
+        class="w-full"
+        type="text"
+        id="connective-tissue-input"
+        placeholder="e.g., 99.99"
+        name="connective_tissue_content"
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="water-holding-input">Water Holding Capacity (%)</label>
+        <input
+        class="w-full"
+        type="text"
+        id="water-holding-input"
+        placeholder="e.g., 99.99"
+        name="water_holding_capacity"
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="ph-input">pH</label>
+        <input
+        class="w-full"
+        type="text"
+        id="ph-input"
+        placeholder="e.g., 5.5"
+        name="pH"
+        />
+    </div>
+
+    <div class="grid gap-2">
+        <label for="water-distribution-input">Water Distribution (%)</label>
+        <input
+        class="w-full"
+        type="text"
+        id="water-distribution-input"
+        placeholder="e.g., 99.99"
+        name="water_distribution"
+        />
+    </div>
+
+</div>

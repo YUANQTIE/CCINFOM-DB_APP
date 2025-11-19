@@ -33,6 +33,16 @@
               description: "List of Agreements.",
               containerId: "agreements-container"
             }) %>
+
+            <%- include('../partials/dialog', { 
+              dialogId: 'add-agreement-dialog' , 
+              title: 'Add Agreement' ,
+              description: '*Required Fields' , 
+              formId: 'add-agreement-form' , 
+              formAction: '' ,
+              formMethod: 'POST' , 
+              submitText: 'Add' , 
+              formFieldsPartial: '../partials/add-agreement-dialog' }) %>
           </div>
           <!-- prettier-ignore -->
           <%- include("../partials/table-data-zero", { id: "table-data-zero" ,
@@ -56,11 +66,23 @@
         "Year of Establishment",
       ];
       const buttons = {
-        editBtn: {
+        openAgreementsBtn: {
           action: (event, rowData, rowIndex) => {
             openAgreementsDialog(rowData.restaurant_code)
           },
           icon: lucide.icons.FileText,
+        },
+        addAgreement: {
+          action: (event, rowData, rowIndex) => {
+            console.log("Add nutrition", rowData);
+            const dialog = document.getElementById("add-agreement-dialog");
+            const form = document.getElementById("add-agreement-form");
+
+            form.action = `/api/clients/add-agreement/${rowData.restaurant_code}`;
+
+            dialog.showModal();
+          },
+          icon: lucide.icons.FilePlus,
         },
       };
 
@@ -81,6 +103,28 @@
         tableColumns,
         buttons
       );
+      document
+        .getElementById("add-agreement-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const form = e.target;
+          const formData = new FormData(form);
+          const payload = Object.fromEntries(formData);
+          try {
+            const response = await fetch(form.action, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) throw new Error("Failed to add agreement");
+            form.closest("dialog").close();
+            window.location.reload();
+          } catch (err) {
+            console.error(err);
+            alert("Error adding agreement.");
+          }
+        });
     });
 
     async function openAgreementsDialog(restaurantCode) {

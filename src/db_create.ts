@@ -330,6 +330,38 @@ export async function createAgreement(a: obj.Agreement) {
   return result;
 }
 
+export async function createClientAgreement(restaurant_code: string, a: obj.AgreementInput) {
+  const [result] = await pool.query(
+    `
+    INSERT INTO agreements (
+      restaurant_code, contract_start, contract_end, client_pricing, 
+      week_of_delivery, cut_type_of_choice, weight, tenderness, color, 
+      fat_content, protein_content, connective_tissue_content,
+      water_holding_capacity, pH, water_distribution
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      restaurant_code,
+      a.contract_start,
+      a.contract_end,
+      a.client_pricing,
+      a.week_of_delivery,
+      a.cut_type_of_choice,
+      a.weight || null,
+      a.tenderness || null,
+      a.color || null,
+      a.fat_content || null,
+      a.protein_content || null,
+      a.connective_tissue_content || null,
+      a.water_holding_capacity || null,
+      a.pH || null,
+      a.water_distribution || null,
+    ]
+  );
+  return result;
+}
+
+
 // --- DELIVERIES & ORDERS ---
 
 // Create a new delivery and return its ID
