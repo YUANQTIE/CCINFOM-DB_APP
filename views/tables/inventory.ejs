@@ -146,9 +146,7 @@
                         <td class="font-bold">Restaurant Name</td>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr></tr>
-                    </tbody>
+                    <tbody id="restaurantTableBody"></tbody>
                   </table>
                 </section>
               </div>
@@ -281,20 +279,27 @@
 
         // Filter Client By Cut Type
         const cutTypeForm = document.getElementById("cut-type-form");
-        cutTypeForm.addEventListener("submit", async (e) => {
-          e.preventDefault();
+          cutTypeForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(cutTypeForm);
+            const cutType = formData.get("cut_type");
+            const response = await fetch(
+              `/api/meat-selection/client-by-cut-type/${encodeURIComponent(cutType)}`
+            );
+            const data = await response.json()
 
-          const formData = new FormData(cutTypeForm);
+            console.log("Cut Type:", cutType);
+            console.log("Response:", data);
+            const tbody = document.getElementById("restaurantTableBody");
+            tbody.innerHTML = ""; // clear old results
 
-          // fetch
-
-          const response = await fetch(
-            `/api/meat-selection/client-by-cut-type/${encodeURIComponent(
-              cutType
-            )}`
-          );
-
-          console.log(Object.fromEntries(formData));
+            data.forEach((item) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${item.restaurant_name}</td>
+              `;
+              tbody.appendChild(row);
+            });
         });
       });
       const openNutritionDialog = async (serialNo) => {
