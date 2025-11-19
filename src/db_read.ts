@@ -282,6 +282,14 @@ export async function getClients() {
   return records;
 }
 
+export async function getUniqueClients() {
+  const [records] = await pool.query(`
+    SELECT DISTINCT restaurant_name FROM clients;`
+  );
+
+  return records
+}
+
 export async function getClientEmails() {
   const [records] = await pool.query(`
     SELECT email_address FROM clients
