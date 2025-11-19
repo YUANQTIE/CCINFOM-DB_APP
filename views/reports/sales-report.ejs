@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Carnivault - Sales Report</title>
-    <script
-      src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js"
-      defer
-    ></script>
-  </head>
-  <body>
-    <div class="flex flex-1">
-      <%- include("../partials/sidebar") %>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivault - Sales Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/basecoat-css@0.3.6/dist/js/tabs.min.js" defer></script>
+</head>
+
+<body>
+  <div class="flex flex-1">
+    <%- include("../partials/sidebar") %>
       <main class="flex-1 p-10 overflow-y-auto bg-background">
         <h1 class="text-2xl font-bold text-foreground mb-6 tracking-tight">
           Sales Report
@@ -21,36 +20,19 @@
         <!-- TODO: The report will display list of meat cuts -->
         <div class="tabs w-full" id="demo-tabs-with-panels">
           <nav role="tablist" aria-orientation="horizontal" class="w-full">
-            <button
-              type="button"
-              role="tab"
-              id="demo-tabs-with-panels-tab-1"
-              aria-controls="demo-tabs-with-panels-panel-1"
-              aria-selected="true"
-              tabindex="0"
-            >
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-1"
+              aria-controls="demo-tabs-with-panels-panel-1" aria-selected="true" tabindex="0">
               Profit By Client
             </button>
 
-            <button
-              type="button"
-              role="tab"
-              id="demo-tabs-with-panels-tab-2"
-              aria-controls="demo-tabs-with-panels-panel-2"
-              aria-selected="false"
-              tabindex="0"
-            >
+            <button type="button" role="tab" id="demo-tabs-with-panels-tab-2"
+              aria-controls="demo-tabs-with-panels-panel-2" aria-selected="false" tabindex="0">
               Total Profit
             </button>
           </nav>
 
-          <div
-            role="tabpanel"
-            id="demo-tabs-with-panels-panel-1"
-            aria-labelledby="demo-tabs-with-panels-tab-1"
-            tabindex="-1"
-            aria-selected="true"
-          >
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-1" aria-labelledby="demo-tabs-with-panels-tab-1"
+            tabindex="-1" aria-selected="true">
             <section class="flex gap-10 mt-4 w-full">
               <form class="form grid gap-6">
                 <div class="grid gap-2">
@@ -130,14 +112,8 @@
             </section>
           </div>
 
-          <div
-            role="tabpanel"
-            id="demo-tabs-with-panels-panel-2"
-            aria-labelledby="demo-tabs-with-panels-tab-2"
-            tabindex="-1"
-            aria-selected="false"
-            hidden
-          >
+          <div role="tabpanel" id="demo-tabs-with-panels-panel-2" aria-labelledby="demo-tabs-with-panels-tab-2"
+            tabindex="-1" aria-selected="false" hidden>
             <section class="flex gap-10 mt-4">
               <form class="form grid gap-6">
                 <div class="grid gap-2">
@@ -195,6 +171,7 @@
           </div>
         </div>
       </main>
-    </div>
-  </body>
+  </div>
+</body>
+
 </html>
